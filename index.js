@@ -50,8 +50,8 @@ async function checkMatches() {
 
     for (const match of liveMatches) {
         // Ignorar partidos amistosos
-        const leagueName = match.league ? match.league.name.toLowerCase() : '';
-        if (leagueName.includes('friendly') || leagueName.includes('amistoso') || leagueName.includes('club friendlies')) {
+        const leagueName = match.league && match.league.name ? match.league.name.toLowerCase() : '';
+        if (leagueName.includes('friendl') || leagueName.includes('amistoso')) {
             continue;
         }
 
