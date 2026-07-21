@@ -23,11 +23,21 @@ if (token && token !== 'tu_token_aqui') {
 const subscribedChats = new Set();
 
 if (bot.onText) {
+    const MI_CHAT_ID = 890184744; // Tu ID exclusivo
+
     bot.onText(/\/start/, (msg) => {
         const chatId = msg.chat.id;
+        
+        // Bloqueo de seguridad: solo aceptar tu ID
+        if (chatId !== MI_CHAT_ID) {
+            console.log(`Intento de acceso bloqueado del ID: ${chatId}`);
+            bot.sendMessage(chatId, "⛔ Acceso denegado. Este es un bot privado de uso exclusivo.");
+            return;
+        }
+
         subscribedChats.add(chatId);
-        bot.sendMessage(chatId, "⚽ ¡Bot de Alertas de Apuestas iniciado!\nEstaré monitoreando partidos en vivo y te avisaré con sonido cuando se cumplan nuestras 3 reglas estratégicas.");
-        console.log(`Nuevo usuario suscrito: ${chatId}`);
+        bot.sendMessage(chatId, "⚽ ¡Bienvenido jefe! Bot de Alertas iniciado.\nEstaré monitoreando partidos en vivo y te avisaré con sonido cuando se cumplan nuestras 4 reglas estratégicas.");
+        console.log(`Usuario principal conectado: ${chatId}`);
     });
 } else {
     // Si no hay bot real, simulamos un suscriptor
