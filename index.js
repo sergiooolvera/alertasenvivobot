@@ -6,7 +6,7 @@ const cron = require('node-cron');
 // Módulos de Fútbol
 const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById } = require('./apiClient');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
-const { isMajorLeague } = require('./config');
+const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
 // Módulos de Béisbol (MLB)
 const { getLiveBaseballGames, getPreGameBaseballOdds, getBaseballGameById } = require('./baseballApiClient');
@@ -57,6 +57,10 @@ const baseballOddsCache = new Map();
 const trackedMatches = new Map();
 const trackedBaseballGames = new Map();
 
+// Set de partidos/juegos actualmente en vivo para evitar polling a partidos en progreso
+let currentLiveFootballIds = new Set();
+let currentLiveBaseballIds = new Set();
+
 // ===================================================
 // MONITOREO DE FÚTBOL
 // ===================================================
@@ -64,25 +68,29 @@ async function checkMatches() {
     console.log(`[${new Date().toLocaleTimeString()}] Revisando partidos de fútbol en vivo...`);
     const liveMatches = await getLiveMatches();
 
+    const newLiveIds = new Set();
+
     for (const match of liveMatches) {
+        const fixtureId = match.fixture.id;
+        newLiveIds.add(fixtureId);
+
         const leagueName = match.league && match.league.name ? match.league.name.toLowerCase() : '';
         if (leagueName.includes('friendl') || leagueName.includes('amistoso')) {
             continue;
         }
 
-        const fixtureId = match.fixture.id;
         const isTop = isMajorLeague(match.league);
         
         if (!oddsCache.has(fixtureId)) {
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 100));
             const odds = await getPreMatchOdds(fixtureId);
-            if (odds) {
-                oddsCache.set(fixtureId, odds);
-            } else {
-                continue;
-            }
+            oddsCache.set(fixtureId, odds || 'NO_ODDS');
         }
+
         const matchOdds = oddsCache.get(fixtureId);
+        if (!matchOdds || matchOdds === 'NO_ODDS') {
+            continue; // Si no hay momios disponibles, no podemos calcular las reglas
+        }
 
         let events = [];
         if (needsEvents(match, isTop)) {
@@ -120,10 +128,17 @@ async function checkMatches() {
             }
         }
     }
+
+    currentLiveFootballIds = newLiveIds;
 }
 
 async function checkFinishedMatches() {
     for (const [fixtureId, matchInfo] of trackedMatches.entries()) {
+        // Solo consultar detalles por ID si el partido ya NO aparece en la lista de partidos en vivo
+        if (currentLiveFootballIds.has(fixtureId)) {
+            continue;
+        }
+
         const matchData = await getMatchById(fixtureId);
         if (matchData && (matchData.fixture.status.short === 'FT' || matchData.fixture.status.short === 'AET' || matchData.fixture.status.short === 'PEN')) {
             const finalEvents = await getMatchEvents(fixtureId);
@@ -152,19 +167,22 @@ async function checkBaseballMatches() {
     console.log(`[${new Date().toLocaleTimeString()}] Revisando juegos de MLB en vivo...`);
     const liveGames = await getLiveBaseballGames();
 
+    const newLiveBaseballIds = new Set();
+
     for (const game of liveGames) {
         const gameId = game.game.id;
+        newLiveBaseballIds.add(gameId);
 
         if (!baseballOddsCache.has(gameId)) {
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 100));
             const odds = await getPreGameBaseballOdds(gameId);
-            if (odds) {
-                baseballOddsCache.set(gameId, odds);
-            } else {
-                continue;
-            }
+            baseballOddsCache.set(gameId, odds || 'NO_ODDS');
         }
+
         const gameOdds = baseballOddsCache.get(gameId);
+        if (!gameOdds || gameOdds === 'NO_ODDS') {
+            continue;
+        }
 
         const alerts = evaluateBaseballRules(game, gameOdds);
 
@@ -192,10 +210,17 @@ async function checkBaseballMatches() {
             }
         }
     }
+
+    currentLiveBaseballIds = newLiveBaseballIds;
 }
 
 async function checkFinishedBaseballMatches() {
     for (const [gameId, gameInfo] of trackedBaseballGames.entries()) {
+        // Solo consultar si el juego ya no está en vivo
+        if (currentLiveBaseballIds.has(gameId)) {
+            continue;
+        }
+
         const gameData = await getBaseballGameById(gameId);
         if (gameData && (gameData.status.short === 'FT' || gameData.status.short === 'POST' || gameData.status.short === 'FINISHED')) {
             const results = evaluateBaseballAlertResults(gameInfo.alertsMetadata, gameData);
@@ -214,15 +239,20 @@ async function checkFinishedBaseballMatches() {
     }
 }
 
-// Programar revisión cada minuto para ambos deportes
-cron.schedule('* * * * *', async () => {
+// Programar revisión cada minuto para ambos deportes (solo en horario 7:00 AM a 9:00 PM CST/CDT)
+cron.schedule('* 7-21 * * *', async () => {
+    if (!isWithinActiveHours()) {
+        return;
+    }
     await checkMatches();
     await checkFinishedMatches();
     await checkBaseballMatches();
     await checkFinishedBaseballMatches();
+}, {
+    timezone: TIMEZONE
 });
 
-// Resumen Matutino todos los días a las 7:30 AM
+// Resumen Matutino todos los días a las 7:30 AM (Hora Centro México)
 cron.schedule('30 7 * * *', async () => {
     console.log("Ejecutando Resumen Matutino de Ligas Principales...");
     const today = new Date().toISOString().split('T')[0];
@@ -233,7 +263,7 @@ cron.schedule('30 7 * * *', async () => {
 
     for (const match of topMatches) {
         const fixtureId = match.fixture.id;
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 100));
         const odds = await getPreMatchOdds(fixtureId);
         if (odds) {
             const homeOdd = odds.home;
@@ -254,9 +284,17 @@ cron.schedule('30 7 * * *', async () => {
             bot.sendMessage(chatId, msg, { parse_mode: 'Markdown' }).catch(e => console.error(e));
         }
     }
+}, {
+    timezone: TIMEZONE
 });
 
-console.log("🟢 Sistema Multideporte automatizado (Fútbol + MLB Béisbol) en marcha.");
-// Ejecutar primera revisión de ambos deportes al arrancar
-checkMatches();
-checkBaseballMatches();
+console.log(`🟢 Sistema Multideporte automatizado (Fútbol + MLB Béisbol) en marcha. Horario activo: 7:00 AM - 9:00 PM (${TIMEZONE}).`);
+// Ejecutar primera revisión únicamente si estamos dentro del horario activo
+if (isWithinActiveHours()) {
+    checkMatches();
+    checkBaseballMatches();
+} else {
+    console.log(`⏰ Script iniciado fuera del horario de monitoreo (7 AM - 9 PM ${TIMEZONE}). En espera de la ventana activa...`);
+}
+
+

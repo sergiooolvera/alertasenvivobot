@@ -50,7 +50,7 @@ function evaluateBaseballRules(game, odds) {
     if (inning >= 3 && inning <= 5 && favorite.odd < 1.55 && favorite.runs < underdog.runs) {
         const ruleId = `${gameId}_mlb1`;
         if (!alertedBaseballGames.has(ruleId)) {
-            const text = `⚾ *REGLA MLB 1: FAVORITO EN APUROS*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo en la ${inning}ª entrada. Oportunidad de valor en la línea de remontada.`;
+            const text = `⚾ *REGLA MLB 1: FAVORITO EN APUROS*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo en la ${inning}ª entrada.\n🎯 *Recomendación:* Línea del Dinero (ML) Favorito en Vivo / Hándicap (+1.5).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -74,7 +74,7 @@ function evaluateBaseballRules(game, odds) {
     if (inning >= 7 && inning <= 9 && Math.abs(homeRuns - awayRuns) <= 1) {
         const ruleId = `${gameId}_mlb2`;
         if (!alertedBaseballGames.has(ruleId)) {
-            const text = `🔥 *REGLA MLB 2: FINAL DE INFARTO (INNING 7-9)*\n\n${msgHeader}\n\n⚠️ *Análisis:* Juego con diferencia de $\\le 1$ carrera ingresando al cierre. Potencial de Extra Innings / Cierre con Bullpen.`;
+            const text = `🔥 *REGLA MLB 2: FINAL DE INFARTO (INNING 7-9)*\n\n${msgHeader}\n\n⚠️ *Análisis:* Juego con diferencia de ≤ 1 carrera ingresando al cierre.\n🎯 *Recomendación:* Hándicap de Carreras (+1.5 Underdog) o Total Carreras (Extra Innings).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -96,7 +96,7 @@ function evaluateBaseballRules(game, odds) {
     if (inning >= 1 && inning <= 3 && (homeRuns + awayRuns) >= 6) {
         const ruleId = `${gameId}_mlb3`;
         if (!alertedBaseballGames.has(ruleId)) {
-            const text = `💥 *REGLA MLB 3: FESTÍN DE CARRERAS (EARLY OVER)*\n\n${msgHeader}\n\n⚠️ *Análisis:* ¡Festival de bateo! Ya van ${homeRuns + awayRuns} carreras en la ${inning}ª entrada. Alta probabilidad de Over de Carreras.`;
+            const text = `💥 *REGLA MLB 3: FESTÍN DE CARRERAS (EARLY OVER)*\n\n${msgHeader}\n\n⚠️ *Análisis:* ¡Festival de bateo! Ya van ${homeRuns + awayRuns} carreras en la ${inning}ª entrada.\n🎯 *Recomendación:* Over de Carreras Totales del Juego en Vivo.\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -115,6 +115,7 @@ function evaluateBaseballRules(game, odds) {
     }
 
     return alerts;
+
 }
 
 /**

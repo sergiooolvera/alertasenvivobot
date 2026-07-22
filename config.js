@@ -58,5 +58,15 @@ function isMajorLeague(league) {
 
 module.exports = {
     MAJOR_LEAGUE_IDS,
-    isMajorLeague
+    isMajorLeague,
+    MONITORING_START_HOUR: 7,
+    MONITORING_END_HOUR: 21,
+    TIMEZONE: 'America/Mexico_City',
+    isWithinActiveHours: function() {
+        const options = { timeZone: 'America/Mexico_City', hour: 'numeric', hour12: false };
+        const formatter = new Intl.DateTimeFormat('en-US', options);
+        const hour = parseInt(formatter.format(new Date()), 10);
+        return hour >= 7 && hour <= 21;
+    }
 };
+

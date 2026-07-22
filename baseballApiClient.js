@@ -11,19 +11,39 @@ const baseballApiClient = axios.create({
   }
 });
 
+let rateLimitedUntil = 0;
+
+function checkRateLimit() {
+  if (Date.now() < rateLimitedUntil) {
+    return true; // Cooldown activo
+  }
+  return false;
+}
+
+function handleApiError(endpoint, error) {
+  if (error.response && error.response.status === 429) {
+    rateLimitedUntil = Date.now() + 60000;
+    console.warn(`⚠️ [API-Sports Baseball] Límite de peticiones alcanzado (429). Pausando peticiones por 60s.`);
+  } else {
+    console.error(`Error fetching ${endpoint}:`, error.message);
+  }
+}
+
 // Obtiene todos los juegos de béisbol en vivo
 async function getLiveBaseballGames() {
+  if (checkRateLimit()) return [];
   try {
     const response = await baseballApiClient.get('/games', { params: { live: 'all' } });
     return response.data.response || [];
   } catch (error) {
-    console.error('Error fetching live baseball games:', error.message);
+    handleApiError('live baseball games', error);
     return [];
   }
 }
 
 // Obtiene los momios pre-partido para Béisbol (Bet 1 = Winner 12)
 async function getPreGameBaseballOdds(gameId) {
+  if (checkRateLimit()) return null;
   try {
     const response = await baseballApiClient.get('/odds', { params: { game: gameId, bet: 1 } });
     
@@ -46,13 +66,14 @@ async function getPreGameBaseballOdds(gameId) {
     }
     return null;
   } catch (error) {
-    console.error(`Error fetching baseball odds for game ${gameId}:`, error.message);
+    handleApiError(`baseball odds for game ${gameId}`, error);
     return null;
   }
 }
 
 // Obtiene un juego de béisbol específico por ID para verificar si terminó
 async function getBaseballGameById(gameId) {
+  if (checkRateLimit()) return null;
   try {
     const response = await baseballApiClient.get('/games', { params: { id: gameId } });
     if (response.data.response && response.data.response.length > 0) {
@@ -60,7 +81,7 @@ async function getBaseballGameById(gameId) {
     }
     return null;
   } catch (error) {
-    console.error(`Error fetching baseball game ${gameId}:`, error.message);
+    handleApiError(`baseball game ${gameId}`, error);
     return null;
   }
 }
@@ -70,3 +91,4 @@ module.exports = {
   getPreGameBaseballOdds,
   getBaseballGameById
 };
+

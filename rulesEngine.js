@@ -79,7 +79,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
             const ruleId = `${fixtureId}_rule1`;
             if (!alertedMatches.has(ruleId)) {
                 const teamWithRed = redCards[0].team.name;
-                const text = `🟥 *REGLA 1: TARJETA ROJA ESTRATÉGICA*\n\n${msgHeader}\n\n⚠️ *Incidente:* Tarjeta roja para ${teamWithRed}`;
+                const text = `🟥 *REGLA 1: TARJETA ROJA ESTRATÉGICA*\n\n${msgHeader}\n\n⚠️ *Incidente:* Tarjeta roja para ${teamWithRed}\n🎯 *Recomendación:* Apostar a Doble Chance / Gana Equipo Beneficiado o Over de Goles.\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
                 alerts.push({
                     text,
                     metadata: {
@@ -104,7 +104,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
         if (fixture.fixture.status.short === 'HT' || elapsed === 45) {
             const ruleId = `${fixtureId}_rule2`;
             if (!alertedMatches.has(ruleId)) {
-                const text = `⏳ *REGLA 2: EL FAVORITO SUFRE*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) no puede anotar al medio tiempo.`;
+                const text = `⏳ *REGLA 2: EL FAVORITO SUFRE*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) no puede anotar al medio tiempo (0-0).\n🎯 *Recomendación:* Over 0.5 Goles en la 2da Mitad o Gana Favorito 2da Mitad.\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
                 alerts.push({
                     text,
                     metadata: {
@@ -128,7 +128,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
     if (underdog.odd > 3.50 && elapsed < 60 && underdogWinning) {
         const ruleId = `${fixtureId}_rule3`;
         if (!alertedMatches.has(ruleId)) {
-            const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA*\n\n${msgHeader}\n\n⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja.`;
+            const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA*\n\n${msgHeader}\n\n⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja.\n🎯 *Recomendación:* Underdog Doble Chance (X2 / 1X) o Hándicap Asiático a favor del Underdog (+1.5).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -161,7 +161,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
             if (totalShots > 12 || possession > 65) {
                 const ruleId = `${fixtureId}_rule4`;
                 if (!alertedMatches.has(ruleId)) {
-                    const text = `🚨 *REGLA 4: ASEDIO INTENSO (HUELE A GOL)*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) está atacando con todo: ${totalShots} tiros y ${possession}% de posesión. ¡Candidato a gol tardío!`;
+                    const text = `🚨 *REGLA 4: ASEDIO INTENSO (HUELE A GOL)*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) está atacando con todo: ${totalShots} tiros y ${possession}% de posesión. ¡Candidato a gol tardío!\n🎯 *Recomendación:* Over 0.5 Goles Adicionales / Próximo Gol (${favorite.team}).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
                     alerts.push({
                         text,
                         metadata: {
@@ -192,7 +192,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
         if ((fixture.fixture.status.short === 'HT' || elapsed === 45) && favorite.odd < 1.45 && favorite.goals < underdog.goals) {
             const ruleId = `${fixtureId}_rule5`;
             if (!alertedMatches.has(ruleId)) {
-                const text = `🔄 *REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo por 1 gol en el medio tiempo. Excelente cuota para valor en 2do tiempo (Favorito o Doble Chance).`;
+                const text = `🔄 *REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo por 1 gol en el medio tiempo.\n🎯 *Recomendación:* Favorito Gana o Empata (Doble Chance) o Hándicap Asiático Favorito (0 / +0.5).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
                 alerts.push({
                     text,
                     metadata: {
@@ -222,7 +222,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
                 if (corners >= 6) {
                     const ruleId = `${fixtureId}_rule6`;
                     if (!alertedMatches.has(ruleId)) {
-                        const text = `🚩 *REGLA 6: PRESIÓN DE CÓRNERES (TOP LEAGUE)*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) acumula ${corners} córneres y busca insistentemente el gol. Alta probabilidad de córneres tardíos.`;
+                        const text = `🚩 *REGLA 6: PRESIÓN DE CÓRNERES (TOP LEAGUE)*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) acumula ${corners} córneres y busca insistentemente el gol.\n🎯 *Recomendación:* Over Córneres Totales Asiáticos (+1.5 / +2.5 córneres finales).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
                         alerts.push({
                             text,
                             metadata: {
@@ -253,7 +253,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
             if (yellowCards >= 3 || redCards >= 1) {
                 const ruleId = `${fixtureId}_rule7`;
                 if (!alertedMatches.has(ruleId)) {
-                    const text = `🟨 *REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)*\n\n${msgHeader}\n\n⚠️ *Análisis:* Partido muy ríspido con ${yellowCards} amarillas y ${redCards} rojas en el 1er tiempo. Candidato a Over de tarjetas / expulsión en el 2do tiempo.`;
+                    const text = `🟨 *REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)*\n\n${msgHeader}\n\n⚠️ *Análisis:* Partido muy ríspido con ${yellowCards} amarillas y ${redCards} rojas en el 1er tiempo.\n🎯 *Recomendación:* Over Tarjetas Totales en el Partido / Próxima Tarjeta.\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
                     alerts.push({
                         text,
                         metadata: {
@@ -276,6 +276,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
     }
 
     return alerts;
+
 }
 
 /**
