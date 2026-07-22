@@ -3,7 +3,8 @@ const botModule = require('node-telegram-bot-api');
 const TelegramBot = botModule.default || botModule;
 const cron = require('node-cron');
 const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById } = require('./apiClient');
-const { evaluateRules, needsStats } = require('./rulesEngine');
+const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
+const { isMajorLeague } = require('./config');
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 let bot;
@@ -15,7 +16,7 @@ if (token && token !== 'tu_token_aqui') {
 } else {
     console.warn("⚠️ TELEGRAM_BOT_TOKEN no configurado en .env. Las alertas se mostrarán en la consola.");
     bot = {
-        sendMessage: (chatId, text) => console.log(`\n🔔 [ALERTA TELEGRAM para ${chatId}]:\n${text}\n`)
+        sendMessage: (chatId, text, options) => console.log(`\n🔔 [ALERTA TELEGRAM para ${chatId}]:\n${text}\n`)
     };
 }
 
@@ -36,7 +37,7 @@ if (bot.onText) {
         }
 
         subscribedChats.add(chatId);
-        bot.sendMessage(chatId, "⚽ ¡Bienvenido jefe! Bot de Alertas iniciado.\nEstaré monitoreando partidos en vivo y te avisaré con sonido cuando se cumplan nuestras 4 reglas estratégicas.");
+        bot.sendMessage(chatId, "⚽ ¡Bienvenido jefe! Bot de Alertas con Verificación GREEN/RED iniciado.\nMonitoreando 7 Reglas Estratégicas en vivo (Reglas 5-7 exclusivas para Ligas Importantes).", { parse_mode: 'Markdown' });
         console.log(`Usuario principal conectado: ${chatId}`);
     });
 } else {
@@ -44,13 +45,11 @@ if (bot.onText) {
     subscribedChats.add("console_user");
 }
 
-// Caché de momios pre-partido.
-// Como no cambian, los pedimos 1 vez por partido y los guardamos en memoria
-// para no agotar el límite de peticiones de la API.
+// Caché de momios pre-partido para cuidar peticiones a la API
 const oddsCache = new Map();
 
-// Para el Seguimiento Post-Partido
-// Mapea fixtureId -> Objeto con info básica del partido
+// Mapeo para Seguimiento Post-Partido GREEN / RED
+// fixtureId -> { home, away, alertsMetadata: [] }
 const trackedMatches = new Map();
 
 async function checkMatches() {
@@ -66,48 +65,53 @@ async function checkMatches() {
         }
 
         const fixtureId = match.fixture.id;
+        const isTop = isMajorLeague(match.league);
         
         // 1. Obtener momios pre-partido (desde API o caché)
         if (!oddsCache.has(fixtureId)) {
-            // Hacemos una pausa muy corta para no hacer spam masivo a la API de golpe si hay muchos partidos
-            await new Promise(r => setTimeout(r, 200)); 
-            
+            await new Promise(r => setTimeout(r, 200)); // Pausa corta
             const odds = await getPreMatchOdds(fixtureId);
             if (odds) {
                 oddsCache.set(fixtureId, odds);
             } else {
-                continue; // Si no hay momios disponibles, no podemos evaluar
+                continue; // Si no hay momios disponibles, saltamos el partido
             }
         }
         const matchOdds = oddsCache.get(fixtureId);
 
-        // 2. Obtener eventos (solo es necesario si estamos antes del min 60 para checar tarjetas)
+        // 2. Obtener eventos solo si la regla lo requiere
         let events = [];
-        const elapsed = match.fixture.status.elapsed;
-        // Solo pedimos eventos si el partido está en una ventana que nos interesa (Regla 1 usa eventos antes del min 60)
-        if (elapsed > 0 && elapsed <= 65) {
-             events = await getMatchEvents(fixtureId);
+        if (needsEvents(match, isTop)) {
+            events = await getMatchEvents(fixtureId);
         }
 
-        // 3. Obtener estadísticas para Regla 4 (Asedio) si aplica
+        // 3. Obtener estadísticas solo si la regla lo requiere
         let stats = [];
-        if (needsStats(match, matchOdds)) {
+        if (needsStats(match, matchOdds, isTop)) {
             stats = await getMatchStatistics(fixtureId);
         }
 
-        // 4. Evaluar las reglas
-        const alerts = evaluateRules(match, matchOdds, events, stats);
+        // 4. Evaluar las 7 reglas (distinguiendo si es liga importante)
+        const alerts = evaluateRules(match, matchOdds, events, stats, isTop);
 
-        // 5. Enviar alertas si las hay y trackear para Post-Partido
+        // 5. Enviar alertas si se activó alguna y registrar para verificación GREEN/RED
         if (alerts.length > 0) {
-            trackedMatches.set(fixtureId, {
-                home: match.teams.home.name,
-                away: match.teams.away.name
-            });
+            if (!trackedMatches.has(fixtureId)) {
+                trackedMatches.set(fixtureId, {
+                    home: match.teams.home.name,
+                    away: match.teams.away.name,
+                    alertsMetadata: []
+                });
+            }
+
+            const trackedInfo = trackedMatches.get(fixtureId);
+
             for (const alert of alerts) {
+                trackedInfo.alertsMetadata.push(alert.metadata);
+
                 for (const chatId of subscribedChats) {
                     try {
-                        await bot.sendMessage(chatId, alert);
+                        await bot.sendMessage(chatId, alert.text, { parse_mode: 'Markdown' });
                     } catch (e) {
                         console.error(`Error enviando mensaje al chat ${chatId}:`, e.message);
                     }
@@ -117,48 +121,53 @@ async function checkMatches() {
     }
 }
 
-// Programar para que la revisión ocurra cada minuto
-cron.schedule('* * * * *', async () => {
-    await checkMatches();
-    await checkFinishedMatches();
-});
-
-// Revisa si los partidos trackeados ya terminaron
+// Revisa si los partidos alertados ya terminaron y envía la calificación GREEN / RED
 async function checkFinishedMatches() {
     for (const [fixtureId, matchInfo] of trackedMatches.entries()) {
         const matchData = await getMatchById(fixtureId);
         if (matchData && (matchData.fixture.status.short === 'FT' || matchData.fixture.status.short === 'AET' || matchData.fixture.status.short === 'PEN')) {
-            const homeGoals = matchData.goals.home;
-            const awayGoals = matchData.goals.away;
             
-            for (const chatId of subscribedChats) {
-                try {
-                    await bot.sendMessage(chatId, `🏁 *POST-PARTIDO*\nEl partido alertado ha terminado:\n${matchInfo.home} ${homeGoals} - ${awayGoals} ${matchInfo.away}`);
-                } catch (e) {
-                    console.error(`Error enviando post-partido al chat ${chatId}:`, e.message);
+            // Consultar eventos finales si hay reglas que los usen
+            const finalEvents = await getMatchEvents(fixtureId);
+            const finalStats = await getMatchStatistics(fixtureId);
+
+            const results = evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
+
+            for (const result of results) {
+                for (const chatId of subscribedChats) {
+                    try {
+                        await bot.sendMessage(chatId, result.msg, { parse_mode: 'Markdown' });
+                    } catch (e) {
+                        console.error(`Error enviando resultado post-partido al chat ${chatId}:`, e.message);
+                    }
                 }
             }
-            // Ya no lo trackeamos
+
+            // Eliminar de seguimiento tras evaluar
             trackedMatches.delete(fixtureId);
         }
     }
 }
 
-// Resumen Matutino todos los días a las 7:30 AM
+// Programar revisión cada minuto
+cron.schedule('* * * * *', async () => {
+    await checkMatches();
+    await checkFinishedMatches();
+});
+
+// Resumen Matutino todos los días a las 7:30 AM (Filtrado por ligas principales)
 cron.schedule('30 7 * * *', async () => {
-    console.log("Ejecutando Resumen Matutino...");
+    console.log("Ejecutando Resumen Matutino de Ligas Principales...");
     const today = new Date().toISOString().split('T')[0];
     const matches = await getMatchesByDate(today);
     
+    // Filtrar partidos de ligas principales
+    const topMatches = matches.filter(m => isMajorLeague(m.league)).slice(0, 20); 
     const topFavorites = [];
-    
-    // Para proteger la cuota de la API, solo sacaremos momios de los primeros 20 partidos
-    // (En un entorno real, filtrarías matches por id de liga primero).
-    const matchesToCheck = matches.slice(0, 20); 
 
-    for (const match of matchesToCheck) {
+    for (const match of topMatches) {
         const fixtureId = match.fixture.id;
-        await new Promise(r => setTimeout(r, 200)); // Pausa para no hacer flood
+        await new Promise(r => setTimeout(r, 200));
         const odds = await getPreMatchOdds(fixtureId);
         if (odds) {
             const homeOdd = odds.home;
@@ -168,19 +177,19 @@ cron.schedule('30 7 * * *', async () => {
             const underdogTeam = homeOdd < awayOdd ? match.teams.away.name : match.teams.home.name;
             
             if (favOdd < 1.35) {
-                topFavorites.push(`- ${favTeam} (${favOdd}) vs ${underdogTeam}`);
+                topFavorites.push(`- 🏆 *${match.league.name}*: ${favTeam} (${favOdd}) vs ${underdogTeam}`);
             }
         }
     }
 
     if (topFavorites.length > 0) {
-        const msg = `☀️ *Resumen Matutino*\nAquí tienes los claros favoritos de hoy (Momio < 1.35):\n\n${topFavorites.join('\n')}`;
+        const msg = `☀️ *Resumen Matutino (Ligas Principales)*\nFavoritos claros del día (Momio < 1.35):\n\n${topFavorites.join('\n')}`;
         for (const chatId of subscribedChats) {
-            bot.sendMessage(chatId, msg).catch(e => console.error(e));
+            bot.sendMessage(chatId, msg, { parse_mode: 'Markdown' }).catch(e => console.error(e));
         }
     }
 });
 
-console.log("🟢 Sistema automatizado con Fase 2 en marcha. Esperando...");
-// Hacemos una primera revisión inmediatamente al iniciar
+console.log("🟢 Sistema automatizado con 7 Reglas y Verificación GREEN/RED en marcha.");
+// Ejecutar primera revisión al arrancar
 checkMatches();

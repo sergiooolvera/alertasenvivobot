@@ -1,68 +1,88 @@
-const { evaluateRules } = require('./rulesEngine');
+const { evaluateRules, evaluateAlertResults } = require('./rulesEngine');
+const { isMajorLeague } = require('./config');
 
-console.log("--- Iniciando Pruebas de Simulación de Reglas ---\n");
+console.log("--- Iniciando Pruebas de Simulación de Reglas 1-7 y Verificación GREEN/RED ---\n");
+
+const topLeague = { id: 39, name: 'Premier League' };
+const minorLeague = { id: 9999, name: 'Tercera División Amateur' };
 
 const matchTemplate = {
     fixture: { id: 1001, status: { elapsed: 0, short: '1H' } },
-    league: { name: 'La Liga' },
-    teams: { home: { name: 'Real Madrid' }, away: { name: 'Osasuna' } },
+    league: topLeague,
+    teams: { home: { name: 'Manchester City' }, away: { name: 'Bournemouth' } },
     goals: { home: 0, away: 0 }
 };
 
-const oddsTemplate = { home: 1.20, draw: 4.50, away: 8.00 }; // Favorito: Home, Underdog: Away
+const oddsTemplate = { home: 1.20, draw: 5.50, away: 10.00 }; // Favorito: Man City (home)
 
 // ============================================
-// Prueba 1: Regla 2 (Favorito Sufre 0-0 al MT)
+// Prueba 1: Regla 5 (HT Comeback - Top League)
 // ============================================
 let test1Match = JSON.parse(JSON.stringify(matchTemplate));
 test1Match.fixture.status.elapsed = 45;
 test1Match.fixture.status.short = 'HT';
-console.log("Prueba 1: Favorito empata 0-0 al medio tiempo");
-let alerts1 = evaluateRules(test1Match, oddsTemplate, []);
-console.log(alerts1.length > 0 ? `✅ Éxito:\n${alerts1.join('\n')}` : "❌ Falló");
+test1Match.goals.home = 0;
+test1Match.goals.away = 1; // Favorito perdiendo al HT
+
+console.log("Prueba 1: Regla 5 (HT Comeback en Premier League)");
+let alerts1 = evaluateRules(test1Match, oddsTemplate, [], [], isMajorLeague(test1Match.league));
+let r5Alert = alerts1.find(a => a.metadata.ruleType === 5);
+console.log(r5Alert ? `✅ Éxito Regla 5 activada:\n${r5Alert.text}` : "❌ Falló Regla 5");
+
+// Comprobar que en liga menor NO salta Regla 5
+test1Match.league = minorLeague;
+let alerts1Minor = evaluateRules(test1Match, oddsTemplate, [], [], isMajorLeague(test1Match.league));
+let r5MinorAlert = alerts1Minor.find(a => a.metadata.ruleType === 5);
+console.log(!r5MinorAlert ? `✅ Éxito: Regla 5 ignorada correctamente en liga menor.` : "❌ Falló: Regla 5 saltó en liga menor");
 
 // ============================================
-// Prueba 2: Regla 3 (Sorpresa Tempranera)
+// Prueba 2: Regla 6 (Late Corners - Top League)
 // ============================================
 let test2Match = JSON.parse(JSON.stringify(matchTemplate));
-test2Match.fixture.status.elapsed = 30;
-test2Match.goals.away = 1; // Underdog anota
-console.log("\nPrueba 2: Underdog toma ventaja al minuto 30");
-let alerts2 = evaluateRules(test2Match, oddsTemplate, []);
-console.log(alerts2.length > 0 ? `✅ Éxito:\n${alerts2.join('\n')}` : "❌ Falló");
-
-// ============================================
-// Prueba 3: Regla 1 (Roja + Empate)
-// ============================================
-let test3Match = JSON.parse(JSON.stringify(matchTemplate));
-test3Match.fixture.id = 1002;
-test3Match.fixture.status.elapsed = 55;
-test3Match.goals.home = 1;
-test3Match.goals.away = 1; // Empate
-let events = [ { type: 'Card', detail: 'Red Card', team: { name: 'Real Madrid' } } ];
-console.log("\nPrueba 3: Roja al minuto 55 con partido empatado");
-let alerts3 = evaluateRules(test3Match, oddsTemplate, events);
-console.log(alerts3.length > 0 ? `✅ Éxito:\n${alerts3.join('\n')}` : "❌ Falló");
-
-// ============================================
-// Prueba 4: Regla 4 (Asedio Min 80)
-// ============================================
-let test4Match = JSON.parse(JSON.stringify(matchTemplate));
-test4Match.fixture.id = 1003;
-test4Match.fixture.status.elapsed = 80; // Entre 75 y 83
-test4Match.goals.home = 0;
-test4Match.goals.away = 1; // Favorito perdiendo
-let stats = [
+test2Match.fixture.id = 1002;
+test2Match.fixture.status.elapsed = 78;
+test2Match.goals.home = 1;
+test2Match.goals.away = 1;
+let stats2 = [
     {
-        team: { name: 'Real Madrid' },
-        statistics: [
-            { type: 'Total Shots', value: 15 }, // Más de 12
-            { type: 'Ball Possession', value: '70%' } // Más del 65%
-        ]
+        team: { name: 'Manchester City' },
+        statistics: [{ type: 'Corner Kicks', value: 8 }]
     }
 ];
-console.log("\nPrueba 4: Favorito perdiendo al min 80 con intenso asedio (15 tiros, 70% pos)");
-let alerts4 = evaluateRules(test4Match, oddsTemplate, [], stats);
-console.log(alerts4.length > 0 ? `✅ Éxito:\n${alerts4.join('\n')}` : "❌ Falló");
 
-console.log("\n--- Pruebas finalizadas ---");
+console.log("\nPrueba 2: Regla 6 (Late Corners al min 78 con 8 córneres en Top League)");
+let alerts2 = evaluateRules(test2Match, oddsTemplate, [], stats2, isMajorLeague(test2Match.league));
+let r6Alert = alerts2.find(a => a.metadata.ruleType === 6);
+console.log(r6Alert ? `✅ Éxito Regla 6 activada:\n${r6Alert.text}` : "❌ Falló Regla 6");
+
+// ============================================
+// Prueba 3: Regla 7 (Partido Caliente - Top League)
+// ============================================
+let test3Match = JSON.parse(JSON.stringify(matchTemplate));
+test3Match.fixture.id = 1003;
+test3Match.fixture.status.elapsed = 35;
+let events3 = [
+    { type: 'Card', detail: 'Yellow Card', team: { name: 'Manchester City' } },
+    { type: 'Card', detail: 'Yellow Card', team: { name: 'Bournemouth' } },
+    { type: 'Card', detail: 'Yellow Card', team: { name: 'Bournemouth' } }
+];
+
+console.log("\nPrueba 3: Regla 7 (Partido Caliente con 3 amarillas en min 35 en Top League)");
+let alerts3 = evaluateRules(test3Match, oddsTemplate, events3, [], isMajorLeague(test3Match.league));
+let r7Alert = alerts3.find(a => a.metadata.ruleType === 7);
+console.log(r7Alert ? `✅ Éxito Regla 7 activada:\n${r7Alert.text}` : "❌ Falló Regla 7");
+
+// ============================================
+// Prueba 4: Verificación GREEN/RED Post-Partido
+// ============================================
+console.log("\nPrueba 4: Evaluación de Resultado Post-Partido (HT Comeback Remontado)");
+let alertMeta = r5Alert.metadata; // Metadata de la Regla 5 enviada en HT (0-1)
+let finalMatch = {
+    fixture: { id: 1001, status: { short: 'FT' } },
+    goals: { home: 2, away: 1 } // Man City remontó 2-1
+};
+
+let veredicto = evaluateAlertResults([alertMeta], finalMatch, [], []);
+console.log(`✅ Veredicto Generado:\n${veredicto[0].msg}`);
+
+console.log("\n--- Pruebas finalizadas con éxito ---");
