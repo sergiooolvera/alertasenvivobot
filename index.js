@@ -108,6 +108,16 @@ async function checkMatches() {
         const alerts = evaluateRules(match, matchOdds, events, stats, isTop);
 
         if (alerts.length > 0) {
+            // Carga dinámica on-demand para alimentar a la IA con el contexto completo
+            if (stats.length === 0) {
+                console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando estadísticas para la IA...`);
+                stats = await getMatchStatistics(fixtureId);
+            }
+            if (events.length === 0) {
+                console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando eventos para la IA...`);
+                events = await getMatchEvents(fixtureId);
+            }
+
             if (!trackedMatches.has(fixtureId)) {
                 trackedMatches.set(fixtureId, {
                     home: match.teams.home.name,

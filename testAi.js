@@ -12,14 +12,46 @@ async function testFootball() {
         ruleName: "Asedio de Favorito Tarde",
         ruleDetails: "El favorito Real Madrid va perdiendo 0-1, juega en casa y el asedio en tiros de esquina/ataques peligrosos se ha intensificado desde el minuto 70.",
         stats: [
-            { type: "Ball Possession", value: "65% vs 35%" },
-            { type: "Total Shots", value: "18 vs 6" },
-            { type: "Shots on Goal", value: "8 vs 2" },
-            { type: "Corner Kicks", value: "9 vs 2" }
+            {
+                team: { name: "Real Madrid" },
+                statistics: [
+                    { type: "Ball Possession", value: "65%" },
+                    { type: "Total Shots", value: 18 },
+                    { type: "Shots on Goal", value: 8 },
+                    { type: "Corner Kicks", value: 9 },
+                    { type: "Fouls", value: 12 },
+                    { type: "Yellow Cards", value: 1 },
+                    { type: "Red Cards", value: 0 }
+                ]
+            },
+            {
+                team: { name: "Barcelona" },
+                statistics: [
+                    { type: "Ball Possession", value: "35%" },
+                    { type: "Total Shots", value: 6 },
+                    { type: "Shots on Goal", value: 2 },
+                    { type: "Corner Kicks", value: 2 },
+                    { type: "Fouls", value: 14 },
+                    { type: "Yellow Cards", value: 3 },
+                    { type: "Red Cards", value: 0 }
+                ]
+            }
         ],
         events: [
-            { type: "Goal", elapsed: 42, team: "Barcelona", detail: "Raphinha" },
-            { type: "Card", elapsed: 65, team: "Barcelona", detail: "Yellow Card" }
+            {
+                time: { elapsed: 42 },
+                team: { name: "Barcelona" },
+                player: { name: "Raphinha" },
+                type: "Goal",
+                detail: "Normal Goal"
+            },
+            {
+                time: { elapsed: 65 },
+                team: { name: "Barcelona" },
+                player: { name: "Gavi" },
+                type: "Card",
+                detail: "Yellow Card"
+            }
         ]
     };
 
@@ -39,12 +71,22 @@ async function testBaseball() {
         ruleName: "Cierre Apretado / Tensión",
         ruleDetails: "El partido entra a las entradas finales (inning 7-9) con una diferencia de apenas 1 carrera y bases llenas para el equipo visitante.",
         stats: {
-            runsByInning: {
-                home: [1, 0, 2, 0, 0, 0, 1, 0],
-                away: [0, 2, 0, 1, 1, 0, 0, 1]
+            home: {
+                total: 4,
+                hits: 8,
+                errors: 1,
+                innings: {
+                    "1": 1, "2": 0, "3": 2, "4": 0, "5": 0, "6": 0, "7": 1, "8": 0
+                }
             },
-            hits: "home 8 | away 10",
-            errors: "home 1 | away 0"
+            away: {
+                total: 5,
+                hits: 10,
+                errors: 0,
+                innings: {
+                    "1": 0, "2": 2, "3": 0, "4": 1, "5": 1, "6": 0, "7": 0, "8": 1
+                }
+            }
         }
     };
 
@@ -57,7 +99,6 @@ async function run() {
     const fs = require('fs');
     try {
         console.log("Iniciando pruebas...");
-        // Capturar salidas en variables
         let outputText = "";
         
         console.log("\n--- Probando IA con Alerta de Fútbol ---");
@@ -70,14 +111,46 @@ async function run() {
             ruleName: "Asedio de Favorito Tarde",
             ruleDetails: "El favorito Real Madrid va perdiendo 0-1, juega en casa y el asedio en tiros de esquina/ataques peligrosos se ha intensificado desde el minuto 70.",
             stats: [
-                { type: "Ball Possession", value: "65% vs 35%" },
-                { type: "Total Shots", value: "18 vs 6" },
-                { type: "Shots on Goal", value: "8 vs 2" },
-                { type: "Corner Kicks", value: "9 vs 2" }
+                {
+                    team: { name: "Real Madrid" },
+                    statistics: [
+                        { type: "Ball Possession", value: "65%" },
+                        { type: "Total Shots", value: 18 },
+                        { type: "Shots on Goal", value: 8 },
+                        { type: "Corner Kicks", value: 9 },
+                        { type: "Fouls", value: 12 },
+                        { type: "Yellow Cards", value: 1 },
+                        { type: "Red Cards", value: 0 }
+                    ]
+                },
+                {
+                    team: { name: "Barcelona" },
+                    statistics: [
+                        { type: "Ball Possession", value: "35%" },
+                        { type: "Total Shots", value: 6 },
+                        { type: "Shots on Goal", value: 2 },
+                        { type: "Corner Kicks", value: 2 },
+                        { type: "Fouls", value: 14 },
+                        { type: "Yellow Cards", value: 3 },
+                        { type: "Red Cards", value: 0 }
+                    ]
+                }
             ],
             events: [
-                { type: "Goal", elapsed: 42, team: "Barcelona", detail: "Raphinha" },
-                { type: "Card", elapsed: 65, team: "Barcelona", detail: "Yellow Card" }
+                {
+                    time: { elapsed: 42 },
+                    team: { name: "Barcelona" },
+                    player: { name: "Raphinha" },
+                    type: "Goal",
+                    detail: "Normal Goal"
+                },
+                {
+                    time: { elapsed: 65 },
+                    team: { name: "Barcelona" },
+                    player: { name: "Gavi" },
+                    type: "Card",
+                    detail: "Yellow Card"
+                }
             ]
         };
         const predFootball = await aiService.generatePrediction(mockMatchDataFootball, 'football');
@@ -93,12 +166,22 @@ async function run() {
             ruleName: "Cierre Apretado / Tensión",
             ruleDetails: "El partido entra a las entradas finales (inning 7-9) con una diferencia de apenas 1 carrera y bases llenas para el equipo visitante.",
             stats: {
-                runsByInning: {
-                    home: [1, 0, 2, 0, 0, 0, 1, 0],
-                    away: [0, 2, 0, 1, 1, 0, 0, 1]
+                home: {
+                    total: 4,
+                    hits: 8,
+                    errors: 1,
+                    innings: {
+                        "1": 1, "2": 0, "3": 2, "4": 0, "5": 0, "6": 0, "7": 1, "8": 0
+                    }
                 },
-                hits: "home 8 | away 10",
-                errors: "home 1 | away 0"
+                away: {
+                    total: 5,
+                    hits: 10,
+                    errors: 0,
+                    innings: {
+                        "1": 0, "2": 2, "3": 0, "4": 1, "5": 1, "6": 0, "7": 0, "8": 1
+                    }
+                }
             }
         };
         const predBaseball = await aiService.generatePrediction(mockMatchDataBaseball, 'baseball');
