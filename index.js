@@ -12,6 +12,9 @@ const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 const { getLiveBaseballGames, getPreGameBaseballOdds, getBaseballGameById } = require('./baseballApiClient');
 const { evaluateBaseballRules, evaluateBaseballAlertResults } = require('./baseballRulesEngine');
 
+// Servicio de IA
+const aiService = require('./aiService');
+
 const token = process.env.TELEGRAM_BOT_TOKEN;
 let bot;
 
@@ -118,9 +121,38 @@ async function checkMatches() {
             for (const alert of alerts) {
                 trackedInfo.alertsMetadata.push(alert.metadata);
 
+                let textToSend = alert.text;
+                try {
+                    const matchData = {
+                        homeTeam: match.teams.home.name,
+                        awayTeam: match.teams.away.name,
+                        elapsed: match.fixture.status.elapsed,
+                        score: { home: match.goals.home || 0, away: match.goals.away || 0 },
+                        odds: matchOdds,
+                        ruleName: alert.metadata.ruleName,
+                        ruleDetails: alert.text.split('\n\n').slice(2).join('\n\n'), // Detalles del mensaje
+                        stats: stats,
+                        events: events
+                    };
+                    console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
+                    const aiPrediction = await aiService.generatePrediction(matchData, 'football');
+                    if (aiPrediction) {
+                        // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
+                        const splitIndex = alert.text.indexOf('🎯');
+                        if (splitIndex !== -1) {
+                            const header = alert.text.substring(0, splitIndex).trim();
+                            textToSend = `${header}\n\n${aiPrediction}`;
+                        } else {
+                            textToSend = `${alert.text}\n\n${aiPrediction}`;
+                        }
+                    }
+                } catch (aiError) {
+                    console.error(`[index.js] Error al procesar IA para fútbol: ${aiError.message}`);
+                }
+
                 for (const chatId of subscribedChats) {
                     try {
-                        await bot.sendMessage(chatId, alert.text, { parse_mode: 'Markdown' });
+                        await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
                     } catch (e) {
                         console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                     }
@@ -200,9 +232,37 @@ async function checkBaseballMatches() {
             for (const alert of alerts) {
                 trackedInfo.alertsMetadata.push(alert.metadata);
 
+                let textToSend = alert.text;
+                try {
+                    const matchData = {
+                        homeTeam: game.teams.home.name,
+                        awayTeam: game.teams.away.name,
+                        inning: game.status.elapsed ? `Inning ${game.status.elapsed}` : 'N/A',
+                        score: { home: game.scores.home.total || 0, away: game.scores.away.total || 0 },
+                        odds: gameOdds,
+                        ruleName: alert.metadata.ruleName,
+                        ruleDetails: alert.text.split('\n\n').slice(2).join('\n\n'), // Detalles del mensaje
+                        stats: game.scores
+                    };
+                    console.log(`[index.js] Solicitando predicción de IA para MLB: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
+                    const aiPrediction = await aiService.generatePrediction(matchData, 'baseball');
+                    if (aiPrediction) {
+                        // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
+                        const splitIndex = alert.text.indexOf('🎯');
+                        if (splitIndex !== -1) {
+                            const header = alert.text.substring(0, splitIndex).trim();
+                            textToSend = `${header}\n\n${aiPrediction}`;
+                        } else {
+                            textToSend = `${alert.text}\n\n${aiPrediction}`;
+                        }
+                    }
+                } catch (aiError) {
+                    console.error(`[index.js] Error al procesar IA para béisbol: ${aiError.message}`);
+                }
+
                 for (const chatId of subscribedChats) {
                     try {
-                        await bot.sendMessage(chatId, alert.text, { parse_mode: 'Markdown' });
+                        await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
                     } catch (e) {
                         console.error(`Error enviando alerta béisbol al chat ${chatId}:`, e.message);
                     }
