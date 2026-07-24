@@ -60,6 +60,16 @@ const baseballOddsCache = new Map();
 const trackedMatches = new Map();
 const trackedBaseballGames = new Map();
 
+// Cachés para almacenar el último resultado de eventos y estadísticas por partido
+const eventsCache = new Map();
+const statsCache = new Map();
+
+// Tiempos de la última petición exitosa a la API
+const lastEventsFetchTime = new Map();
+const lastStatsFetchTime = new Map();
+
+const THROTTLE_COOLDOWN_MS = 4 * 60 * 1000; // 4 minutos de cooldown
+
 // Set de partidos/juegos actualmente en vivo para evitar polling a partidos en progreso
 let currentLiveFootballIds = new Set();
 let currentLiveBaseballIds = new Set();
@@ -96,13 +106,31 @@ async function checkMatches() {
         }
 
         let events = [];
-        if (needsEvents(match, isTop)) {
-            events = await getMatchEvents(fixtureId);
+        if (needsEvents(match, matchOdds, isTop)) {
+            const now = Date.now();
+            const lastFetch = lastEventsFetchTime.get(fixtureId) || 0;
+            if (now - lastFetch >= THROTTLE_COOLDOWN_MS || !eventsCache.has(fixtureId)) {
+                console.log(`[API-Sports] Consultando eventos en vivo para ${match.teams.home.name} vs ${match.teams.away.name} (fixture: ${fixtureId})`);
+                events = await getMatchEvents(fixtureId);
+                eventsCache.set(fixtureId, events);
+                lastEventsFetchTime.set(fixtureId, now);
+            } else {
+                events = eventsCache.get(fixtureId) || [];
+            }
         }
 
         let stats = [];
         if (needsStats(match, matchOdds, isTop)) {
-            stats = await getMatchStatistics(fixtureId);
+            const now = Date.now();
+            const lastFetch = lastStatsFetchTime.get(fixtureId) || 0;
+            if (now - lastFetch >= THROTTLE_COOLDOWN_MS || !statsCache.has(fixtureId)) {
+                console.log(`[API-Sports] Consultando estadísticas en vivo para ${match.teams.home.name} vs ${match.teams.away.name} (fixture: ${fixtureId})`);
+                stats = await getMatchStatistics(fixtureId);
+                statsCache.set(fixtureId, stats);
+                lastStatsFetchTime.set(fixtureId, now);
+            } else {
+                stats = statsCache.get(fixtureId) || [];
+            }
         }
 
         const alerts = evaluateRules(match, matchOdds, events, stats, isTop);
@@ -182,6 +210,20 @@ async function checkMatches() {
                     }
                 }
             }
+        }
+    }
+
+    // Limpieza de cachés para partidos que ya no están en vivo
+    for (const cachedFixtureId of lastEventsFetchTime.keys()) {
+        if (!newLiveIds.has(cachedFixtureId)) {
+            lastEventsFetchTime.delete(cachedFixtureId);
+            eventsCache.delete(cachedFixtureId);
+        }
+    }
+    for (const cachedFixtureId of lastStatsFetchTime.keys()) {
+        if (!newLiveIds.has(cachedFixtureId)) {
+            lastStatsFetchTime.delete(cachedFixtureId);
+            statsCache.delete(cachedFixtureId);
         }
     }
 

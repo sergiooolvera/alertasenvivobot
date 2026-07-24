@@ -5,6 +5,9 @@ const alertedMatches = new Set();
  * Determina si se requiere consultar el endpoint de estadísticas para el partido.
  */
 function needsStats(fixture, odds, isTopLeague = false) {
+    if (!odds || odds === 'NO_ODDS' || typeof odds.home === 'undefined') {
+        return false;
+    }
     const elapsed = fixture.fixture.status.elapsed;
     const homeGoals = fixture.goals.home || 0;
     const awayGoals = fixture.goals.away || 0;
@@ -28,16 +31,35 @@ function needsStats(fixture, odds, isTopLeague = false) {
 /**
  * Determina si se requiere consultar el endpoint de eventos.
  */
-function needsEvents(fixture, isTopLeague = false) {
+function needsEvents(fixture, odds, isTopLeague = false) {
     const elapsed = fixture.fixture.status.elapsed;
-    // Regla 1 (Todas las ligas): Tarjeta roja min 1-65
-    if (elapsed > 0 && elapsed <= 65) {
-        return true;
-    }
-    // Regla 7 (Solo Ligas Top): Partido caliente min 25-45
+
+    // Regla 7 (Solo Ligas Top): Partido caliente min 25-45 (no depende del marcador)
     if (isTopLeague && elapsed >= 25 && elapsed <= 45) {
         return true;
     }
+
+    // Regla 1 (Todas las ligas): Tarjeta roja min 1-60.
+    // Solo nos interesa si va empatado o ganando el underdog, y tenemos momios para identificar al favorito.
+    if (elapsed > 0 && elapsed <= 60 && odds && odds !== 'NO_ODDS') {
+        const homeGoals = fixture.goals.home || 0;
+        const awayGoals = fixture.goals.away || 0;
+        const isDraw = homeGoals === awayGoals;
+
+        let underdogWinning = false;
+        if (odds.home < odds.away) {
+            // Favorito local, underdog visitante
+            underdogWinning = awayGoals > homeGoals;
+        } else {
+            // Favorito visitante, underdog local
+            underdogWinning = homeGoals > awayGoals;
+        }
+
+        if (isDraw || underdogWinning) {
+            return true;
+        }
+    }
+
     return false;
 }
 
