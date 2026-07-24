@@ -4,7 +4,7 @@ const TelegramBot = botModule.default || botModule;
 const cron = require('node-cron');
 
 // Módulos de Fútbol
-const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById } = require('./apiClient');
+const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches } = require('./apiClient');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
@@ -128,11 +128,23 @@ async function checkMatches() {
 
             const trackedInfo = trackedMatches.get(fixtureId);
 
+            // Obtener los últimos 5 partidos de cada equipo
+            const homeTeamId = match.teams.home.id;
+            const awayTeamId = match.teams.away.id;
+            console.log(`[index.js] Consultando últimos 5 partidos de ${match.teams.home.name} (ID: ${homeTeamId}) y ${match.teams.away.name} (ID: ${awayTeamId}) para la IA...`);
+            const lastMatchesHome = await getTeamLastMatches(homeTeamId, 5);
+            await new Promise(r => setTimeout(r, 100)); // Delay para respetar rate limit
+            const lastMatchesAway = await getTeamLastMatches(awayTeamId, 5);
+
             for (const alert of alerts) {
                 trackedInfo.alertsMetadata.push(alert.metadata);
 
                 let textToSend = alert.text;
                 try {
+                    const ruleThirdPart = alert.text.split('\n\n').slice(2).join('\n\n');
+                    const targetIdx = ruleThirdPart.indexOf('🎯');
+                    const cleanRuleDetails = targetIdx !== -1 ? ruleThirdPart.substring(0, targetIdx).trim() : ruleThirdPart;
+
                     const matchData = {
                         homeTeam: match.teams.home.name,
                         awayTeam: match.teams.away.name,
@@ -140,9 +152,11 @@ async function checkMatches() {
                         score: { home: match.goals.home || 0, away: match.goals.away || 0 },
                         odds: matchOdds,
                         ruleName: alert.metadata.ruleName,
-                        ruleDetails: alert.text.split('\n\n').slice(2).join('\n\n'), // Detalles del mensaje
+                        ruleDetails: cleanRuleDetails,
                         stats: stats,
-                        events: events
+                        events: events,
+                        lastMatchesHome: lastMatchesHome,
+                        lastMatchesAway: lastMatchesAway
                     };
                     console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
                     const aiPrediction = await aiService.generatePrediction(matchData, 'football');
@@ -244,6 +258,10 @@ async function checkBaseballMatches() {
 
                 let textToSend = alert.text;
                 try {
+                    const ruleThirdPart = alert.text.split('\n\n').slice(2).join('\n\n');
+                    const targetIdx = ruleThirdPart.indexOf('🎯');
+                    const cleanRuleDetails = targetIdx !== -1 ? ruleThirdPart.substring(0, targetIdx).trim() : ruleThirdPart;
+
                     const matchData = {
                         homeTeam: game.teams.home.name,
                         awayTeam: game.teams.away.name,
@@ -251,7 +269,7 @@ async function checkBaseballMatches() {
                         score: { home: game.scores.home.total || 0, away: game.scores.away.total || 0 },
                         odds: gameOdds,
                         ruleName: alert.metadata.ruleName,
-                        ruleDetails: alert.text.split('\n\n').slice(2).join('\n\n'), // Detalles del mensaje
+                        ruleDetails: cleanRuleDetails,
                         stats: game.scores
                     };
                     console.log(`[index.js] Solicitando predicción de IA para MLB: ${matchData.homeTeam} vs ${matchData.awayTeam}`);

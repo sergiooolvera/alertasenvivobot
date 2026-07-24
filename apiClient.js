@@ -119,12 +119,26 @@ async function getMatchById(fixtureId) {
   }
 }
 
+// Obtiene los últimos N partidos de un equipo (Fútbol)
+async function getTeamLastMatches(teamId, last = 5) {
+  if (checkRateLimit()) return [];
+  try {
+    const response = await apiClient.get('/fixtures', { params: { team: teamId, last: last } });
+    return response.data.response || [];
+  } catch (error) {
+    handleApiError(`last ${last} matches for team ${teamId}`, error);
+    return [];
+  }
+}
+
 module.exports = {
   getLiveMatches,
   getMatchEvents,
   getPreMatchOdds,
   getMatchStatistics,
   getMatchesByDate,
-  getMatchById
+  getMatchById,
+  getTeamLastMatches
 };
+
 

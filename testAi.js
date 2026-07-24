@@ -52,6 +52,60 @@ async function testFootball() {
                 type: "Card",
                 detail: "Yellow Card"
             }
+        ],
+        lastMatchesHome: [
+            {
+                fixture: { date: "2026-07-15T20:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Real Madrid" }, away: { name: "Atletico Madrid" } },
+                goals: { home: 2, away: 1 }
+            },
+            {
+                fixture: { date: "2026-07-11T18:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Valencia" }, away: { name: "Real Madrid" } },
+                goals: { home: 0, away: 2 }
+            },
+            {
+                fixture: { date: "2026-07-08T21:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Real Madrid" }, away: { name: "Espanyol" } },
+                goals: { home: 4, away: 1 }
+            },
+            {
+                fixture: { date: "2026-07-04T19:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Real Betis" }, away: { name: "Real Madrid" } },
+                goals: { home: 1, away: 1 }
+            },
+            {
+                fixture: { date: "2026-07-01T20:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Real Madrid" }, away: { name: "Athletic Bilbao" } },
+                goals: { home: 3, away: 0 }
+            }
+        ],
+        lastMatchesAway: [
+            {
+                fixture: { date: "2026-07-16T20:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Barcelona" }, away: { name: "Osasuna" } },
+                goals: { home: 3, away: 0 }
+            },
+            {
+                fixture: { date: "2026-07-12T20:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Real Sociedad" }, away: { name: "Barcelona" } },
+                goals: { home: 1, away: 2 }
+            },
+            {
+                fixture: { date: "2026-07-09T19:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Barcelona" }, away: { name: "Sevilla" } },
+                goals: { home: 2, away: 2 }
+            },
+            {
+                fixture: { date: "2026-07-05T21:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Celta Vigo" }, away: { name: "Barcelona" } },
+                goals: { home: 0, away: 1 }
+            },
+            {
+                fixture: { date: "2026-07-02T19:00:00Z", status: { short: "FT" } },
+                teams: { home: { name: "Getafe" }, away: { name: "Barcelona" } },
+                goals: { home: 1, away: 3 }
+            }
         ]
     };
 
@@ -150,6 +204,60 @@ async function run() {
                     player: { name: "Gavi" },
                     type: "Card",
                     detail: "Yellow Card"
+                }
+            ],
+            lastMatchesHome: [
+                {
+                    fixture: { date: "2026-07-15T20:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Real Madrid" }, away: { name: "Atletico Madrid" } },
+                    goals: { home: 2, away: 1 }
+                },
+                {
+                    fixture: { date: "2026-07-11T18:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Valencia" }, away: { name: "Real Madrid" } },
+                    goals: { home: 0, away: 2 }
+                },
+                {
+                    fixture: { date: "2026-07-08T21:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Real Madrid" }, away: { name: "Espanyol" } },
+                    goals: { home: 4, away: 1 }
+                },
+                {
+                    fixture: { date: "2026-07-04T19:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Real Betis" }, away: { name: "Real Madrid" } },
+                    goals: { home: 1, away: 1 }
+                },
+                {
+                    fixture: { date: "2026-07-01T20:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Real Madrid" }, away: { name: "Athletic Bilbao" } },
+                    goals: { home: 3, away: 0 }
+                }
+            ],
+            lastMatchesAway: [
+                {
+                    fixture: { date: "2026-07-16T20:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Barcelona" }, away: { name: "Osasuna" } },
+                    goals: { home: 3, away: 0 }
+                },
+                {
+                    fixture: { date: "2026-07-12T20:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Real Sociedad" }, away: { name: "Barcelona" } },
+                    goals: { home: 1, away: 2 }
+                },
+                {
+                    fixture: { date: "2026-07-09T19:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Barcelona" }, away: { name: "Sevilla" } },
+                    goals: { home: 2, away: 2 }
+                },
+                {
+                    fixture: { date: "2026-07-05T21:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Celta Vigo" }, away: { name: "Barcelona" } },
+                    goals: { home: 0, away: 1 }
+                },
+                {
+                    fixture: { date: "2026-07-02T19:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Getafe" }, away: { name: "Barcelona" } },
+                    goals: { home: 1, away: 3 }
                 }
             ]
         };

@@ -214,15 +214,41 @@ ${inningsStr.trim()}`;
 }
 
 /**
- * Construye el prompt para fútbol en tono informal e irreverente.
+ * Formatea los últimos partidos de un equipo de fútbol en un texto compacto.
+ */
+function formatLastMatches(teamName, matches) {
+    if (!matches || matches.length === 0) return `Últimos partidos de ${teamName}: No disponibles`;
+    
+    try {
+        const formatted = matches.map(m => {
+            const date = m.fixture.date ? m.fixture.date.split('T')[0] : 'N/A';
+            const homeName = m.teams.home.name;
+            const awayName = m.teams.away.name;
+            const homeGoals = m.goals.home !== null && m.goals.home !== undefined ? m.goals.home : '-';
+            const awayGoals = m.goals.away !== null && m.goals.away !== undefined ? m.goals.away : '-';
+            const status = m.fixture.status.short || 'N/A';
+            return `- [${date}] ${homeName} ${homeGoals} - ${awayGoals} ${awayName} (${status})`;
+        }).join('\n');
+        
+        return `Últimos partidos de ${teamName}:\n${formatted}`;
+    } catch (e) {
+        console.error(`[AI-Service] Error formateando últimos partidos para ${teamName}:`, e.message);
+        return `Últimos partidos de ${teamName}: Error al procesar.`;
+    }
+}
+
+/**
+ * Construye el prompt para fútbol en tono formal y técnico.
  */
 function buildFootballPrompt(matchData) {
-    const { homeTeam, awayTeam, elapsed, score, odds, ruleName, ruleDetails, stats, events } = matchData;
+    const { homeTeam, awayTeam, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway } = matchData;
     
     const statsStr = formatFootballStats(stats);
     const eventsStr = formatFootballEvents(events);
+    const lastMatchesHomeStr = formatLastMatches(homeTeam, lastMatchesHome);
+    const lastMatchesAwayStr = formatLastMatches(awayTeam, lastMatchesAway);
 
-    return `Actúa como un tipster y analista de apuestas de fútbol profesional. Tu estilo de análisis DEBE ser sumamente informal, atrevido, directo, divertido e irreverente, usando emojis y jerga de fútbol. No seas aburrido ni corporativo.
+    return `Actúa como un analista profesional de apuestas deportivas de fútbol. Tu estilo de análisis DEBE ser formal, técnico, objetivo y preciso. Evita el lenguaje informal, coloquial, vulgar o irreverente. Presenta la información de forma estructurada y analítica, adecuada para inversionistas deportivos serios.
 
 Analiza este partido de fútbol en vivo que acaba de activar una alerta estadística:
 - Partido: ${homeTeam} vs ${awayTeam}
@@ -237,26 +263,31 @@ ${statsStr}
 📋 Línea de Tiempo de Eventos:
 ${eventsStr}
 
+📊 Rendimiento Histórico Reciente (Últimos 5 partidos):
+${lastMatchesHomeStr}
+
+${lastMatchesAwayStr}
+
 Instrucciones para redactar la respuesta:
-1. Genera un análisis rápido, agudo y entretenido de la dinámica del partido (máximo 3 líneas) usando las estadísticas y eventos provistos. Sé directo sobre quién está jugando mal, si el favorito está dando vergüenza o quién domina la presión.
-2. Da una recomendación de apuesta concreta e inteligente basada en la alerta y las estadísticas del partido.
-3. Sugiere un momio objetivo (debe ser @1.60 o superior).
+1. Realice un análisis formal de la dinámica de juego combinando las estadísticas en vivo con el rendimiento histórico reciente provisto de ambos equipos (máximo 3 líneas).
+2. Proporcione una recomendación de apuesta concreta y de alta probabilidad basada en los datos analizados.
+3. Sugiera un momio objetivo en vivo (mínimo @1.60 o superior).
 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
 
-🧠 Análisis de IA: [Tu análisis agudo e irreverente aquí]
-🎯 Recomendación Inteligente: [Tu recomendación concreta de apuesta aquí]
+🧠 Análisis de IA: [Su análisis técnico y formal aquí]
+🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]`;
 }
 
 /**
- * Construye el prompt para béisbol en tono informal e irreverente.
+ * Construye el prompt para béisbol en tono formal y técnico.
  */
 function buildBaseballPrompt(matchData) {
     const { homeTeam, awayTeam, inning, score, odds, ruleName, ruleDetails, stats } = matchData;
     const statsStr = formatBaseballStats(stats);
 
-    return `Actúa como un tipster y analista de apuestas de béisbol de la MLB profesional. Tu estilo de análisis DEBE ser sumamente informal, atrevido, directo, divertido e irreverente, usando emojis y jerga de béisbol. No seas aburrido ni corporativo.
+    return `Actúa como un analista profesional de apuestas deportivas de béisbol de la MLB. Tu estilo de análisis DEBE ser formal, técnico, objetivo y preciso. Evita el lenguaje informal, coloquial o irreverente. Presenta la información de forma estructurada y analítica, adecuada para inversionistas deportivos serios.
 
 Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 - Partido: ${homeTeam} vs ${awayTeam}
@@ -269,14 +300,14 @@ Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 ${statsStr}
 
 Instrucciones para redactar la respuesta:
-1. Genera un análisis rápido y dinámico del juego (máximo 3 líneas) utilizando el desglose de entradas, hits y errores. Opina sobre el picheo, bateo, si a algún lanzador le está temblando la mano o quién está dominando el montículo.
-2. Da una recomendación de apuesta de béisbol concreta (ej: Over de carreras en entrada X, Hándicap, Gana en Entrada X, etc.).
-3. Sugiere un momio objetivo (debe ser @1.60 o superior).
+1. Realice un análisis formal y técnico del juego (máximo 3 líneas) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo.
+2. Proporcione una recomendación de apuesta concreta basada en los datos estadísticos del partido.
+3. Sugiera un momio objetivo (mínimo @1.60 o superior).
 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
 
-🧠 Análisis de IA: [Tu análisis agudo e irreverente aquí]
-🎯 Recomendación Inteligente: [Tu recomendación concreta de apuesta aquí]
+🧠 Análisis de IA: [Su análisis técnico y formal aquí]
+🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]`;
 }
 
