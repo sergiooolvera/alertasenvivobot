@@ -295,6 +295,65 @@ async function run() {
         const predBaseball = await aiService.generatePrediction(mockMatchDataBaseball, 'baseball');
         outputText += `=== BÉISBOL ===\n${predBaseball || 'Error'}\n\n`;
 
+        // --- Probando IA con Parlay del Día ---
+        console.log("\n--- Probando IA con Parlay del Día (Pre-Partido) ---");
+        const mockParlayMatches = [
+            {
+                sport: 'football',
+                homeTeam: "Arsenal",
+                awayTeam: "Chelsea",
+                leagueName: "Premier League",
+                odds: { home: 1.45, draw: 4.20, away: 6.50 },
+                lastMatchesHome: [
+                    { fixture: { date: "2026-07-15", status: { short: "FT" } }, teams: { home: { name: "Arsenal" }, away: { name: "Everton" } }, goals: { home: 3, away: 0 } },
+                    { fixture: { date: "2026-07-11", status: { short: "FT" } }, teams: { home: { name: "West Ham" }, away: { name: "Arsenal" } }, goals: { home: 1, away: 2 } }
+                ],
+                lastMatchesAway: [
+                    { fixture: { date: "2026-07-16", status: { short: "FT" } }, teams: { home: { name: "Chelsea" }, away: { name: "Leicester" } }, goals: { home: 1, away: 1 } },
+                    { fixture: { date: "2026-07-12", status: { short: "FT" } }, teams: { home: { name: "Bournemouth" }, away: { name: "Chelsea" } }, goals: { home: 2, away: 1 } }
+                ]
+            },
+            {
+                sport: 'football',
+                homeTeam: "Bayern Munich",
+                awayTeam: "Werder Bremen",
+                leagueName: "Bundesliga",
+                odds: { home: 1.22, draw: 6.00, away: 11.00 },
+                lastMatchesHome: [
+                    { fixture: { date: "2026-07-14", status: { short: "FT" } }, teams: { home: { name: "Bayern Munich" }, away: { name: "Stuttgart" } }, goals: { home: 4, away: 2 } }
+                ],
+                lastMatchesAway: [
+                    { fixture: { date: "2026-07-15", status: { short: "FT" } }, teams: { home: { name: "Mainz" }, away: { name: "Werder Bremen" } }, goals: { home: 2, away: 0 } }
+                ]
+            },
+            {
+                sport: 'football',
+                homeTeam: "Manchester City",
+                awayTeam: "Liverpool",
+                leagueName: "Premier League",
+                odds: { home: 2.10, draw: 3.60, away: 3.20 },
+                lastMatchesHome: [
+                    { fixture: { date: "2026-07-14", status: { short: "FT" } }, teams: { home: { name: "Manchester City" }, away: { name: "Aston Villa" } }, goals: { home: 2, away: 1 } }
+                ],
+                lastMatchesAway: [
+                    { fixture: { date: "2026-07-15", status: { short: "FT" } }, teams: { home: { name: "Liverpool" }, away: { name: "Wolves" } }, goals: { home: 3, away: 0 } }
+                ]
+            }
+        ];
+
+        const predParlay = await aiService.generateDailyParlay(mockParlayMatches);
+        outputText += `=== PARLAY DEL DÍA ===\n${predParlay || 'Error'}\n\n`;
+
+        // Validar extracción de confianza de los resultados anteriores
+        const confFootball = predFootball ? (predFootball.match(/🔥 Confianza Estimada:\s*(\d+)%/i) ? predFootball.match(/🔥 Confianza Estimada:\s*(\d+)%/i)[1] + "%" : "No encontrada") : "Error";
+        const confBaseball = predBaseball ? (predBaseball.match(/🔥 Confianza Estimada:\s*(\d+)%/i) ? predBaseball.match(/🔥 Confianza Estimada:\s*(\d+)%/i)[1] + "%" : "No encontrada") : "Error";
+        
+        console.log(`\nValidación de confianza en vivo:`);
+        console.log(`- Confianza Fútbol: ${confFootball}`);
+        console.log(`- Confianza Béisbol: ${confBaseball}`);
+
+        outputText += `=== VALIDACIÓN CONFIANZA ===\nFútbol: ${confFootball}\nBéisbol: ${confBaseball}\n`;
+
         fs.writeFileSync('testAi_output.txt', outputText, 'utf-8');
         console.log("Pruebas completadas. Archivo testAi_output.txt generado.");
     } catch (error) {
