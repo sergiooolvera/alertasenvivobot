@@ -82,7 +82,9 @@ let finalMatch = {
     goals: { home: 2, away: 1 } // Man City remontó 2-1
 };
 
-let veredicto = evaluateAlertResults([alertMeta], finalMatch, [], []);
-console.log(`✅ Veredicto Generado:\n${veredicto[0].msg}`);
-
-console.log("\n--- Pruebas finalizadas con éxito ---");
+evaluateAlertResults([alertMeta], finalMatch, [], []).then(veredicto => {
+    console.log(`✅ Veredicto Generado:\n${veredicto[0].msg}`);
+    console.log("\n--- Pruebas finalizadas con éxito ---");
+}).catch(err => {
+    console.error("❌ Error en Prueba 4:", err);
+});

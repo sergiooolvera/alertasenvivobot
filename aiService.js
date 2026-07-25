@@ -272,12 +272,14 @@ Instrucciones para redactar la respuesta:
 1. Realice un análisis formal de la dinámica de juego combinando las estadísticas en vivo con el rendimiento histórico reciente provisto de ambos equipos (máximo 3 líneas).
 2. Proporcione una recomendación de apuesta concreta y de alta probabilidad basada en los datos analizados.
 3. Sugiera un momio objetivo en vivo (mínimo @1.60 o superior).
+4. Estime una probabilidad matemática/nivel de confianza de acierto para esta recomendación de apuesta basada estrictamente en los datos del análisis (entre 0% y 100%).
 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
 
 🧠 Análisis de IA: [Su análisis técnico y formal aquí]
 🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
-📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]`;
+📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
+🔥 Confianza Estimada: [Porcentaje de confianza entre 0% y 100%, solo el número con el símbolo %]`;
 }
 
 /**
@@ -303,12 +305,14 @@ Instrucciones para redactar la respuesta:
 1. Realice un análisis formal y técnico del juego (máximo 3 líneas) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo.
 2. Proporcione una recomendación de apuesta concreta basada en los datos estadísticos del partido.
 3. Sugiera un momio objetivo (mínimo @1.60 o superior).
+4. Estime una probabilidad matemática/nivel de confianza de acierto para esta recomendación de apuesta basada en los datos del partido (entre 0% y 100%).
 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
 
 🧠 Análisis de IA: [Su análisis técnico y formal aquí]
 🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
-📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]`;
+📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
+🔥 Confianza Estimada: [Porcentaje de confianza entre 0% y 100%, solo el número con el símbolo %]`;
 }
 
 /**
@@ -337,6 +341,169 @@ async function generatePrediction(matchData, sport = 'football') {
     }
 }
 
+/**
+ * Construye el prompt para el Parlay del Día pre-partido.
+ */
+function buildDailyParlayPrompt(matchesData) {
+    const matchesStr = matchesData.map((m, idx) => {
+        const type = m.sport === 'baseball' ? '⚾ BÉISBOL MLB' : '⚽ FÚTBOL';
+        const oddsStr = m.sport === 'baseball' 
+            ? `Local ${m.odds.home} | Visita ${m.odds.away}`
+            : `Local ${m.odds.home} | Empate ${m.odds.draw} | Visita ${m.odds.away}`;
+        
+        let lastMatchesStr = '';
+        if (m.sport === 'football') {
+            const lastHome = formatLastMatches(m.homeTeam, m.lastMatchesHome);
+            const lastAway = formatLastMatches(m.awayTeam, m.lastMatchesAway);
+            lastMatchesStr = `\n${lastHome}\n${lastAway}`;
+        }
+        
+        return `--- PARTIDO #${idx + 1} (${type}) ---
+- Deporte/Liga: ${type} - ${m.leagueName}
+- Encuentro: ${m.homeTeam} vs ${m.awayTeam}
+- Momios Iniciales: ${oddsStr}${lastMatchesStr}`;
+    }).join('\n\n');
+
+    return `Actúa como un analista profesional senior de apuestas deportivas. Tu estilo de análisis DEBE ser formal, técnico, objetivo y preciso. Evita el lenguaje informal, coloquial o irreverente.
+
+Tu misión es crear el "PARLAY DEL DÍA" (Dupla o Tripla) más certero y seguro posible a partir de la siguiente lista de partidos que se jugarán hoy:
+
+${matchesStr}
+
+Instrucciones para la selección y redacción:
+1. Analiza cada partido basándote en los momios iniciales y el rendimiento histórico reciente (si está disponible).
+2. Selecciona únicamente los 2 (máximo 3) partidos con mayor certeza matemática y menor riesgo.
+3. Define un pronóstico para cada selección elegida (ej. Doble oportunidad, Over 1.5 goles, Gana favorito, etc.).
+4. Asegúrate de que las apuestas elegidas sean seguras y sumen un momio acumulado atractivo (idealmente entre @1.70 y @2.50).
+5. Justifica formalmente la selección de cada partido en el Parlay.
+
+Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales, pero sí puedes usar negritas en el texto generado por ti):
+
+🏆 PARLAY DEL DÍA DE LA IA 🏆
+
+📊 SELECCIONES:
+1. [Deporte - Liga] [Equipo Local] vs [Equipo Visitante] -> Pronóstico: [Su recomendación técnica] (Momio: @[Momio])
+2. [Deporte - Liga] [Equipo Local] vs [Equipo Visitante] -> Pronóstico: [Su recomendación técnica] (Momio: @[Momio])
+
+📈 MOMIO TOTAL ESTIMADO: @[Suma multiplicada de los momios]
+🔥 CONFIANZA COMBINADA: [Porcentaje estimado de certeza del parlay total]%
+
+🧠 JUSTIFICACIÓN TÉCNICA:
+• [Justificación técnica formal y estructurada del Partido #1, combinando momios y datos históricos]
+• [Justificación técnica formal y estructurada del Partido #2, combinando momios y datos históricos]`;
+}
+
+/**
+ * Genera el Parlay del Día usando Gemini a partir de una lista de partidos pre-partido.
+ */
+async function generateDailyParlay(matchesData) {
+    if (apiKeys.length === 0) {
+        console.warn("[AI-Service] No hay API keys de Gemini configuradas en .env. No se puede generar parlay.");
+        return null;
+    }
+
+    try {
+        const prompt = buildDailyParlayPrompt(matchesData);
+        const result = await callGeminiWithRotation(prompt);
+        return result;
+    } catch (error) {
+        console.error(`[AI-Service] Error crítico generando parlay con IA: ${error.message}`);
+        return null;
+    }
+}
+
+/**
+ * Formatea los datos finales de un partido de fútbol para el prompt de evaluación de la IA.
+ */
+function formatFootballFinalData(finalData) {
+    const { fixture, events, stats } = finalData;
+    const homeTeam = fixture.teams.home.name;
+    const awayTeam = fixture.teams.away.name;
+    const finalHome = fixture.goals.home || 0;
+    const finalAway = fixture.goals.away || 0;
+    
+    let eventsStr = '';
+    if (events && events.length > 0) {
+        eventsStr = `\n📋 Eventos del partido:\n` + formatFootballEvents(events);
+    }
+    
+    let statsStr = '';
+    if (stats && stats.length > 0) {
+        statsStr = `\n📊 Estadísticas del partido:\n` + formatFootballStats(stats);
+    }
+
+    return `- Partido: ${homeTeam} vs ${awayTeam}
+- Marcador final: ${finalHome} - ${finalAway}${eventsStr}${statsStr}`;
+}
+
+/**
+ * Formatea los datos finales de un partido de béisbol para el prompt de evaluación de la IA.
+ */
+function formatBaseballFinalData(finalGame) {
+    const homeTeam = finalGame.teams?.home?.name || 'Local';
+    const awayTeam = finalGame.teams?.away?.name || 'Visitante';
+    const finalHomeRuns = (finalGame.scores && finalGame.scores.home && finalGame.scores.home.total !== undefined) ? finalGame.scores.home.total : 0;
+    const finalAwayRuns = (finalGame.scores && finalGame.scores.away && finalGame.scores.away.total !== undefined) ? finalGame.scores.away.total : 0;
+    
+    let statsStr = '';
+    if (finalGame.scores) {
+        statsStr = `\n📊 Desglose final:\n` + formatBaseballStats(finalGame.scores);
+    }
+
+    return `- Partido: ${homeTeam} vs ${awayTeam}
+- Carreras finales: Local ${finalHomeRuns} - ${finalAwayRuns} Visitante${statsStr}`;
+}
+
+/**
+ * Evalúa si una recomendación de la IA resultó en GREEN o RED según el resultado final del encuentro.
+ */
+async function evaluatePredictionOutcome(sport, aiRecommendation, finalData) {
+    if (apiKeys.length === 0) {
+        console.warn("[AI-Service] No hay API keys de Gemini configuradas para evaluar. Se usará fallback estático.");
+        return null;
+    }
+
+    try {
+        const formattedData = sport === 'baseball' 
+            ? formatBaseballFinalData(finalData) 
+            : formatFootballFinalData(finalData);
+
+        const prompt = `Actúa como un validador oficial y objetivo de apuestas deportivas en español.
+Determina si la siguiente recomendación de apuesta resultó ganadora (GREEN) o perdedora (RED) basándote en los datos finales del partido.
+
+Deporte: ${sport === 'baseball' ? 'Béisbol' : 'Fútbol'}
+Recomendación de apuesta realizada: "${aiRecommendation}"
+
+Datos finales del partido:
+${formattedData}
+
+Instrucciones obligatorias:
+1. Responde ÚNICAMENTE en formato JSON válido con la siguiente estructura exacta:
+{
+  "isGreen": true o false,
+  "explanation": "Una breve explicación de una sola frase (en español) de por qué la recomendación se ganó o se perdió basándote en el marcador o eventos finales."
+}
+2. No incluyas nada más en tu respuesta. No uses bloques de código con markdown (como \`\`\`json). Solo el texto plano del objeto JSON.`;
+
+        console.log(`[AI-Service] Evaluando veredicto para recomendación: "${aiRecommendation}"`);
+        const resultText = await callGeminiWithRotation(prompt);
+        if (resultText) {
+            const cleanJsonText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const resultObj = JSON.parse(cleanJsonText);
+            return {
+                isGreen: !!resultObj.isGreen,
+                explanation: resultObj.explanation || 'Evaluación completada por IA.'
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error(`[AI-Service] Error evaluando el resultado con IA: ${error.message}`);
+        return null;
+    }
+}
+
 module.exports = {
-    generatePrediction
+    generatePrediction,
+    generateDailyParlay,
+    evaluatePredictionOutcome
 };

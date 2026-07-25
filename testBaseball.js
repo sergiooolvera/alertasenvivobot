@@ -57,7 +57,9 @@ let finalGame = {
     scores: { home: { total: 6 }, away: { total: 4 } } // Yankees remontaron 6-4
 };
 
-let veredicto = evaluateBaseballAlertResults([alertMeta], finalGame);
-console.log(`✅ Veredicto MLB Generado:\n${veredicto[0].msg}`);
-
-console.log("\n--- Pruebas de Béisbol finalizadas con éxito ---");
+evaluateBaseballAlertResults([alertMeta], finalGame).then(veredicto => {
+    console.log(`✅ Veredicto MLB Generado:\n${veredicto[0].msg}`);
+    console.log("\n--- Pruebas de Béisbol finalizadas con éxito ---");
+}).catch(err => {
+    console.error("❌ Error en Prueba 4:", err);
+});

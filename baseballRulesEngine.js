@@ -1,3 +1,4 @@
+const aiService = require('./aiService');
 const alertedBaseballGames = new Set();
 
 /**
@@ -121,7 +122,7 @@ function evaluateBaseballRules(game, odds) {
 /**
  * Evalúa los resultados post-partido para Béisbol GREEN / RED.
  */
-function evaluateBaseballAlertResults(alertMetadatas, finalGame) {
+async function evaluateBaseballAlertResults(alertMetadatas, finalGame) {
     const results = [];
     const finalHomeRuns = (finalGame.scores && finalGame.scores.home && finalGame.scores.home.total !== undefined) ? finalGame.scores.home.total : 0;
     const finalAwayRuns = (finalGame.scores && finalGame.scores.away && finalGame.scores.away.total !== undefined) ? finalGame.scores.away.total : 0;
@@ -129,8 +130,23 @@ function evaluateBaseballAlertResults(alertMetadatas, finalGame) {
     for (const meta of alertMetadatas) {
         let isGreen = false;
         let explanation = '';
+        let evaluatedByAI = false;
 
-        switch (meta.ruleType) {
+        if (meta.aiRecommendation) {
+            console.log(`[baseballRulesEngine] Evaluando recomendación de IA para béisbol: "${meta.aiRecommendation}"`);
+            const aiOutcome = await aiService.evaluatePredictionOutcome('baseball', meta.aiRecommendation, finalGame);
+
+            if (aiOutcome) {
+                isGreen = aiOutcome.isGreen;
+                explanation = aiOutcome.explanation;
+                evaluatedByAI = true;
+            } else {
+                console.warn(`[baseballRulesEngine] Falló la evaluación de IA. Usando fallback estático.`);
+            }
+        }
+
+        if (!evaluatedByAI) {
+            switch (meta.ruleType) {
             case 1: // Favorito en Apuros MLB
                 {
                     const isHomeFav = meta.favoriteSide === 'home';
@@ -165,6 +181,7 @@ function evaluateBaseballAlertResults(alertMetadatas, finalGame) {
                 isGreen = true;
                 explanation = `Juego finalizado ${finalHomeRuns}-${finalAwayRuns}.`;
         }
+    }
 
         const icon = isGreen ? '🟩 *GREEN*' : '🟥 *RED*';
         const msg = `🏁 *VEREDICTO MLB POST-PARTIDO: ${icon}*\n\n🧢 *${meta.homeTeam}* ${finalHomeRuns} - ${finalAwayRuns} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;

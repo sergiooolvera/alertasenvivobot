@@ -1,3 +1,5 @@
+const aiService = require('./aiService');
+
 // Set para recordar de qué partidos ya enviamos qué alerta y no hacer spam
 const alertedMatches = new Set();
 
@@ -305,7 +307,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
  * Evalúa el resultado final del partido respecto a las alertas enviadas.
  * Devuelve un array de objetos con el resultado GREEN u RED y su mensaje.
  */
-function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = [], finalStats = []) {
+async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = [], finalStats = []) {
     const results = [];
     const finalHome = finalFixture.goals.home || 0;
     const finalAway = finalFixture.goals.away || 0;
@@ -313,8 +315,27 @@ function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = [], fi
     for (const meta of alertMetadatas) {
         let isGreen = false;
         let explanation = '';
+        let evaluatedByAI = false;
 
-        switch (meta.ruleType) {
+        if (meta.aiRecommendation) {
+            console.log(`[rulesEngine] Evaluando recomendación de IA para fútbol: "${meta.aiRecommendation}"`);
+            const aiOutcome = await aiService.evaluatePredictionOutcome('football', meta.aiRecommendation, {
+                fixture: finalFixture,
+                events: finalEvents,
+                stats: finalStats
+            });
+
+            if (aiOutcome) {
+                isGreen = aiOutcome.isGreen;
+                explanation = aiOutcome.explanation;
+                evaluatedByAI = true;
+            } else {
+                console.warn(`[rulesEngine] Falló la evaluación de IA. Usando fallback estático.`);
+            }
+        }
+
+        if (!evaluatedByAI) {
+            switch (meta.ruleType) {
             case 1: // Tarjeta roja estratégica
                 // GREEN si el equipo perjudicado no ganó (el beneficiado o el favorito remontó/empató/ganó)
                 isGreen = true;
@@ -399,6 +420,7 @@ function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = [], fi
                 isGreen = true;
                 explanation = `Partido finalizado ${finalHome}-${finalAway}.`;
         }
+    }
 
         const icon = isGreen ? '🟩 *GREEN*' : '🟥 *RED*';
         const msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;

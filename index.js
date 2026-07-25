@@ -189,6 +189,10 @@ async function checkMatches() {
                     console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
                     const aiPrediction = await aiService.generatePrediction(matchData, 'football');
                     if (aiPrediction) {
+                        const recMatch = aiPrediction.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
+                        if (recMatch) {
+                            alert.metadata.aiRecommendation = recMatch[1].replace(/\*/g, '').trim();
+                        }
                         // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
                         const splitIndex = alert.text.indexOf('🎯');
                         if (splitIndex !== -1) {
@@ -208,6 +212,10 @@ async function checkMatches() {
                     } catch (e) {
                         console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                     }
+                }
+
+                if (textToSend) {
+                    await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                 }
             }
         }
@@ -242,7 +250,7 @@ async function checkFinishedMatches() {
             const finalEvents = await getMatchEvents(fixtureId);
             const finalStats = await getMatchStatistics(fixtureId);
 
-            const results = evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
+            const results = await evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
 
             for (const result of results) {
                 for (const chatId of subscribedChats) {
@@ -317,6 +325,10 @@ async function checkBaseballMatches() {
                     console.log(`[index.js] Solicitando predicción de IA para MLB: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
                     const aiPrediction = await aiService.generatePrediction(matchData, 'baseball');
                     if (aiPrediction) {
+                        const recMatch = aiPrediction.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
+                        if (recMatch) {
+                            alert.metadata.aiRecommendation = recMatch[1].replace(/\*/g, '').trim();
+                        }
                         // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
                         const splitIndex = alert.text.indexOf('🎯');
                         if (splitIndex !== -1) {
@@ -337,6 +349,10 @@ async function checkBaseballMatches() {
                         console.error(`Error enviando alerta béisbol al chat ${chatId}:`, e.message);
                     }
                 }
+
+                if (textToSend) {
+                    await handleLiveParlayQueue(gameId, 'baseball', game.teams.home.name, game.teams.away.name, textToSend);
+                }
             }
         }
     }
@@ -353,7 +369,7 @@ async function checkFinishedBaseballMatches() {
 
         const gameData = await getBaseballGameById(gameId);
         if (gameData && (gameData.status.short === 'FT' || gameData.status.short === 'POST' || gameData.status.short === 'FINISHED')) {
-            const results = evaluateBaseballAlertResults(gameInfo.alertsMetadata, gameData);
+            const results = await evaluateBaseballAlertResults(gameInfo.alertsMetadata, gameData);
 
             for (const result of results) {
                 for (const chatId of subscribedChats) {
@@ -368,6 +384,192 @@ async function checkFinishedBaseballMatches() {
         }
     }
 }
+
+// ===================================================
+// SISTEMA DE PARLAYS DEL DÍA Y EN VIVO (IA)
+// ===================================================
+const liveAlertsQueue = [];
+const LIVE_ALERT_EXPIRATION_MS = 40 * 60 * 1000; // 40 minutos
+
+function extractConfidence(text) {
+    if (!text) return 0;
+    const match = text.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+    return match ? parseInt(match[1]) : 0;
+}
+
+async function handleLiveParlayQueue(fixtureId, sport, homeTeam, awayTeam, textToSend) {
+    const confidence = extractConfidence(textToSend);
+    if (confidence < 85) {
+        return;
+    }
+
+    console.log(`[Parlay en Vivo] Alerta de alta confianza detectada para ${homeTeam} vs ${awayTeam} (${confidence}%). Agregando a la cola...`);
+
+    const recMatch = textToSend.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
+    const oddMatch = textToSend.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
+    const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/A';
+    const odd = oddMatch ? oddMatch[1].replace(/\*/g, '').trim() : '1.60';
+
+    const now = Date.now();
+    let activeAlerts = liveAlertsQueue.filter(a => (now - a.timestamp) < LIVE_ALERT_EXPIRATION_MS);
+    activeAlerts = activeAlerts.filter(a => a.fixtureId !== fixtureId);
+
+    activeAlerts.push({
+        fixtureId,
+        sport,
+        homeTeam,
+        awayTeam,
+        recommendation,
+        odd,
+        confidence,
+        timestamp: now
+    });
+
+    liveAlertsQueue.length = 0;
+    liveAlertsQueue.push(...activeAlerts);
+
+    if (liveAlertsQueue.length >= 2) {
+        console.log(`[Parlay en Vivo] Generando Parlay en Vivo con ${liveAlertsQueue.length} selecciones.`);
+        const selections = [];
+        let combinedOdd = 1.0;
+        let combinedConfidence = 1.0;
+
+        liveAlertsQueue.forEach((alert, idx) => {
+            const cleanOddVal = parseFloat(alert.odd.replace('@', '').trim()) || 1.60;
+            combinedOdd *= cleanOddVal;
+            combinedConfidence *= (alert.confidence / 100);
+
+            const sportIcon = alert.sport === 'baseball' ? '⚾' : '⚽';
+            selections.push(`${idx + 1}. ${sportIcon} *${alert.homeTeam} vs ${alert.awayTeam}* -> Pronóstico: *${alert.recommendation}* (Momio: @${cleanOddVal.toFixed(2)})`);
+        });
+
+        const finalConfidence = Math.round(combinedConfidence * 100);
+
+        const msg = `🔥 *PARLAY EN VIVO DETECTADO (ALTA CONFIANZA)* 🔥\n\n` +
+            `Se han identificado múltiples oportunidades en vivo con alta probabilidad de éxito de forma simultánea:\n\n` +
+            `📊 *SELECCIONES:*\n${selections.join('\n')}\n\n` +
+            `📈 *MOMIO TOTAL SUGERIDO:* @${combinedOdd.toFixed(2)}\n` +
+            `🔥 *CONFIANZA COMBINADA:* ${finalConfidence}%\n\n` +
+            `⚠️ *Nota:* Se recomienda ingresar esta apuesta a la brevedad, ya que las cuotas en vivo varían rápidamente.`;
+
+        for (const chatId of subscribedChats) {
+            try {
+                await bot.sendMessage(chatId, msg, { parse_mode: 'Markdown' });
+            } catch (e) {
+                console.error(`Error enviando parlay en vivo al chat ${chatId}:`, e.message);
+            }
+        }
+
+        liveAlertsQueue.length = 0;
+    }
+}
+
+async function generateAndSendDailyParlay(timeString) {
+    console.log(`[${new Date().toLocaleTimeString()}] Ejecutando Parlay del Día (${timeString})...`);
+    
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const matches = await getMatchesByDate(today);
+        
+        if (!matches || matches.length === 0) {
+            console.log(`[Parlay ${timeString}] No se encontraron partidos para hoy.`);
+            return;
+        }
+
+        const futureMatches = matches.filter(m => {
+            const isTop = isMajorLeague(m.league);
+            const isNotStarted = m.fixture.status.short === 'NS';
+            return isTop && isNotStarted;
+        });
+
+        if (futureMatches.length < 2) {
+            console.log(`[Parlay ${timeString}] No hay suficientes partidos futuros en ligas principales para armar un parlay (Mínimo 2, encontrados: ${futureMatches.length}).`);
+            return;
+        }
+
+        console.log(`[Parlay ${timeString}] Encontrados ${futureMatches.length} partidos futuros. Procesando momios y estadísticas...`);
+
+        const eligibleMatches = [];
+        const maxToProcess = futureMatches.slice(0, 15);
+
+        for (const match of maxToProcess) {
+            const fixtureId = match.fixture.id;
+            
+            await new Promise(r => setTimeout(r, 200));
+            const odds = await getPreMatchOdds(fixtureId);
+            if (!odds) continue;
+
+            await new Promise(r => setTimeout(r, 200));
+            const lastMatchesHome = await getTeamLastMatches(match.teams.home.id, 5);
+
+            await new Promise(r => setTimeout(r, 200));
+            const lastMatchesAway = await getTeamLastMatches(match.teams.away.id, 5);
+
+            eligibleMatches.push({
+                sport: 'football',
+                fixtureId,
+                homeTeam: match.teams.home.name,
+                awayTeam: match.teams.away.name,
+                leagueName: match.league.name,
+                odds,
+                lastMatchesHome,
+                lastMatchesAway
+            });
+
+            if (eligibleMatches.length >= 8) {
+                break;
+            }
+        }
+
+        if (eligibleMatches.length < 2) {
+            console.log(`[Parlay ${timeString}] No se pudieron consolidar al menos 2 partidos con momios e historial completo.`);
+            return;
+        }
+
+        console.log(`[Parlay ${timeString}] Enviando ${eligibleMatches.length} partidos elegibles a Gemini para armar el Parlay...`);
+        const parlayMsg = await aiService.generateDailyParlay(eligibleMatches);
+
+        if (parlayMsg) {
+            for (const chatId of subscribedChats) {
+                try {
+                    await bot.sendMessage(chatId, parlayMsg, { parse_mode: 'Markdown' });
+                } catch (e) {
+                    console.error(`Error enviando Parlay ${timeString} al chat ${chatId}:`, e.message);
+                }
+            }
+            console.log(`[Parlay ${timeString}] ¡Parlay del Día enviado exitosamente!`);
+        } else {
+            console.warn(`[Parlay ${timeString}] La IA no pudo generar el mensaje del parlay.`);
+        }
+    } catch (error) {
+        console.error(`Error crítico en generateAndSendDailyParlay (${timeString}):`, error.message);
+    }
+}
+
+// Programar Parlay Pre-Partido a las 8:30 AM, 9:30 AM y 10:30 AM (Hora Centro México)
+cron.schedule('30 8 * * *', async () => {
+    if (isWithinActiveHours()) {
+        await generateAndSendDailyParlay('8:30 AM');
+    }
+}, {
+    timezone: TIMEZONE
+});
+
+cron.schedule('30 9 * * *', async () => {
+    if (isWithinActiveHours()) {
+        await generateAndSendDailyParlay('9:30 AM');
+    }
+}, {
+    timezone: TIMEZONE
+});
+
+cron.schedule('30 10 * * *', async () => {
+    if (isWithinActiveHours()) {
+        await generateAndSendDailyParlay('10:30 AM');
+    }
+}, {
+    timezone: TIMEZONE
+});
 
 // Programar revisión cada minuto para ambos deportes (solo en horario 7:00 AM a 9:00 PM CST/CDT)
 cron.schedule('* 7-21 * * *', async () => {
