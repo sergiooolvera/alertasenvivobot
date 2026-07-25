@@ -295,6 +295,51 @@ async function run() {
         const predBaseball = await aiService.generatePrediction(mockMatchDataBaseball, 'baseball');
         outputText += `=== BÉISBOL ===\n${predBaseball || 'Error'}\n\n`;
 
+        // --- Probando Caso del Usuario (Sorpresa Tempranera con Underdog Ganando) ---
+        console.log("\n--- Probando Caso del Usuario (Sorpresa Tempranera con Underdog Ganando) ---");
+        const mockUserCase = {
+            homeTeam: "Confiança",
+            awayTeam: "AO Itabaiana",
+            elapsed: 45,
+            score: { home: 0, away: 1 },
+            odds: { home: 1.90, draw: 3.00, away: 4.10 }, // AO Itabaiana es underdog
+            ruleName: "Sorpresa Tempranera",
+            ruleDetails: "El underdog AO Itabaiana ha tomado la ventaja.",
+            stats: [
+                {
+                    team: { name: "Confiança" },
+                    statistics: [
+                        { type: "Ball Possession", value: "58%" },
+                        { type: "Total Shots", value: 8 },
+                        { type: "Corner Kicks", value: 4 }
+                    ]
+                },
+                {
+                    team: { name: "AO Itabaiana" },
+                    statistics: [
+                        { type: "Ball Possession", value: "42%" },
+                        { type: "Total Shots", value: 4 },
+                        { type: "Corner Kicks", value: 1 }
+                    ]
+                }
+            ],
+            events: [
+                {
+                    time: { elapsed: 15 },
+                    team: { name: "AO Itabaiana" },
+                    player: { name: "Tiago" },
+                    type: "Goal",
+                    detail: "Normal Goal"
+                }
+            ],
+            lastMatchesHome: [],
+            lastMatchesAway: []
+        };
+        const predUserCase = await aiService.generatePrediction(mockUserCase, 'football');
+        console.log("Resultado del Caso del Usuario (AO Itabaiana va ganando):");
+        console.log(predUserCase || "⚠️ ERROR: No se obtuvo respuesta.");
+        outputText += `=== CASO USUARIO ===\n${predUserCase || 'Error'}\n\n`;
+
         // --- Probando IA con Parlay del Día ---
         console.log("\n--- Probando IA con Parlay del Día (Pre-Partido) ---");
         const mockParlayMatches = [

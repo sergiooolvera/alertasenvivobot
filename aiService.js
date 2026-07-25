@@ -271,7 +271,8 @@ ${lastMatchesAwayStr}
 Instrucciones para redactar la respuesta:
 1. Realice un análisis formal de la dinámica de juego combinando las estadísticas en vivo con el rendimiento histórico reciente provisto de ambos equipos (máximo 3 líneas).
 2. Proporcione una recomendación de apuesta concreta y de alta probabilidad basada en los datos analizados.
-3. Sugiera un momio objetivo en vivo (mínimo @1.60 o superior).
+3. Sugiera un momio objetivo en vivo (mínimo @1.60 o superior). Este momio DEBE ser realista para el mercado en vivo de acuerdo con la situación del partido.
+   * REGLA DE REALISMO DE MOMIOS: Si el equipo recomendado ya va ganando, la Doble Oportunidad (1X/X2) o Hándicaps a su favor (como +1.5) NO tendrán momios de @1.60+ en vivo (serán de @1.10 o menores). Para obtener un momio de @1.60+ en este caso, debes recomendar su victoria directa (ML), que anotará el próximo gol, o el Over de Goles Totales del partido. Solo recomienda Doble Oportunidad o Hándicaps positivos de @1.60+ para el equipo que va empatando o perdiendo.
 4. Estime una probabilidad matemática/nivel de confianza de acierto para esta recomendación de apuesta basada estrictamente en los datos del análisis (entre 0% y 100%).
 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
@@ -304,7 +305,8 @@ ${statsStr}
 Instrucciones para redactar la respuesta:
 1. Realice un análisis formal y técnico del juego (máximo 3 líneas) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo.
 2. Proporcione una recomendación de apuesta concreta basada en los datos estadísticos del partido.
-3. Sugiera un momio objetivo (mínimo @1.60 o superior).
+3. Sugiera un momio objetivo (mínimo @1.60 o superior). Este momio DEBE ser realista para el mercado en vivo de acuerdo con la situación del partido.
+   * REGLA DE REALISMO DE MOMIOS: Si el equipo recomendado ya va ganando en las entradas medias/finales, la línea de dinero (ML) o Hándicaps a su favor NO tendrán momios de @1.60+ en vivo. Para obtener un momio de @1.60+ en este caso, debes sugerir el Over de Carreras Totales del juego, Hándicap negativo del líder, o apostar a la reacción del equipo que va perdiendo (ML o Hándicap positivo del equipo en desventaja).
 4. Estime una probabilidad matemática/nivel de confianza de acierto para esta recomendación de apuesta basada en los datos del partido (entre 0% y 100%).
 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
