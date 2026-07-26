@@ -6,7 +6,7 @@ const packageJson = require('./package.json');
 const VERSION = packageJson.version;
 
 // Módulos de Fútbol
-const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches } = require('./apiClient');
+const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds } = require('./apiClient');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
@@ -238,9 +238,9 @@ async function checkMatches() {
     // Obtener momios en vivo del endpoint consolidado
     const liveOddsMap = new Map();
     try {
-        const liveOddsResponse = await apiClient.get('/odds/live');
-        if (liveOddsResponse.data && liveOddsResponse.data.response) {
-            liveOddsResponse.data.response.forEach(item => {
+        const liveOddsResponse = await getLiveOdds();
+        if (liveOddsResponse && liveOddsResponse.response) {
+            liveOddsResponse.response.forEach(item => {
                 if (item.fixture && item.fixture.id) {
                     liveOddsMap.set(item.fixture.id, item.odds);
                 }

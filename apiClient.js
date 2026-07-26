@@ -131,6 +131,18 @@ async function getTeamLastMatches(teamId, last = 5) {
   }
 }
 
+// Obtiene los momios en vivo actuales (Fútbol)
+async function getLiveOdds() {
+  if (checkRateLimit()) return null;
+  try {
+    const response = await apiClient.get('/odds/live');
+    return response.data;
+  } catch (error) {
+    handleApiError('live odds', error);
+    return null;
+  }
+}
+
 module.exports = {
   getLiveMatches,
   getMatchEvents,
@@ -138,7 +150,8 @@ module.exports = {
   getMatchStatistics,
   getMatchesByDate,
   getMatchById,
-  getTeamLastMatches
+  getTeamLastMatches,
+  getLiveOdds
 };
 
 
