@@ -10,9 +10,9 @@ const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, get
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
-// Módulos de Béisbol (MLB)
-const { getLiveBaseballGames, getPreGameBaseballOdds, getBaseballGameById } = require('./baseballApiClient');
-const { evaluateBaseballRules, evaluateBaseballAlertResults } = require('./baseballRulesEngine');
+// Módulos de Béisbol (MLB) - Deshabilitados para canal separado
+// const { getLiveBaseballGames, getPreGameBaseballOdds, getBaseballGameById } = require('./baseballApiClient');
+// const { evaluateBaseballRules, evaluateBaseballAlertResults } = require('./baseballRulesEngine');
 
 // Servicio de IA
 const aiService = require('./aiService');
@@ -56,11 +56,9 @@ if (bot.onText) {
 
 // Cachés de momios pre-partido
 const oddsCache = new Map();
-const baseballOddsCache = new Map();
 
 // Seguimiento Post-Partido GREEN / RED
 const trackedMatches = new Map();
-const trackedBaseballGames = new Map();
 
 // Cachés para almacenar el último resultado de eventos y estadísticas por partido
 const eventsCache = new Map();
@@ -531,137 +529,8 @@ async function checkFinishedMatches() {
 }
 
 // ===================================================
-// MONITOREO DE BÉISBOL (MLB)
+// MONITOREO DE BÉISBOL (MLB) - REMOVIDO PARA CANAL SEPARADO
 // ===================================================
-async function checkBaseballMatches() {
-    console.log(`[${new Date().toLocaleTimeString()}] Revisando juegos de MLB en vivo...`);
-    const liveGames = await getLiveBaseballGames();
-
-    const newLiveBaseballIds = new Set();
-
-    for (const game of liveGames) {
-        const gameId = game.game.id;
-        newLiveBaseballIds.add(gameId);
-
-        if (!baseballOddsCache.has(gameId)) {
-            await new Promise(r => setTimeout(r, 100));
-            const odds = await getPreGameBaseballOdds(gameId);
-            baseballOddsCache.set(gameId, odds || 'NO_ODDS');
-        }
-
-        const gameOdds = baseballOddsCache.get(gameId);
-        if (!gameOdds || gameOdds === 'NO_ODDS') {
-            continue;
-        }
-
-        const alerts = evaluateBaseballRules(game, gameOdds);
-
-        if (alerts.length > 0) {
-            if (!trackedBaseballGames.has(gameId)) {
-                trackedBaseballGames.set(gameId, {
-                    home: game.teams.home.name,
-                    away: game.teams.away.name,
-                    alertsMetadata: []
-                });
-            }
-
-            const trackedInfo = trackedBaseballGames.get(gameId);
-
-            for (const alert of alerts) {
-                trackedInfo.alertsMetadata.push(alert.metadata);
-
-                let textToSend = alert.text;
-                try {
-                    const ruleThirdPart = alert.text.split('\n\n').slice(2).join('\n\n');
-                    const targetIdx = ruleThirdPart.indexOf('🎯');
-                    const cleanRuleDetails = targetIdx !== -1 ? ruleThirdPart.substring(0, targetIdx).trim() : ruleThirdPart;
-
-                    const matchData = {
-                        homeTeam: game.teams.home.name,
-                        awayTeam: game.teams.away.name,
-                        inning: game.status.elapsed ? `Inning ${game.status.elapsed}` : 'N/A',
-                        score: { home: game.scores.home.total || 0, away: game.scores.away.total || 0 },
-                        odds: gameOdds,
-                        ruleName: alert.metadata.ruleName,
-                        ruleDetails: cleanRuleDetails,
-                        stats: game.scores
-                    };
-                    console.log(`[index.js] Solicitando predicción de IA para MLB: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
-                    const aiPrediction = await aiService.generatePrediction(matchData, 'baseball');
-                    if (aiPrediction) {
-                        const recMatch = aiPrediction.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
-                        if (recMatch) {
-                            alert.metadata.aiRecommendation = recMatch[1].replace(/\*/g, '').trim();
-                        }
-                        // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
-                        const splitIndex = alert.text.indexOf('🎯');
-                        const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
-                        
-                        // Parsear y formatear la predicción de IA de forma premium
-                        const analysisMatch = aiPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
-                        const oddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
-                        const confidenceMatch = aiPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
-                        
-                        const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
-                        const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
-                        const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
-                        const confidence = confidenceMatch ? confidenceMatch[1] : '80';
-                        
-                        const formattedAiSection = 
-                            `🤖 *ANÁLISIS INTELIGENTE DE IA*\n` +
-                            `🧠 ${analysis}\n\n` +
-                            `🎯 *Recomendación:* *${recommendation}*\n` +
-                            `📈 *Momio Sugerido:* *@${oddVal}*\n` +
-                            `🔥 *Confianza Estimada:* *${confidence}%*`;
-                            
-                        textToSend = `${header}\n\n${formattedAiSection}`;
-                    }
-                } catch (aiError) {
-                    console.error(`[index.js] Error al procesar IA para béisbol: ${aiError.message}`);
-                }
-
-                for (const chatId of subscribedChats) {
-                    try {
-                        await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
-                    } catch (e) {
-                        console.error(`Error enviando alerta béisbol al chat ${chatId}:`, e.message);
-                    }
-                }
-
-                if (textToSend) {
-                    await handleLiveParlayQueue(gameId, 'baseball', game.teams.home.name, game.teams.away.name, textToSend);
-                }
-            }
-        }
-    }
-
-    currentLiveBaseballIds = newLiveBaseballIds;
-}
-
-async function checkFinishedBaseballMatches() {
-    for (const [gameId, gameInfo] of trackedBaseballGames.entries()) {
-        // Solo consultar si el juego ya no está en vivo
-        if (currentLiveBaseballIds.has(gameId)) {
-            continue;
-        }
-
-        const gameData = await getBaseballGameById(gameId);
-        if (gameData && (gameData.status.short === 'FT' || gameData.status.short === 'POST' || gameData.status.short === 'FINISHED')) {
-            const results = await evaluateBaseballAlertResults(gameInfo.alertsMetadata, gameData);
-
-            for (const result of results) {
-                for (const chatId of subscribedChats) {
-                    try {
-                        await bot.sendMessage(chatId, result.msg, { parse_mode: 'Markdown' });
-                    } catch (e) {
-                        console.error(`Error enviando veredicto béisbol al chat ${chatId}:`, e.message);
-                    }
-                }
-            }
-            trackedBaseballGames.delete(gameId);
-        }
-    }
-}
 
 // ===================================================
 // SISTEMA DE PARLAYS DEL DÍA Y EN VIVO (IA)
@@ -849,15 +718,13 @@ cron.schedule('30 10 * * *', async () => {
     timezone: TIMEZONE
 });
 
-// Programar revisión cada minuto para ambos deportes (solo en horario 7:00 AM a 9:00 PM CST/CDT)
+// Programar revisión cada minuto para fútbol (solo en horario 7:00 AM a 9:00 PM CST/CDT)
 cron.schedule('* 7-21 * * *', async () => {
     if (!isWithinActiveHours()) {
         return;
     }
     await checkMatches();
     await checkFinishedMatches();
-    await checkBaseballMatches();
-    await checkFinishedBaseballMatches();
 }, {
     timezone: TIMEZONE
 });
@@ -898,11 +765,10 @@ cron.schedule('30 7 * * *', async () => {
     timezone: TIMEZONE
 });
 
-console.log(`🟢 Sistema Multideporte automatizado (Fútbol + MLB Béisbol) en marcha. Horario activo: 7:00 AM - 9:00 PM (${TIMEZONE}).`);
+console.log(`🟢 Bot de Monitoreo de Fútbol en vivo en marcha. Horario activo: 7:00 AM - 9:00 PM (${TIMEZONE}).`);
 // Ejecutar primera revisión únicamente si estamos dentro del horario activo
 if (isWithinActiveHours()) {
     checkMatches();
-    checkBaseballMatches();
 } else {
     console.log(`⏰ Script iniciado fuera del horario de monitoreo (7 AM - 9 PM ${TIMEZONE}). En espera de la ventana activa...`);
 }
