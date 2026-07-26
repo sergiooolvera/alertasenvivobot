@@ -76,12 +76,183 @@ const THROTTLE_COOLDOWN_MS = 4 * 60 * 1000; // 4 minutos de cooldown
 let currentLiveFootballIds = new Set();
 let currentLiveBaseballIds = new Set();
 
+// Cola de alertas pendientes del sistema SafeOdds por cuota objetivo
+const pendingAlertsQueue = [];
+
+function getLiveOddForRecommendation(oddsArray, recommendation, homeTeam, awayTeam) {
+    if (!oddsArray || !recommendation) return null;
+    
+    const recLower = recommendation.toLowerCase();
+    
+    // 1. Fulltime Result / Match Winner / 3-Way (ML)
+    const isHomeWin = (recLower.includes('victoria') && recLower.includes(homeTeam.toLowerCase())) || 
+                      recLower.includes(`${homeTeam.toLowerCase()} (resultado final)`) ||
+                      recLower.includes(`${homeTeam.toLowerCase()} ml`) ||
+                      (recLower.includes('victoria') && recLower.includes('local')) ||
+                      recLower === homeTeam.toLowerCase();
+                      
+    const isAwayWin = (recLower.includes('victoria') && recLower.includes(awayTeam.toLowerCase())) || 
+                      recLower.includes(`${awayTeam.toLowerCase()} (resultado final)`) ||
+                      recLower.includes(`${awayTeam.toLowerCase()} ml`) ||
+                      (recLower.includes('victoria') && recLower.includes('visita')) ||
+                      recLower === awayTeam.toLowerCase();
+                      
+    const isDraw = recLower.includes('empate') && !recLower.includes('o empate') && !recLower.includes('draw or');
+
+    if (isHomeWin || isAwayWin || isDraw) {
+        const ftMarket = oddsArray.find(o => o.id === 59 || o.id === 1 || o.name.toLowerCase().includes('fulltime result') || o.name.toLowerCase().includes('match winner') || o.name.toLowerCase().includes('3-way result'));
+        if (ftMarket) {
+            const targetVal = isHomeWin ? 'Home' : (isAwayWin ? 'Away' : 'Draw');
+            const oddObj = ftMarket.values.find(v => v.value === targetVal);
+            if (oddObj && !oddObj.suspended) {
+                return parseFloat(oddObj.odd);
+            }
+        }
+    }
+
+    // 2. Double Chance
+    const isDoubleChance = recLower.includes('doble oportunidad') || recLower.includes('double chance') || recLower.includes('o empate') || recLower.includes('1x') || recLower.includes('x2') || recLower.includes('12');
+    if (isDoubleChance) {
+        const dcMarket = oddsArray.find(o => o.id === 72 || o.name.toLowerCase().includes('double chance'));
+        if (dcMarket) {
+            let targetVal = null;
+            if (recLower.includes(homeTeam.toLowerCase()) && (recLower.includes('empate') || recLower.includes('draw') || recLower.includes('1x'))) {
+                targetVal = 'Home or Draw';
+            } else if (recLower.includes(awayTeam.toLowerCase()) && (recLower.includes('empate') || recLower.includes('draw') || recLower.includes('x2'))) {
+                targetVal = 'Away or Draw';
+            } else if (recLower.includes('home or away') || recLower.includes('12')) {
+                targetVal = 'Home or Away';
+            }
+            
+            if (targetVal) {
+                const oddObj = dcMarket.values.find(v => v.value === targetVal);
+                if (oddObj && !oddObj.suspended) {
+                    return parseFloat(oddObj.odd);
+                }
+            }
+        }
+    }
+
+    // 3. Over Goals
+    const isOverGoals = recLower.includes('over') || recLower.includes('más de') || recLower.includes('mas de');
+    if (isOverGoals) {
+        const goalsMarket = oddsArray.find(o => o.id === 25 || o.id === 36 || o.name.toLowerCase().includes('goals') || o.name.toLowerCase().includes('over/under') || o.name.toLowerCase().includes('total goals'));
+        if (goalsMarket) {
+            const oddObj = goalsMarket.values.find(v => v.value === 'Over');
+            if (oddObj && !oddObj.suspended) {
+                return parseFloat(oddObj.odd);
+            }
+        }
+    }
+
+    return null;
+}
+
+async function processPendingAlerts(liveMatches, liveOddsMap) {
+    if (pendingAlertsQueue.length === 0) return;
+    
+    console.log(`[SafeOdds] Procesando ${pendingAlertsQueue.length} alertas pendientes en cola...`);
+    const activeLiveMatchesMap = new Map(liveMatches.map(m => [m.fixture.id, m]));
+    
+    for (let i = pendingAlertsQueue.length - 1; i >= 0; i--) {
+        const alert = pendingAlertsQueue[i];
+        const match = activeLiveMatchesMap.get(alert.fixtureId);
+        
+        // 1. Si el partido ya no está en vivo o ya finalizó, eliminar la alerta
+        if (!match) {
+            console.log(`[SafeOdds] Partido finalizado o no en vivo. Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            pendingAlertsQueue.splice(i, 1);
+            continue;
+        }
+        
+        const currentHomeGoals = match.goals.home || 0;
+        const currentAwayGoals = match.goals.away || 0;
+        
+        // 2. Si el marcador cambió, la alerta ya no sirve, eliminar de la cola
+        if (currentHomeGoals !== alert.scoreAtTime.home || currentAwayGoals !== alert.scoreAtTime.away) {
+            console.log(`[SafeOdds] El marcador cambió (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} -> ${currentHomeGoals}-${currentAwayGoals}). Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            pendingAlertsQueue.splice(i, 1);
+            continue;
+        }
+        
+        const elapsed = match.fixture.status.elapsed || 0;
+        let oddTriggered = false;
+        let currentOddValue = null;
+        let method = '';
+        
+        // 3. Revisar si tenemos momios en vivo en la API para este partido
+        const oddsArray = liveOddsMap.get(alert.fixtureId);
+        if (oddsArray) {
+            currentOddValue = getLiveOddForRecommendation(oddsArray, alert.aiRecommendation, alert.homeTeam, alert.awayTeam);
+            if (currentOddValue !== null) {
+                method = 'API en vivo';
+                if (currentOddValue >= alert.targetOdd) {
+                    oddTriggered = true;
+                }
+            }
+        }
+        
+        // 4. Si no hay momios en vivo en la API, usar el estimador por tiempo transcurrido
+        if (currentOddValue === null) {
+            method = 'Estimador de tiempo';
+            const elapsedMinutesSinceIncident = elapsed - alert.minuteAtIncident;
+            if (elapsedMinutesSinceIncident >= alert.waitMinutes) {
+                oddTriggered = true;
+                currentOddValue = alert.targetOdd; // Valor estimado
+            }
+        }
+        
+        // 5. Si se activa el trigger, enviar la alerta
+        if (oddTriggered) {
+            console.log(`[SafeOdds] ¡Alerta ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${currentOddValue.toFixed(2)} (${method}) en el minuto ${elapsed}'`);
+            
+            let finalMsg = alert.textToSend;
+            const activationNote = `\n\n📊 *ALERTA ACTIVADA EN VIVO:* El momio alcanzó la cuota objetivo de *@${alert.targetOdd.toFixed(2)}* (Momio actual: *@${currentOddValue.toFixed(2)}* en el minuto ${elapsed}', detectado vía ${method}).`;
+            finalMsg += activationNote;
+            
+            for (const chatId of subscribedChats) {
+                try {
+                    await bot.sendMessage(chatId, finalMsg, { parse_mode: 'Markdown' });
+                } catch (e) {
+                    console.error(`Error enviando alerta fútbol en vivo activada al chat ${chatId}:`, e.message);
+                }
+            }
+            
+            // Encolar para parlays en vivo si tiene alta confianza
+            await handleLiveParlayQueue(alert.fixtureId, 'football', alert.homeTeam, alert.awayTeam, finalMsg);
+            
+            pendingAlertsQueue.splice(i, 1);
+        } else {
+            console.log(`[SafeOdds] Esperando. ${alert.homeTeam} vs ${alert.awayTeam}. Momio objetivo: @${alert.targetOdd.toFixed(2)}, Momio en vivo/est: @${currentOddValue ? currentOddValue.toFixed(2) : 'N/D'} (${method}). Minuto actual: ${elapsed}' (espera est restante: ${alert.waitMinutes - (elapsed - alert.minuteAtIncident)}m)`);
+        }
+    }
+}
+
 // ===================================================
 // MONITOREO DE FÚTBOL
 // ===================================================
 async function checkMatches() {
     console.log(`[${new Date().toLocaleTimeString()}] Revisando partidos de fútbol en vivo...`);
     const liveMatches = await getLiveMatches();
+    
+    // Obtener momios en vivo del endpoint consolidado
+    const liveOddsMap = new Map();
+    try {
+        const liveOddsResponse = await apiClient.get('/odds/live');
+        if (liveOddsResponse.data && liveOddsResponse.data.response) {
+            liveOddsResponse.data.response.forEach(item => {
+                if (item.fixture && item.fixture.id) {
+                    liveOddsMap.set(item.fixture.id, item.odds);
+                }
+            });
+        }
+        console.log(`[SafeOdds] Descargados momios en vivo para ${liveOddsMap.size} partidos.`);
+    } catch (err) {
+        console.error(`[SafeOdds] Error al obtener momios en vivo de la API:`, err.message);
+    }
+    
+    // Procesar la cola de alertas en espera
+    await processPendingAlerts(liveMatches, liveOddsMap);
 
     const newLiveIds = new Set();
 
@@ -203,21 +374,98 @@ async function checkMatches() {
                         } else {
                             textToSend = `${alert.text}\n\n${aiPrediction}`;
                         }
+
+                        // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
+                        const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
+                        const suggestedOdd = suggestedOddMatch ? parseFloat(suggestedOddMatch[1]) : 1.60;
+                        const targetOdd = Math.max(1.60, suggestedOdd);
+                        
+                        const currentHomeGoals = match.goals.home || 0;
+                        const currentAwayGoals = match.goals.away || 0;
+                        const elapsed = match.fixture.status.elapsed || 0;
+                        
+                        let liveOddVal = null;
+                        const oddsArray = liveOddsMap.get(fixtureId);
+                        if (oddsArray && alert.metadata.aiRecommendation) {
+                            liveOddVal = getLiveOddForRecommendation(oddsArray, alert.metadata.aiRecommendation, match.teams.home.name, match.teams.away.name);
+                        }
+                        
+                        if (liveOddVal === null || liveOddVal < targetOdd) {
+                            // Estimar cuota de inicio
+                            let estimatedStartOdd = 1.30;
+                            const favOdd = matchOdds.home < matchOdds.away ? matchOdds.home : matchOdds.away;
+                            
+                            if (alert.metadata.ruleName.includes('TARJETA ROJA')) {
+                                estimatedStartOdd = Math.max(1.05, favOdd * 0.95);
+                            } else if (alert.metadata.ruleName.includes('EL FAVORITO SUFRE')) {
+                                estimatedStartOdd = Math.max(1.10, favOdd * 1.4);
+                            } else if (alert.metadata.ruleName.includes('SORPRESA TEMPRANERA')) {
+                                estimatedStartOdd = Math.max(1.20, favOdd * 1.8);
+                            } else if (alert.metadata.ruleName.includes('ASEDIO INTENSO')) {
+                                estimatedStartOdd = 1.30;
+                            }
+                            
+                            // Si la cuota de inicio estimada ya cumple la meta, enviar de inmediato
+                            if (liveOddVal === null && estimatedStartOdd >= targetOdd) {
+                                console.log(`[SafeOdds] Alerta enviada de inmediato (cuota de inicio estimada @${estimatedStartOdd.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
+                                for (const chatId of subscribedChats) {
+                                    try {
+                                        await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                    } catch (e) {
+                                        console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+                                    }
+                                }
+                                if (textToSend) {
+                                    await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
+                                }
+                            } else {
+                                // Calcular minutos de espera
+                                const timeRemaining = 90 - elapsed;
+                                let waitMinutes = 0;
+                                const startOdd = liveOddVal !== null ? liveOddVal : estimatedStartOdd;
+                                if (startOdd < targetOdd && timeRemaining > 0) {
+                                    const ratio = (startOdd - 1) / (targetOdd - 1);
+                                    waitMinutes = timeRemaining * (1 - Math.pow(Math.max(0.01, ratio), 0.9));
+                                    waitMinutes = Math.max(1, Math.min(timeRemaining, Math.round(waitMinutes)));
+                                }
+                                
+                                console.log(`[SafeOdds] Encolando alerta pendiente para ${match.teams.home.name} vs ${match.teams.away.name}. Cuota inicial/en-vivo: @${startOdd.toFixed(2)}, Objetivo: @${targetOdd.toFixed(2)}, Espera: ${waitMinutes} min.`);
+                                pendingAlertsQueue.push({
+                                    id: `${fixtureId}_${alert.metadata.ruleName}`,
+                                    fixtureId,
+                                    sport: 'football',
+                                    homeTeam: match.teams.home.name,
+                                    awayTeam: match.teams.away.name,
+                                    ruleName: alert.metadata.ruleName,
+                                    textToSend,
+                                    aiRecommendation: alert.metadata.aiRecommendation || '',
+                                    suggestedOdd,
+                                    targetOdd,
+                                    scoreAtTime: { home: currentHomeGoals, away: currentAwayGoals },
+                                    timestamp: Date.now(),
+                                    minuteAtIncident: elapsed,
+                                    estimatedStartOdd: startOdd,
+                                    waitMinutes,
+                                    sent: false
+                                });
+                            }
+                        } else {
+                            // Enviar de inmediato porque la cuota en vivo actual ya es mayor o igual a la objetivo
+                            console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
+                            for (const chatId of subscribedChats) {
+                                try {
+                                    await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                } catch (e) {
+                                    console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+                                }
+                            }
+                            if (textToSend) {
+                                    await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
+                            }
+                        }
                     }
                 } catch (aiError) {
                     console.error(`[index.js] Error al procesar IA para fútbol: ${aiError.message}`);
-                }
-
-                for (const chatId of subscribedChats) {
-                    try {
-                        await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
-                    } catch (e) {
-                        console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
-                    }
-                }
-
-                if (textToSend) {
-                    await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                 }
             }
         }
