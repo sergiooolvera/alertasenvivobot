@@ -45,13 +45,22 @@ function evaluateBaseballRules(game, odds) {
         underdog = { side: 'home', team: game.teams.home.name, odd: odds.home, runs: homeRuns };
     }
 
-    const msgHeader = `⚾ *BÉISBOL MLB:* ${leagueName}\n🧢 *${game.teams.home.name}* vs *${game.teams.away.name}*\n⏱️ *Entrada:* ${inning}ª Inning\n📊 *Carreras:* ${homeRuns} - ${awayRuns}\n💵 *Momios ML:* Local ${odds.home} | Visita ${odds.away}`;
+    const msgHeader = `⚾ *Liga MLB:* ${leagueName}
+🧢 *${game.teams.home.name}* vs *${game.teams.away.name}*
+⏱️ *Entrada:* ${inning}ª Inning  |  📊 *Carreras:* ${homeRuns} - ${awayRuns}
+💵 *Momios ML:* 🏠 ${odds.home}  •  🚀 ${odds.away}`;
 
     // --- REGLA MLB 1: Favorito Sufriendo al Medio Juego (Inning 3-5) ---
     if (inning >= 3 && inning <= 5 && favorite.odd < 1.55 && favorite.runs < underdog.runs) {
         const ruleId = `${gameId}_mlb1`;
         if (!alertedBaseballGames.has(ruleId)) {
-            const text = `⚾ *REGLA MLB 1: FAVORITO EN APUROS*\n\n${msgHeader}\n\n⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo en la ${inning}ª entrada.\n🎯 *Recomendación:* Línea del Dinero (ML) Favorito en Vivo / Hándicap (+1.5).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
+            const text = `⚾ *REGLA MLB 1: FAVORITO EN APUROS*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${msgHeader}
+⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo en la ${inning}ª entrada.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 *Recomendación:* Línea del Dinero (ML) Favorito en Vivo / Hándicap (+1.5).
+🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -75,7 +84,13 @@ function evaluateBaseballRules(game, odds) {
     if (inning >= 7 && inning <= 9 && Math.abs(homeRuns - awayRuns) <= 1) {
         const ruleId = `${gameId}_mlb2`;
         if (!alertedBaseballGames.has(ruleId)) {
-            const text = `🔥 *REGLA MLB 2: FINAL DE INFARTO (INNING 7-9)*\n\n${msgHeader}\n\n⚠️ *Análisis:* Juego con diferencia de ≤ 1 carrera ingresando al cierre.\n🎯 *Recomendación:* Hándicap de Carreras (+1.5 Underdog) o Total Carreras (Extra Innings).\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
+            const text = `🔥 *REGLA MLB 2: FINAL DE INFARTO (INNING 7-9)*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${msgHeader}
+⚠️ *Análisis:* Juego con diferencia de ≤ 1 carrera ingresando al cierre.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 *Recomendación:* Hándicap de Carreras (+1.5 Underdog) o Total Carreras (Extra Innings).
+🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -97,7 +112,13 @@ function evaluateBaseballRules(game, odds) {
     if (inning >= 1 && inning <= 3 && (homeRuns + awayRuns) >= 6) {
         const ruleId = `${gameId}_mlb3`;
         if (!alertedBaseballGames.has(ruleId)) {
-            const text = `💥 *REGLA MLB 3: FESTÍN DE CARRERAS (EARLY OVER)*\n\n${msgHeader}\n\n⚠️ *Análisis:* ¡Festival de bateo! Ya van ${homeRuns + awayRuns} carreras en la ${inning}ª entrada.\n🎯 *Recomendación:* Over de Carreras Totales del Juego en Vivo.\n🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
+            const text = `💥 *REGLA MLB 3: FESTÍN DE CARRERAS (EARLY OVER)*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${msgHeader}
+⚠️ *Análisis:* ¡Festival de bateo! Ya van ${homeRuns + awayRuns} carreras en la ${inning}ª entrada.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 *Recomendación:* Over de Carreras Totales del Juego en Vivo.
+🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {

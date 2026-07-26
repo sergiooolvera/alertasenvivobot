@@ -355,7 +355,7 @@ async function checkMatches() {
                         ruleName: alert.metadata.ruleName,
                         ruleDetails: cleanRuleDetails,
                         stats: stats,
-                        events: events,
+events: events,
                         lastMatchesHome: lastMatchesHome,
                         lastMatchesAway: lastMatchesAway
                     };
@@ -368,12 +368,26 @@ async function checkMatches() {
                         }
                         // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
                         const splitIndex = alert.text.indexOf('🎯');
-                        if (splitIndex !== -1) {
-                            const header = alert.text.substring(0, splitIndex).trim();
-                            textToSend = `${header}\n\n${aiPrediction}`;
-                        } else {
-                            textToSend = `${alert.text}\n\n${aiPrediction}`;
-                        }
+                        const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
+                        
+                        // Parsear y formatear la predicción de IA de forma premium
+                        const analysisMatch = aiPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
+                        const oddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
+                        const confidenceMatch = aiPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+                        
+                        const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
+                        const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
+                        const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
+                        const confidence = confidenceMatch ? confidenceMatch[1] : '80';
+                        
+                        const formattedAiSection = 
+                            `🤖 *ANÁLISIS INTELIGENTE DE IA*\n` +
+                            `🧠 ${analysis}\n\n` +
+                            `🎯 *Recomendación:* *${recommendation}*\n` +
+                            `📈 *Momio Sugerido:* *@${oddVal}*\n` +
+                            `🔥 *Confianza Estimada:* *${confidence}%*`;
+                            
+                        textToSend = `${header}\n\n${formattedAiSection}`;
 
                         // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                         const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
@@ -581,12 +595,26 @@ async function checkBaseballMatches() {
                         }
                         // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
                         const splitIndex = alert.text.indexOf('🎯');
-                        if (splitIndex !== -1) {
-                            const header = alert.text.substring(0, splitIndex).trim();
-                            textToSend = `${header}\n\n${aiPrediction}`;
-                        } else {
-                            textToSend = `${alert.text}\n\n${aiPrediction}`;
-                        }
+                        const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
+                        
+                        // Parsear y formatear la predicción de IA de forma premium
+                        const analysisMatch = aiPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
+                        const oddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
+                        const confidenceMatch = aiPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+                        
+                        const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
+                        const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
+                        const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
+                        const confidence = confidenceMatch ? confidenceMatch[1] : '80';
+                        
+                        const formattedAiSection = 
+                            `🤖 *ANÁLISIS INTELIGENTE DE IA*\n` +
+                            `🧠 ${analysis}\n\n` +
+                            `🎯 *Recomendación:* *${recommendation}*\n` +
+                            `📈 *Momio Sugerido:* *@${oddVal}*\n` +
+                            `🔥 *Confianza Estimada:* *${confidence}%*`;
+                            
+                        textToSend = `${header}\n\n${formattedAiSection}`;
                     }
                 } catch (aiError) {
                     console.error(`[index.js] Error al procesar IA para béisbol: ${aiError.message}`);
@@ -643,7 +671,7 @@ const LIVE_ALERT_EXPIRATION_MS = 40 * 60 * 1000; // 40 minutos
 
 function extractConfidence(text) {
     if (!text) return 0;
-    const match = text.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+    const match = text.match(/🔥\s*\*?Confianza(?: Estimada)?\*?:\s*\*?(\d+)%/i);
     return match ? parseInt(match[1]) : 0;
 }
 
@@ -655,8 +683,8 @@ async function handleLiveParlayQueue(fixtureId, sport, homeTeam, awayTeam, textT
 
     console.log(`[Parlay en Vivo] Alerta de alta confianza detectada para ${homeTeam} vs ${awayTeam} (${confidence}%). Agregando a la cola...`);
 
-    const recMatch = textToSend.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
-    const oddMatch = textToSend.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
+    const recMatch = textToSend.match(/🎯\s*\*?Recomendación(?:\s+Inteligente)?\*?:\s*\*?([^\n\*]+)/i);
+    const oddMatch = textToSend.match(/📈\s*\*?Momio(?:\s+Sugerido)?\*?:\s*\*?@?\s*([^\n\*]+)/i);
     const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/A';
     const odd = oddMatch ? oddMatch[1].replace(/\*/g, '').trim() : '1.60';
 
