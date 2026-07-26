@@ -1,0 +1,1537 @@
+{
+  "total": 182,
+  "fechaAyer": "25.07.2026",
+  "statsTotal": {
+    "Favorito Sufre en HT": {
+      "green": 20,
+      "red": 5,
+      "total": 25
+    },
+    "Sorpresa Tempranera": {
+      "green": 71,
+      "red": 25,
+      "total": 96
+    },
+    "Tarjeta Roja Estratégica": {
+      "green": 24,
+      "red": 2,
+      "total": 26
+    },
+    "Partido Caliente / Tarjetas": {
+      "green": 21,
+      "red": 2,
+      "total": 23
+    },
+    "Asedio Intenso (Late Goal)": {
+      "green": 5,
+      "red": 2,
+      "total": 7
+    },
+    "HT Comeback Favorito": {
+      "green": 1,
+      "red": 2,
+      "total": 3
+    },
+    "Late Corners": {
+      "green": 2,
+      "red": 0,
+      "total": 2
+    }
+  },
+  "statsAyer": {
+    "Partido Caliente / Tarjetas": {
+      "green": 5,
+      "red": 2,
+      "total": 7
+    },
+    "Tarjeta Roja Estratégica": {
+      "green": 12,
+      "red": 0,
+      "total": 12
+    },
+    "Sorpresa Tempranera": {
+      "green": 36,
+      "red": 8,
+      "total": 44
+    },
+    "Favorito Sufre en HT": {
+      "green": 9,
+      "red": 2,
+      "total": 11
+    },
+    "Late Corners": {
+      "green": 2,
+      "red": 0,
+      "total": 2
+    },
+    "HT Comeback Favorito": {
+      "green": 0,
+      "red": 1,
+      "total": 1
+    },
+    "Asedio Intenso (Late Goal)": {
+      "green": 1,
+      "red": 1,
+      "total": 2
+    }
+  },
+  "totalAyerCount": 79,
+  "rawVeredictos": [
+    {
+      "lineNumber": 591,
+      "fullDate": "22.07.2026 05:22:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Cooma Tigers FC</strong> 0 - 2 <strong>Western Sydney Wanderers</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (0-2)."
+    },
+    {
+      "lineNumber": 623,
+      "fullDate": "22.07.2026 06:10:01 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Launceston City</strong> 4 - 2 <strong>Launceston United</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 4-2."
+    },
+    {
+      "lineNumber": 655,
+      "fullDate": "22.07.2026 06:27:01 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Gwangju FC</strong> 1 - 1 <strong>Gimcheon Sangmu FC</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Gwangju FC) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 783,
+      "fullDate": "22.07.2026 10:57:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Mash&apos;al</strong> 1 - 1 <strong>Nasaf</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Mash&apos;al) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 831,
+      "fullDate": "22.07.2026 11:27:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>PAOK W</strong> 3 - 1 <strong>Hapoel Jerusalem W</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 3-1. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 847,
+      "fullDate": "22.07.2026 11:27:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>PAOK W</strong> 3 - 1 <strong>Hapoel Jerusalem W</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (1 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 911,
+      "fullDate": "22.07.2026 11:53:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "RED",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Trans Narva</strong> 0 - 0 <strong>Flora II</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido terminó 0-0 sin goles."
+    },
+    {
+      "lineNumber": 927,
+      "fullDate": "22.07.2026 11:55:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Neftchi Baku</strong> 2 - 4 <strong>Dinamo Minsk</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Dinamo Minsk) mantuvo el resultado (2-4)."
+    },
+    {
+      "lineNumber": 1215,
+      "fullDate": "22.07.2026 18:34:04 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Operario-PR</strong> 3 - 2 <strong>Ponte Preta</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> ¡Hubo gol tardío! Marcador final: 3-2."
+    },
+    {
+      "lineNumber": 1295,
+      "fullDate": "22.07.2026 19:41:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC Cincinnati</strong> 4 - 3 <strong>Vancouver Whitecaps</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (6 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1327,
+      "fullDate": "22.07.2026 19:42:03 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Columbus Crew</strong> 1 - 2 <strong>New York City FC</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (New York City FC) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 1359,
+      "fullDate": "22.07.2026 20:06:02 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Manta FC</strong> 1 - 1 <strong>LDU de Quito</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 1-1. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 1391,
+      "fullDate": "22.07.2026 20:27:01 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Lanus</strong> 2 - 0 <strong>Cienciano</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (7 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1407,
+      "fullDate": "22.07.2026 20:27:02 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Sao Paulo</strong> 1 - 2 <strong>Atletico Paranaense</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Atletico Paranaense) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 1423,
+      "fullDate": "22.07.2026 20:31:02 UTC-06:00",
+      "date": "22.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Internacional</strong> 1 - 2 <strong>Cruzeiro</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (8 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1607,
+      "fullDate": "23.07.2026 10:24:02 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Malisheva</strong> 2 - 0 <strong>Hibernian</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Malisheva) mantuvo el resultado (2-0)."
+    },
+    {
+      "lineNumber": 1687,
+      "fullDate": "23.07.2026 10:54:03 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Alashkert</strong> 1 - 1 <strong>CFR 1907 Cluj</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Alashkert) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 1703,
+      "fullDate": "23.07.2026 10:54:03 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Alashkert</strong> 1 - 1 <strong>CFR 1907 Cluj</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (7 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1719,
+      "fullDate": "23.07.2026 11:02:05 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>New England II</strong> 3 - 0 <strong>New York City II</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (5 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1799,
+      "fullDate": "23.07.2026 11:25:04 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Panevėžys</strong> 1 - 1 <strong>FK Tobol Kostanay</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (6 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1815,
+      "fullDate": "23.07.2026 11:27:03 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>TP-47</strong> 0 - 1 <strong>JS Hercules</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 0-1. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 1911,
+      "fullDate": "23.07.2026 11:51:11 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Paide</strong> 1 - 0 <strong>Zira</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-0)."
+    },
+    {
+      "lineNumber": 1927,
+      "fullDate": "23.07.2026 11:56:03 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Dila</strong> 0 - 4 <strong>Apollon Limassol</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (5 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 1991,
+      "fullDate": "23.07.2026 12:21:05 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Dunajska Streda</strong> 1 - 0 <strong>Velež</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-0)."
+    },
+    {
+      "lineNumber": 2023,
+      "fullDate": "23.07.2026 12:25:12 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Raków Częstochowa</strong> 3 - 1 <strong>Valletta FC</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 3-1."
+    },
+    {
+      "lineNumber": 2039,
+      "fullDate": "23.07.2026 12:25:13 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "HT Comeback Favorito",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Raków Częstochowa</strong> 3 - 1 <strong>Valletta FC</strong><br>📋 <strong>Regla:</strong> HT Comeback Favorito<br>💡 <strong>Resultado:</strong> ¡Remontada lograda! El favorito (Raków Częstochowa) empató o ganó (3-1)."
+    },
+    {
+      "lineNumber": 2151,
+      "fullDate": "23.07.2026 12:51:05 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Bate Borisov</strong> 1 - 1 <strong>FC Sion</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Bate Borisov) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 2167,
+      "fullDate": "23.07.2026 12:51:06 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "RED",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Bate Borisov</strong> 1 - 1 <strong>FC Sion</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> No cayeron más goles tras la alerta (1-1)."
+    },
+    {
+      "lineNumber": 2183,
+      "fullDate": "23.07.2026 12:51:06 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Tromso</strong> 0 - 1 <strong>Hradec Králové</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (0-1)."
+    },
+    {
+      "lineNumber": 2199,
+      "fullDate": "23.07.2026 12:51:07 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC Santa Coloma</strong> 1 - 3 <strong>Rapid Vienna</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-3)."
+    },
+    {
+      "lineNumber": 2215,
+      "fullDate": "23.07.2026 12:53:05 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Zimbru</strong> 1 - 1 <strong>FC Noah</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Zimbru) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 2231,
+      "fullDate": "23.07.2026 12:54:05 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Hammarby FF</strong> 1 - 1 <strong>Anderlecht</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Anderlecht) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 2247,
+      "fullDate": "23.07.2026 12:54:06 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Hammarby FF</strong> 1 - 1 <strong>Anderlecht</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (6 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 2295,
+      "fullDate": "23.07.2026 18:02:01 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Polessya</strong> 3 - 3 <strong>FC Copenhagen</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Polessya) mantuvo el resultado (3-3)."
+    },
+    {
+      "lineNumber": 2311,
+      "fullDate": "23.07.2026 18:02:02 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Bravo</strong> 2 - 1 <strong>Shkendija</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 2-1."
+    },
+    {
+      "lineNumber": 2327,
+      "fullDate": "23.07.2026 18:03:04 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FCSB</strong> 2 - 3 <strong>Auda</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Auda) mantuvo el resultado (2-3)."
+    },
+    {
+      "lineNumber": 2343,
+      "fullDate": "23.07.2026 18:03:04 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "RED",
+      "regla": "HT Comeback Favorito",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>FCSB</strong> 2 - 3 <strong>Auda</strong><br>📋 <strong>Regla:</strong> HT Comeback Favorito<br>💡 <strong>Resultado:</strong> El favorito (FCSB) no pudo remontar (2-3)."
+    },
+    {
+      "lineNumber": 2359,
+      "fullDate": "23.07.2026 18:03:05 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FCSB</strong> 2 - 3 <strong>Auda</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (6 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 2375,
+      "fullDate": "23.07.2026 18:03:06 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Beşiktaş</strong> 1 - 0 <strong>FC Midtjylland</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 1-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 2391,
+      "fullDate": "23.07.2026 18:03:06 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Beşiktaş</strong> 1 - 0 <strong>FC Midtjylland</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (1 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 2407,
+      "fullDate": "23.07.2026 18:03:07 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Twente</strong> 1 - 2 <strong>Ferencvarosi TC</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Ferencvarosi TC) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 2423,
+      "fullDate": "23.07.2026 18:03:07 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Racing Club Res.</strong> 2 - 3 <strong>Gimnasia Mendoza 2</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Gimnasia Mendoza 2) mantuvo el resultado (2-3)."
+    },
+    {
+      "lineNumber": 2439,
+      "fullDate": "23.07.2026 18:03:08 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC ST. Gallen</strong> 2 - 1 <strong>Benfica</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (FC ST. Gallen) mantuvo el resultado (2-1)."
+    },
+    {
+      "lineNumber": 2519,
+      "fullDate": "23.07.2026 20:41:01 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Defensa Y Justicia</strong> 1 - 1 <strong>Aldosivi</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Aldosivi) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 2551,
+      "fullDate": "23.07.2026 21:58:01 UTC-06:00",
+      "date": "23.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>CS Herediano</strong> 1 - 1 <strong>Puntarenas FC</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Puntarenas FC) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 2703,
+      "fullDate": "24.07.2026 08:55:02 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Shakhter Karagandy</strong> 4 - 1 <strong>Arys</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 4-1."
+    },
+    {
+      "lineNumber": 2783,
+      "fullDate": "24.07.2026 09:51:02 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Tauras</strong> 4 - 2 <strong>Kauno Žalgiris II</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 4-2."
+    },
+    {
+      "lineNumber": 2847,
+      "fullDate": "24.07.2026 10:17:05 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Oleksandria</strong> 1 - 0 <strong>Nyva Ternopil</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 1-0."
+    },
+    {
+      "lineNumber": 2863,
+      "fullDate": "24.07.2026 10:17:05 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Oleksandria</strong> 1 - 0 <strong>Nyva Ternopil</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-0)."
+    },
+    {
+      "lineNumber": 2911,
+      "fullDate": "24.07.2026 10:31:05 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Muras United</strong> 0 - 0 <strong>Bishkek City</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido terminó 0-0 sin goles."
+    },
+    {
+      "lineNumber": 3135,
+      "fullDate": "24.07.2026 11:53:04 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>PEPO</strong> 3 - 2 <strong>PuiU Helsinki</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 3-2."
+    },
+    {
+      "lineNumber": 3151,
+      "fullDate": "24.07.2026 11:53:05 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>PPJ</strong> 0 - 1 <strong>Union Plaani</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (0-1)."
+    },
+    {
+      "lineNumber": 3167,
+      "fullDate": "24.07.2026 11:54:04 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>NJS</strong> 1 - 2 <strong>ÅIFK</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 1-2."
+    },
+    {
+      "lineNumber": 3247,
+      "fullDate": "24.07.2026 12:53:06 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Leobendorf</strong> 0 - 1 <strong>SCR Altach</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (0-1)."
+    },
+    {
+      "lineNumber": 3263,
+      "fullDate": "24.07.2026 13:01:07 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>CSKA Moscow</strong> 2 - 1 <strong>Baltika</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 2-1."
+    },
+    {
+      "lineNumber": 3407,
+      "fullDate": "24.07.2026 18:54:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Tigres FC</strong> 0 - 1 <strong>Leones FC</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Leones FC) mantuvo el resultado (0-1)."
+    },
+    {
+      "lineNumber": 3503,
+      "fullDate": "24.07.2026 20:04:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Antigua GFC</strong> 3 - 1 <strong>Marquense</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (3-1)."
+    },
+    {
+      "lineNumber": 3519,
+      "fullDate": "24.07.2026 20:08:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Orlando Pride W</strong> 1 - 0 <strong>Chicago Red Stars W</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> ¡Hubo gol tardío! Marcador final: 1-0."
+    },
+    {
+      "lineNumber": 3535,
+      "fullDate": "24.07.2026 20:15:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Platense</strong> 2 - 2 <strong>Union Santa Fe</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (5 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 3647,
+      "fullDate": "24.07.2026 21:01:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Mineros de Zacatecas</strong> 3 - 3 <strong>Correcaminos Uat</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Correcaminos Uat) mantuvo el resultado (3-3)."
+    },
+    {
+      "lineNumber": 3695,
+      "fullDate": "24.07.2026 21:31:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Universitario</strong> 2 - 1 <strong>Cusco</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> ¡Hubo gol tardío! Marcador final: 2-1."
+    },
+    {
+      "lineNumber": 3711,
+      "fullDate": "24.07.2026 21:36:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>FAS</strong> 3 - 1 <strong>Municipal Limeño</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 3-1."
+    },
+    {
+      "lineNumber": 3743,
+      "fullDate": "24.07.2026 21:57:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Deportivo Saprissa</strong> 5 - 1 <strong>Perez Zeledon</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 5-1."
+    },
+    {
+      "lineNumber": 3759,
+      "fullDate": "24.07.2026 21:57:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Deportivo Saprissa</strong> 5 - 1 <strong>Perez Zeledon</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (5-1)."
+    },
+    {
+      "lineNumber": 3775,
+      "fullDate": "24.07.2026 21:58:01 UTC-06:00",
+      "date": "24.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Municipal</strong> 2 - 0 <strong>Mixco</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (2-0)."
+    },
+    {
+      "lineNumber": 3831,
+      "fullDate": "25.07.2026 07:00:31 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Vancouver FC</strong> 1 - 0 <strong>Cavalry FC</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (8 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 3847,
+      "fullDate": "25.07.2026 07:00:31 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Vancouver FC</strong> 1 - 0 <strong>Cavalry FC</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 1-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 4055,
+      "fullDate": "25.07.2026 07:55:06 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Břidličná</strong> 1 - 0 <strong>Hlučín</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Břidličná) mantuvo el resultado (1-0)."
+    },
+    {
+      "lineNumber": 4167,
+      "fullDate": "25.07.2026 08:33:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Dedza Dynamos</strong> 1 - 0 <strong>Nyasa Big Bullets</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Dedza Dynamos) mantuvo el resultado (1-0)."
+    },
+    {
+      "lineNumber": 4231,
+      "fullDate": "25.07.2026 08:49:13 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Mandalskameratene</strong> 8 - 3 <strong>Staal Jørpeland</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 8-3. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 4247,
+      "fullDate": "25.07.2026 08:51:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Trelleborg W</strong> 1 - 1 <strong>Linköping W</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Trelleborg W) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 4263,
+      "fullDate": "25.07.2026 08:52:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>JDFS Alberts</strong> 1 - 1 <strong>Super Nova 2</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Super Nova 2) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 4279,
+      "fullDate": "25.07.2026 08:52:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Arendal</strong> 4 - 0 <strong>Vidar</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (4-0)."
+    },
+    {
+      "lineNumber": 4295,
+      "fullDate": "25.07.2026 08:53:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Enskede W</strong> 1 - 1 <strong>Häcken II W</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-1)."
+    },
+    {
+      "lineNumber": 4311,
+      "fullDate": "25.07.2026 08:54:04 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>MP</strong> 3 - 3 <strong>Kooteepee</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (MP) mantuvo el resultado (3-3)."
+    },
+    {
+      "lineNumber": 4327,
+      "fullDate": "25.07.2026 08:54:04 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>MP</strong> 3 - 3 <strong>Kooteepee</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 3-3. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 4343,
+      "fullDate": "25.07.2026 08:56:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Elverum</strong> 5 - 3 <strong>Sandefjord II</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 5-3."
+    },
+    {
+      "lineNumber": 4359,
+      "fullDate": "25.07.2026 09:01:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Zhetysu</strong> 1 - 2 <strong>Kyzyl-Zhar</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (10 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 4375,
+      "fullDate": "25.07.2026 09:16:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Akron</strong> 0 - 5 <strong>Zenit</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> Se cumplió el Over de tarjetas (5 tarjetas registradas)."
+    },
+    {
+      "lineNumber": 4407,
+      "fullDate": "25.07.2026 09:21:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Mariehamn</strong> 1 - 1 <strong>AC Oulu</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Mariehamn) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 4423,
+      "fullDate": "25.07.2026 09:23:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Pogoń Siedlce</strong> 1 - 1 <strong>ŁKS Łódź</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Pogoń Siedlce) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 4551,
+      "fullDate": "25.07.2026 09:48:03 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Dundee</strong> 4 - 0 <strong>Clyde</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (4-0)."
+    },
+    {
+      "lineNumber": 4583,
+      "fullDate": "25.07.2026 09:51:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>IR Reykjavik</strong> 2 - 0 <strong>Fylkir</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (IR Reykjavik) mantuvo el resultado (2-0)."
+    },
+    {
+      "lineNumber": 4599,
+      "fullDate": "25.07.2026 09:53:03 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Montrose</strong> 0 - 2 <strong>Spartans</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Spartans) mantuvo el resultado (0-2)."
+    },
+    {
+      "lineNumber": 4615,
+      "fullDate": "25.07.2026 09:55:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Riga Mariners</strong> 1 - 1 <strong>JFK Ventspils</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (JFK Ventspils) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 4631,
+      "fullDate": "25.07.2026 09:56:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>ST Johnstone</strong> 1 - 1 <strong>East Fife</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-1)."
+    },
+    {
+      "lineNumber": 4647,
+      "fullDate": "25.07.2026 09:56:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Respublika FA</strong> 1 - 2 <strong>Jayxun</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Jayxun) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 4727,
+      "fullDate": "25.07.2026 10:28:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Farul Constanta</strong> 2 - 0 <strong>Corvinul Hunedoara</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 2-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 4791,
+      "fullDate": "25.07.2026 10:51:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Strogino</strong> 2 - 0 <strong>Volna Nizhegorodskaya</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (2-0)."
+    },
+    {
+      "lineNumber": 4807,
+      "fullDate": "25.07.2026 10:51:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Strogino</strong> 2 - 0 <strong>Volna Nizhegorodskaya</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Strogino) mantuvo el resultado (2-0)."
+    },
+    {
+      "lineNumber": 4823,
+      "fullDate": "25.07.2026 10:56:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Plzen</strong> 1 - 3 <strong>Slovan Liberec</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Slovan Liberec) mantuvo el resultado (1-3)."
+    },
+    {
+      "lineNumber": 4919,
+      "fullDate": "25.07.2026 11:25:03 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Nagykanizsai ULE</strong> 2 - 3 <strong>Diosgyori VTK</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 2-3."
+    },
+    {
+      "lineNumber": 4935,
+      "fullDate": "25.07.2026 11:26:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Gornik Zabrze</strong> 2 - 1 <strong>Slask Wroclaw</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 2-1."
+    },
+    {
+      "lineNumber": 4951,
+      "fullDate": "25.07.2026 11:28:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC Gomel</strong> 1 - 2 <strong>FC Vitebsk</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (FC Vitebsk) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 4983,
+      "fullDate": "25.07.2026 11:56:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Fjardabyggd / Leiknir</strong> 4 - 2 <strong>Thróttur Vogar</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 4-2."
+    },
+    {
+      "lineNumber": 4999,
+      "fullDate": "25.07.2026 11:56:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Stromsgodset</strong> 1 - 1 <strong>Lyn</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (1-1)."
+    },
+    {
+      "lineNumber": 5015,
+      "fullDate": "25.07.2026 11:57:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Tekstilshchik</strong> 0 - 0 <strong>Spartak Kostroma</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 0-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 5031,
+      "fullDate": "25.07.2026 11:59:03 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Dock Sud</strong> 1 - 1 <strong>Liniers</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Liniers) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 5063,
+      "fullDate": "25.07.2026 12:02:14 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Berazategui</strong> 0 - 1 <strong>Mercedes</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Mercedes) mantuvo el resultado (0-1)."
+    },
+    {
+      "lineNumber": 5079,
+      "fullDate": "25.07.2026 12:04:05 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Spartak Trnava</strong> 1 - 1 <strong>Skalica</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Skalica) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 5127,
+      "fullDate": "25.07.2026 12:24:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Krems / Rehberg</strong> 0 - 1 <strong>Austria Lustenau</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (0-1)."
+    },
+    {
+      "lineNumber": 5287,
+      "fullDate": "25.07.2026 12:49:14 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Zawisza Bydgoszcz</strong> 1 - 1 <strong>Sokół Kleczew</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Sokół Kleczew) mantuvo el resultado (1-1)."
+    },
+    {
+      "lineNumber": 5303,
+      "fullDate": "25.07.2026 12:51:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Torpedo Zhodino</strong> 1 - 2 <strong>FC Dnepr Mogilev</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (FC Dnepr Mogilev) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 5319,
+      "fullDate": "25.07.2026 12:54:05 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Fratria</strong> 0 - 1 <strong>Marek</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Marek) mantuvo el resultado (0-1)."
+    },
+    {
+      "lineNumber": 5335,
+      "fullDate": "25.07.2026 12:58:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Yantra 2019</strong> 0 - 2 <strong>Spartak Pleven</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Spartak Pleven) mantuvo el resultado (0-2)."
+    },
+    {
+      "lineNumber": 5367,
+      "fullDate": "25.07.2026 13:28:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Maccabi Haifa</strong> 2 - 3 <strong>Hapoel Haifa</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Hapoel Haifa) mantuvo el resultado (2-3)."
+    },
+    {
+      "lineNumber": 5399,
+      "fullDate": "25.07.2026 13:40:10 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Dinamo Bucuresti</strong> 5 - 1 <strong>Universitatea Craiova</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 5-1. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 5431,
+      "fullDate": "25.07.2026 13:52:00 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>IMT Novi Beograd</strong> 4 - 0 <strong>Zemun</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 4-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 5447,
+      "fullDate": "25.07.2026 13:53:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Nação</strong> 1 - 2 <strong>Hercílio Luz</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 1-2."
+    },
+    {
+      "lineNumber": 5463,
+      "fullDate": "25.07.2026 13:57:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Canuelas</strong> 0 - 1 <strong>Deportivo Muñiz</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Deportivo Muñiz) mantuvo el resultado (0-1)."
+    },
+    {
+      "lineNumber": 5479,
+      "fullDate": "25.07.2026 13:58:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Zbrojovka Brno</strong> 3 - 1 <strong>Sparta Praha</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Zbrojovka Brno) mantuvo el resultado (3-1)."
+    },
+    {
+      "lineNumber": 5495,
+      "fullDate": "25.07.2026 14:00:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Sport Huancayo</strong> 2 - 0 <strong>Atletico Grau</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 2-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 5511,
+      "fullDate": "25.07.2026 14:00:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>CA Estudiantes</strong> 1 - 2 <strong>Ciudad de Bolívar</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Ciudad de Bolívar) mantuvo el resultado (1-2)."
+    },
+    {
+      "lineNumber": 5527,
+      "fullDate": "25.07.2026 14:04:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Leones de Rosario</strong> 0 - 2 <strong>Central Cordoba</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Central Cordoba) mantuvo el resultado (0-2)."
+    },
+    {
+      "lineNumber": 5543,
+      "fullDate": "25.07.2026 14:11:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Lokomotiv Sofia</strong> 1 - 2 <strong>Levski Sofia</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El favorito remontó y el partido terminó 1-2."
+    },
+    {
+      "lineNumber": 5575,
+      "fullDate": "25.07.2026 14:28:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Costa Brava</strong> 0 - 1 <strong>Deportivo Rincon</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Deportivo Rincon) mantuvo el resultado (0-1)."
+    },
+    {
+      "lineNumber": 5623,
+      "fullDate": "25.07.2026 14:56:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Always Ready</strong> 3 - 1 <strong>San Antonio Bulo Bulo</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido se rompió en el 2do tiempo (3-1)."
+    },
+    {
+      "lineNumber": 5639,
+      "fullDate": "25.07.2026 14:58:00 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Atletico DE Rafaela</strong> 1 - 0 <strong>Nueva Chicago</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Marcador final: 1-0. Alerta aprovechada tras la expulsión."
+    },
+    {
+      "lineNumber": 5751,
+      "fullDate": "25.07.2026 15:59:01 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Santa Cruz</strong> 0 - 1 <strong>Figueirense</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El underdog (Figueirense) mantuvo el resultado (0-1)."
+    },
+    {
+      "lineNumber": 5767,
+      "fullDate": "25.07.2026 15:59:02 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Yaracuyanos FC</strong> 0 - 0 <strong>Atletico el Vigia FC</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> El partido terminó 0-0 sin goles."
+    },
+    {
+      "lineNumber": 6071,
+      "fullDate": "25.07.2026 17:24:09 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Confiança</strong> 1 - 1 <strong>AO Itabaiana</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora porque se anotaron 2 goles en total (1-1), lo cual supera la línea establecida de más de 1.5 goles."
+    },
+    {
+      "lineNumber": 6087,
+      "fullDate": "25.07.2026 17:28:09 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Late Corners",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Santos</strong> 2 - 2 <strong>Chapecoense-sc</strong><br>📋 <strong>Regla:</strong> Late Corners<br>💡 <strong>Resultado:</strong> La recomendación es ganadora ya que se registraron 13 córneres en total (12 de Santos y 1 de Chapecoense-sc), superando la línea de 8.5."
+    },
+    {
+      "lineNumber": 6103,
+      "fullDate": "25.07.2026 17:30:10 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Junior W</strong> 0 - 0 <strong>Millonarios W</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora porque el partido entre Junior W y Millonarios W terminó en empate 0-0 y se requería la victoria de Millonarios W."
+    },
+    {
+      "lineNumber": 6119,
+      "fullDate": "25.07.2026 17:31:09 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Huachipato</strong> 3 - 3 <strong>Cobresal</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora ya que se anotaron 6 goles en total (3-3), superando la línea propuesta de Más de 3.5 goles."
+    },
+    {
+      "lineNumber": 6183,
+      "fullDate": "25.07.2026 17:59:09 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Tlaxcala</strong> 2 - 4 <strong>Leones Negros UDG</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora ya que el marcador final de 2-4 suma un total de 6 goles, superando la línea de Over 2.5."
+    },
+    {
+      "lineNumber": 6215,
+      "fullDate": "25.07.2026 18:05:11 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>San Martin Tucuman</strong> 1 - 2 <strong>Temperley</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el segundo gol del partido fue anotado por San Martín de Tucumán en el minuto 90+1."
+    },
+    {
+      "lineNumber": 6231,
+      "fullDate": "25.07.2026 18:17:15 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>River Plate</strong> 0 - 1 <strong>Barracas Central</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora debido a que River Plate cayó derrotado 0-1 ante Barracas Central, no logrando la victoria directa recomendada."
+    },
+    {
+      "lineNumber": 6247,
+      "fullDate": "25.07.2026 18:17:15 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "HT Comeback Favorito",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>River Plate</strong> 0 - 1 <strong>Barracas Central</strong><br>📋 <strong>Regla:</strong> HT Comeback Favorito<br>💡 <strong>Resultado:</strong> La apuesta resulta perdedora debido a que River Plate cayó derrotado por 0-1 ante Barracas Central, no logrando la victoria requerida."
+    },
+    {
+      "lineNumber": 6263,
+      "fullDate": "25.07.2026 18:17:16 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>River Plate</strong> 0 - 1 <strong>Barracas Central</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> La recomendación resultó perdedora ya que el partido finalizó 0-1 con solo 1 gol en total, sin superar la línea requerida de más de 1.5 goles."
+    },
+    {
+      "lineNumber": 6343,
+      "fullDate": "25.07.2026 18:56:17 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Chattanooga</strong> 4 - 0 <strong>Philadelphia Union II</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora porque se mostraron un total de 5 tarjetas amarillas en el partido, quedando por debajo de las 5.5 requeridas."
+    },
+    {
+      "lineNumber": 6375,
+      "fullDate": "25.07.2026 19:05:22 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Late Corners",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Guadalajara Chivas</strong> 1 - 0 <strong>FC Juarez</strong><br>📋 <strong>Regla:</strong> Late Corners<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora debido a que se cobraron 21 tiros de esquina en total (19 de Guadalajara Chivas y 2 de FC Juárez), superando la línea de 14.5."
+    },
+    {
+      "lineNumber": 6391,
+      "fullDate": "25.07.2026 19:05:23 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Guadalajara Chivas</strong> 1 - 0 <strong>FC Juarez</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora porque se anotó 1 gol en el partido, superando la línea requerida de más de 0.5 goles totales."
+    },
+    {
+      "lineNumber": 6407,
+      "fullDate": "25.07.2026 19:07:10 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Detroit City</strong> 0 - 1 <strong>Las Vegas Lights</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es perdedora porque el partido finalizó con solo 1 gol en total (0-1), por debajo del umbral de más de 2.5 goles requeridos."
+    },
+    {
+      "lineNumber": 6471,
+      "fullDate": "25.07.2026 19:28:09 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Vasco DA Gama</strong> 1 - 1 <strong>Mirassol</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora debido a que el partido finalizó en empate 1-1, un resultado contemplado en la Doble Oportunidad (1X)."
+    },
+    {
+      "lineNumber": 6599,
+      "fullDate": "25.07.2026 20:33:08 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Lanus</strong> 1 - 0 <strong>San Lorenzo</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Lanús anotó el primer y único gol del partido en el minuto 65."
+    },
+    {
+      "lineNumber": 6615,
+      "fullDate": "25.07.2026 20:39:12 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>St. Louis City</strong> 1 - 0 <strong>Colorado Rapids</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque St. Louis City obtuvo la victoria al finalizar el partido con un marcador a favor de 1-0 sobre Colorado Rapids."
+    },
+    {
+      "lineNumber": 6631,
+      "fullDate": "25.07.2026 20:39:13 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>St. Louis City</strong> 1 - 0 <strong>Colorado Rapids</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta es ganadora debido a que St. Louis City obtuvo la victoria directa tras finalizar el partido 1-0 a su favor."
+    },
+    {
+      "lineNumber": 6647,
+      "fullDate": "25.07.2026 20:52:12 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Real Estelí</strong> 2 - 0 <strong>Matagalpa</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> Real Estelí ganó el partido 2-0, superando por más de un gol la diferencia requerida por el hándicap asiático -1.0."
+    },
+    {
+      "lineNumber": 6663,
+      "fullDate": "25.07.2026 20:52:13 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Real Estelí</strong> 2 - 0 <strong>Matagalpa</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el Real Estelí ganó por dos goles de diferencia (2-0), superando la línea del hándicap asiático de -1.25."
+    },
+    {
+      "lineNumber": 6695,
+      "fullDate": "25.07.2026 20:56:12 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Monarcas</strong> 4 - 2 <strong>CA La Paz</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora porque ambos equipos anotaron al menos un gol durante el partido, finalizando con un marcador de 4-2."
+    },
+    {
+      "lineNumber": 6711,
+      "fullDate": "25.07.2026 20:56:12 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Monarcas</strong> 4 - 2 <strong>CA La Paz</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Monarcas obtuvo la victoria con un marcador final de 4-2 sobre CA La Paz."
+    },
+    {
+      "lineNumber": 6727,
+      "fullDate": "25.07.2026 21:02:09 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Spokane Velocity</strong> 3 - 1 <strong>Fort Wayne</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Spokane Velocity logró la victoria por 3-1, cumpliendo con el pronóstico de ganancia local o empate."
+    },
+    {
+      "lineNumber": 6743,
+      "fullDate": "25.07.2026 21:02:12 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Malacateco</strong> 1 - 1 <strong>Cobán Imperial</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque ambos equipos anotaron al menos un gol, finalizando el partido con un marcador de 1-1."
+    },
+    {
+      "lineNumber": 6759,
+      "fullDate": "25.07.2026 21:02:17 UTC-06:00",
+      "date": "25.07.2026",
+      "status": "RED",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>North Texas</strong> 2 - 2 <strong>Los Angeles FC II</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta es perdedora debido a que solo se registraron 4 tarjetas amarillas en el partido, no alcanzando el mínimo de 6 necesarias para superar el umbral de 5.5."
+    },
+    {
+      "lineNumber": 6911,
+      "fullDate": "26.07.2026 07:01:11 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>San Jose Earthquakes</strong> 1 - 1 <strong>Los Angeles Galaxy</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es perdedora porque el partido terminó con un marcador de 1-1 (2 goles en total), por lo que no se superó la línea de más de 2.5 goles."
+    },
+    {
+      "lineNumber": 6927,
+      "fullDate": "26.07.2026 07:01:13 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>San Jose Earthquakes</strong> 1 - 1 <strong>Los Angeles Galaxy</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora porque el partido terminó con un marcador final de 1-1, sumando solo 2 goles en total, lo cual no supera el umbral de 2.5 goles."
+    },
+    {
+      "lineNumber": 6943,
+      "fullDate": "26.07.2026 07:01:18 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Portland Timbers</strong> 2 - 1 <strong>Real Salt Lake</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Portland Timbers ganó el partido por 2-1, cumpliendo con la opción de victoria local dentro de la Doble Oportunidad."
+    },
+    {
+      "lineNumber": 6959,
+      "fullDate": "26.07.2026 07:01:18 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Portland Timbers</strong> 2 - 1 <strong>Real Salt Lake</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora debido a que Portland Timbers se impuso 2-1 ante Real Salt Lake, cumpliendo la condición de victoria local o empate."
+    },
+    {
+      "lineNumber": 6975,
+      "fullDate": "26.07.2026 07:01:19 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Portland Timbers</strong> 2 - 1 <strong>Real Salt Lake</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Portland Timbers obtuvo la victoria por 2-1 frente a Real Salt Lake, cumpliendo con la condición de victoria local o empate."
+    },
+    {
+      "lineNumber": 6991,
+      "fullDate": "26.07.2026 07:01:20 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Portland Timbers</strong> 2 - 1 <strong>Real Salt Lake</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Portland Timbers ganó el partido por 2-1, cumpliendo con la condición de victoria local de la Doble Oportunidad."
+    },
+    {
+      "lineNumber": 7119,
+      "fullDate": "26.07.2026 07:51:10 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Asedio Intenso (Late Goal)",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>IF Brommapojkarna</strong> 1 - 1 <strong>Hammarby FF</strong><br>📋 <strong>Regla:</strong> Asedio Intenso (Late Goal)<br>💡 <strong>Resultado:</strong> La apuesta resulta ganadora ya que Hammarby FF marcó el primer gol del partido en el minuto 79, cumpliendo con la recomendación del próximo gol y superando además el total de 0.5 goles."
+    },
+    {
+      "lineNumber": 7151,
+      "fullDate": "26.07.2026 07:56:13 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Inter Turku</strong> 1 - 2 <strong>Gnistan</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora debido a que el partido terminó con un total de 3 goles (1-2), quedando por debajo de los 3.5 goles requeridos."
+    },
+    {
+      "lineNumber": 7167,
+      "fullDate": "26.07.2026 07:56:13 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Inter Turku</strong> 1 - 2 <strong>Gnistan</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora porque el partido finalizó con un total de 3 goles (1-2), cifra que no supera el umbral de más de 3.5 goles requeridos."
+    },
+    {
+      "lineNumber": 7183,
+      "fullDate": "26.07.2026 08:09:11 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Trygg/Lade</strong> 1 - 2 <strong>Eidsvold</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el marcador final de 1-2 suma un total de 3 goles en el partido, superando la línea de 2.5 goles."
+    },
+    {
+      "lineNumber": 7247,
+      "fullDate": "26.07.2026 08:23:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>jerv</strong> 1 - 2 <strong>Lysekloster</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es perdedora porque el partido terminó 1-2 a favor de Lysekloster, por lo que Jerv no logró ganar ni empatar como requería la doble oportunidad."
+    },
+    {
+      "lineNumber": 7263,
+      "fullDate": "26.07.2026 08:28:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Brann</strong> 2 - 3 <strong>Valerenga</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el partido finalizó con un total de 5 goles (2-3), superando la línea de más de 2.5 goles."
+    },
+    {
+      "lineNumber": 7327,
+      "fullDate": "26.07.2026 08:46:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Raków Częstochowa</strong> 1 - 2 <strong>Wisla Plock</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó perdedora ya que el Wisla Plock ganó el partido 1-2, por lo que no se cumplió la condición de victoria del Raków Częstochowa o empate."
+    },
+    {
+      "lineNumber": 7343,
+      "fullDate": "26.07.2026 08:57:11 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Porto Football U20</strong> 0 - 1 <strong>Referencia U20</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el equipo visitante, Referencia U20, ganó el partido con un marcador final de 0-1."
+    },
+    {
+      "lineNumber": 7359,
+      "fullDate": "26.07.2026 08:58:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Slavia Praha</strong> 5 - 1 <strong>Slovácko</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora ya que Slavia Praha cumplió con la victoria directa al derrotar a Slovácko con un marcador final de 5-1."
+    },
+    {
+      "lineNumber": 7375,
+      "fullDate": "26.07.2026 08:58:13 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Santo André</strong> 0 - 0 <strong>São Caetano</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La recomendación es ganadora ya que el partido finalizó en empate 0-0, cumpliendo con la opción de Doble Oportunidad (São Caetano o Empate)."
+    },
+    {
+      "lineNumber": 7391,
+      "fullDate": "26.07.2026 08:59:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Juventus</strong> 3 - 1 <strong>Paulista</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La recomendación es ganadora ya que la Juventus venció 3-1 a Paulista, cumpliendo la condición de victoria local o empate."
+    },
+    {
+      "lineNumber": 7439,
+      "fullDate": "26.07.2026 09:21:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>KuPS Akatemia</strong> 2 - 2 <strong>VJS</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el marcador final de 2-2 suma un total de 4 goles, superando la línea de más de 2.5 goles."
+    },
+    {
+      "lineNumber": 7503,
+      "fullDate": "26.07.2026 09:40:18 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Vasas</strong> 2 - 2 <strong>Gyori ETO FC</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta resulta perdedora ya que el partido finalizó en empate 2-2 y se requería la victoria de Gyori ETO FC."
+    },
+    {
+      "lineNumber": 7535,
+      "fullDate": "26.07.2026 09:52:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Torpedo Moskva</strong> 1 - 1 <strong>Shinnik Yaroslavl</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el partido finalizó en empate 1-1, cumpliendo con la condición de victoria o empate de Torpedo Moskva (1X)."
+    },
+    {
+      "lineNumber": 7551,
+      "fullDate": "26.07.2026 09:57:11 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC Copenhagen</strong> 3 - 2 <strong>Lyngby</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora debido a que el partido finalizó con un total de 5 goles (3-2), superando la línea requerida de más de 3.5 goles."
+    },
+    {
+      "lineNumber": 7615,
+      "fullDate": "26.07.2026 10:22:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Favorito Sufre en HT",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Gais</strong> 1 - 1 <strong>Halmstad</strong><br>📋 <strong>Regla:</strong> Favorito Sufre en HT<br>💡 <strong>Resultado:</strong> La apuesta resulta perdedora debido a que el partido finalizó en empate 1-1 y se requería la victoria directa de Gais."
+    },
+    {
+      "lineNumber": 7631,
+      "fullDate": "26.07.2026 10:25:11 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Malmo FF</strong> 1 - 2 <strong>IF Elfsborg</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora porque el Malmö FF anotó el segundo gol del partido en el minuto 22 a través de J. Stryger."
+    },
+    {
+      "lineNumber": 7647,
+      "fullDate": "26.07.2026 10:25:14 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC ST. Gallen</strong> 2 - 1 <strong>FC Zurich</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora ya que el marcador final de 2-1 sumó un total de 3 goles, superando la línea de más de 2.5 goles."
+    },
+    {
+      "lineNumber": 7711,
+      "fullDate": "26.07.2026 10:52:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Moss</strong> 1 - 2 <strong>Raufoss</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora ya que ambos equipos lograron marcar al menos un gol durante el partido, finalizando con un marcador de 1-2."
+    },
+    {
+      "lineNumber": 7743,
+      "fullDate": "26.07.2026 10:55:08 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Žilina</strong> 4 - 4 <strong>FK Košice</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el partido finalizó con un total de 8 goles (4-4), superando la línea requerida de más de 3.5 goles."
+    },
+    {
+      "lineNumber": 7823,
+      "fullDate": "26.07.2026 11:25:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Kraft</strong> 2 - 3 <strong>Vaajakoski</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque Vaajakoski obtuvo la victoria tras finalizar el partido con un marcador de 3-2 a su favor."
+    },
+    {
+      "lineNumber": 7855,
+      "fullDate": "26.07.2026 11:31:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Widzew Łódź</strong> 2 - 2 <strong>Motor Lublin</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el partido finalizó con un marcador de 2-2, sumando un total de 4 goles y superando la línea de más de 2.5 goles."
+    },
+    {
+      "lineNumber": 7887,
+      "fullDate": "26.07.2026 11:51:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Chertanovo Moscow</strong> 1 - 1 <strong>Zvezda St. Petersburg</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta resulta ganadora porque el partido finalizó en empate 1-1, lo cual está cubierto por la recomendación de Doble Oportunidad (1X)."
+    },
+    {
+      "lineNumber": 7903,
+      "fullDate": "26.07.2026 11:54:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Bravo</strong> 0 - 3 <strong>Nafta</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el partido finalizó con un total de 3 goles (0-3), superando el umbral de más de 2.5 goles."
+    },
+    {
+      "lineNumber": 7919,
+      "fullDate": "26.07.2026 11:54:13 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Cherno More Varna</strong> 0 - 3 <strong>Spartak Varna</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el partido finalizó con un marcador de 0-3, sumando un total de 3 goles y superando la línea de 2.5 goles."
+    },
+    {
+      "lineNumber": 7951,
+      "fullDate": "26.07.2026 11:57:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "RED",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟥 </strong>RED<br><br>⚽ <strong>Leithaprodersdorf</strong> 2 - 1 <strong>Admira Wacker</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> El partido finalizó con un marcador de 2-1 (3 goles en total), por lo que no se alcanzó el mínimo de 4 goles requerido para superar la línea de más de 3.5."
+    },
+    {
+      "lineNumber": 8015,
+      "fullDate": "26.07.2026 12:28:09 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>D. Puerto Montt</strong> 3 - 2 <strong>Antofagasta</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> D. Puerto Montt ganó el partido con un marcador final de 3-2 sobre Antofagasta, cumpliendo con la recomendación de victoria directa."
+    },
+    {
+      "lineNumber": 8047,
+      "fullDate": "26.07.2026 12:35:19 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Sorpresa Tempranera",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Rubin</strong> 1 - 3 <strong>FC Krasnodar</strong><br>📋 <strong>Regla:</strong> Sorpresa Tempranera<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el marcador final fue 1-3, sumando un total de 4 goles que supera la línea de 2.5 anotaciones."
+    },
+    {
+      "lineNumber": 8063,
+      "fullDate": "26.07.2026 12:35:19 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Rubin</strong> 1 - 3 <strong>FC Krasnodar</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta es ganadora porque el FC Krasnodar se impuso con un marcador final de 1-3, cumpliendo con la condición de empate o victoria visitante (X2)."
+    },
+    {
+      "lineNumber": 8079,
+      "fullDate": "26.07.2026 12:35:19 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>Rubin</strong> 1 - 3 <strong>FC Krasnodar</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> El segundo gol del partido fue anotado por el FC Krasnodar en el minuto 45+6&apos;, cumpliendo con la recomendación de apuesta."
+    },
+    {
+      "lineNumber": 8095,
+      "fullDate": "26.07.2026 12:36:12 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Partido Caliente / Tarjetas",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC Orenburg</strong> 2 - 1 <strong>FC Rostov</strong><br>📋 <strong>Regla:</strong> Partido Caliente / Tarjetas<br>💡 <strong>Resultado:</strong> La apuesta es ganadora ya que se mostraron un total de 10 tarjetas en el partido (9 amarillas y 1 roja), superando el límite de 5.5 tarjetas."
+    },
+    {
+      "lineNumber": 8111,
+      "fullDate": "26.07.2026 12:36:13 UTC-06:00",
+      "date": "26.07.2026",
+      "status": "GREEN",
+      "regla": "Tarjeta Roja Estratégica",
+      "line": "🏁 <strong>VEREDICTO POST-PARTIDO: 🟩 </strong>GREEN<br><br>⚽ <strong>FC Orenburg</strong> 2 - 1 <strong>FC Rostov</strong><br>📋 <strong>Regla:</strong> Tarjeta Roja Estratégica<br>💡 <strong>Resultado:</strong> La apuesta resultó ganadora debido a que el marcador final fue de 2-1, sumando un total de 3 goles en el partido, lo cual supera la línea de más de 1.5 goles."
+    }
+  ]
+}

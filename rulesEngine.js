@@ -316,6 +316,66 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
         let isGreen = false;
         let explanation = '';
         let evaluatedByAI = false;
+        let isOmitted = false;
+
+        // Interceptar si la IA recomendó evitar la apuesta
+        if (meta.aiRecommendation && 
+            (meta.aiRecommendation.toLowerCase().includes('evitar') || 
+             meta.aiRecommendation.toLowerCase().includes('no recomendada'))) {
+            isOmitted = true;
+        }
+
+        if (isOmitted) {
+            // Evaluamos la regla de forma estática para el reporte informativo de control
+            let traditionalGreen = false;
+            switch (meta.ruleType) {
+                case 1: // Tarjeta roja
+                    traditionalGreen = true;
+                    break;
+                case 2: // Favorito Sufre HT 0-0
+                    traditionalGreen = (finalHome + finalAway) > 0;
+                    break;
+                case 3: // Sorpresa tempranera
+                    {
+                        const isHomeUnderdog = meta.odds.home > meta.odds.away;
+                        const underdogGoals = isHomeUnderdog ? finalHome : finalAway;
+                        const favoriteGoals = isHomeUnderdog ? finalAway : finalHome;
+                        traditionalGreen = underdogGoals >= favoriteGoals;
+                    }
+                    break;
+                case 4: // Asedio (Late Goal)
+                    traditionalGreen = (finalHome + finalAway) > meta.totalGoalsAtAlert;
+                    break;
+                case 5: // HT Comeback
+                    {
+                        const isHomeFav = meta.favoriteSide === 'home';
+                        const favFinalGoals = isHomeFav ? finalHome : finalAway;
+                        const underdogFinalGoals = isHomeFav ? finalAway : finalHome;
+                        traditionalGreen = favFinalGoals >= underdogFinalGoals;
+                    }
+                    break;
+                case 6: // Late Corners
+                    traditionalGreen = true;
+                    break;
+                case 7: // Partido Caliente
+                    {
+                        const totalCards = finalEvents.filter(e => e.type === 'Card').length;
+                        traditionalGreen = totalCards >= 5 || finalEvents.some(e => e.detail === 'Red Card');
+                    }
+                    break;
+                default:
+                    traditionalGreen = true;
+            }
+
+            const outcomeStr = traditionalGreen ? 'GREEN' : 'RED';
+            explanation = `Alerta identificada con alto riesgo por la IA. Se recomendó EVITAR la operación. El resultado de control tradicional habría sido ${outcomeStr}.`;
+            const icon = '⚪ *APUESTA EVITADA*';
+            const msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;
+            
+            // isGreen es false para que no compute en el win rate activo, isOmitted: true indica descarte
+            results.push({ isGreen: false, isOmitted: true, msg, meta });
+            continue;
+        }
 
         if (meta.aiRecommendation) {
             console.log(`[rulesEngine] Evaluando recomendación de IA para fútbol: "${meta.aiRecommendation}"`);

@@ -131,6 +131,45 @@ async function evaluateBaseballAlertResults(alertMetadatas, finalGame) {
         let isGreen = false;
         let explanation = '';
         let evaluatedByAI = false;
+        let isOmitted = false;
+
+        // Interceptar si la IA recomendó evitar la apuesta
+        if (meta.aiRecommendation && 
+            (meta.aiRecommendation.toLowerCase().includes('evitar') || 
+             meta.aiRecommendation.toLowerCase().includes('no recomendada'))) {
+            isOmitted = true;
+        }
+
+        if (isOmitted) {
+            // Evaluamos la regla de forma estática para el reporte informativo de control
+            let traditionalGreen = false;
+            switch (meta.ruleType) {
+                case 1: // Favorito en Apuros MLB
+                    {
+                        const isHomeFav = meta.favoriteSide === 'home';
+                        const favFinalRuns = isHomeFav ? finalHomeRuns : finalAwayRuns;
+                        const underdogFinalRuns = isHomeFav ? finalAwayRuns : finalHomeRuns;
+                        traditionalGreen = favFinalRuns >= underdogFinalRuns;
+                    }
+                    break;
+                case 2: // Final Apretado MLB
+                    traditionalGreen = true;
+                    break;
+                case 3: // Festín de Carreras
+                    traditionalGreen = (finalHomeRuns + finalAwayRuns) >= 9;
+                    break;
+                default:
+                    traditionalGreen = true;
+            }
+
+            const outcomeStr = traditionalGreen ? 'GREEN' : 'RED';
+            explanation = `Alerta identificada con alto riesgo por la IA. Se recomendó EVITAR la operación. El resultado de control tradicional habría sido ${outcomeStr}.`;
+            const icon = '⚪ *APUESTA EVITADA*';
+            const msg = `🏁 *VEREDICTO MLB POST-PARTIDO: ${icon}*\n\n🧢 *${meta.homeTeam}* ${finalHomeRuns} - ${finalAwayRuns} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;
+            
+            results.push({ isGreen: false, isOmitted: true, msg, meta });
+            continue;
+        }
 
         if (meta.aiRecommendation) {
             console.log(`[baseballRulesEngine] Evaluando recomendación de IA para béisbol: "${meta.aiRecommendation}"`);

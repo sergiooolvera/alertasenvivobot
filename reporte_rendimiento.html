@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Rendimiento - Alertas en Vivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(22, 31, 48, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.15);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.15);
+      --red: #ef4444;
+      --red-glow: rgba(239, 68, 68, 0.15);
+      --yellow: #f59e0b;
+      --yellow-glow: rgba(245, 158, 11, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--green));
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    .logo-container svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #ffffff, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    /* Tabs Navigation */
+    .tabs-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.75rem 2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+
+    /* Grid layout */
+    .dashboard-section {
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .dashboard-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats Overview Cards */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--primary);
+    }
+
+    .stat-card.green-theme::before {
+      background: var(--green);
+    }
+
+    .stat-card.red-theme::before {
+      background: var(--red);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-value {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 0.5rem 0;
+      background: linear-gradient(135deg, #fff, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card.green-theme .stat-value {
+      background: linear-gradient(135deg, #34d399, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card.red-theme .stat-value {
+      background: linear-gradient(135deg, #f87171, #dc2626);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* Strategy Performance Grid */
+    .strategies-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .strategies-title svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--primary);
+    }
+
+    .strategies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .strategy-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .strategy-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .strategy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .strategy-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      max-width: 70%;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-excellent {
+      background: var(--green-glow);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-consistent {
+      background: var(--primary-glow);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .badge-review {
+      background: var(--red-glow);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-unreliable {
+      background: var(--yellow-glow);
+      color: var(--yellow);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .strategy-metrics {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+
+    .metric-group {
+      text-align: center;
+    }
+
+    .metric-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .metric-num.green-text { color: var(--green); }
+    .metric-num.red-text { color: var(--red); }
+
+    .metric-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .winrate-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Analysis & Suggestions Box */
+    .analysis-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      margin-top: 3rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .analysis-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .analysis-title svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--primary);
+    }
+
+    .status-group {
+      margin-bottom: 2.5rem;
+    }
+
+    .status-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+    }
+
+    .status-header.success { color: var(--green); }
+    .status-header.warning { color: var(--yellow); }
+    .status-header.danger { color: var(--red); }
+
+    .status-header svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .status-list {
+      list-style: none;
+      padding-left: 2rem;
+    }
+
+    .status-list li {
+      position: relative;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    .status-list li strong {
+      font-weight: 600;
+      color: white;
+    }
+
+    .status-list li::before {
+      content: '✦';
+      position: absolute;
+      left: -1.5rem;
+      color: var(--text-muted);
+    }
+
+    .status-group.success .status-list li::before { color: var(--green); }
+    .status-group.warning .status-list li::before { color: var(--yellow); }
+    .status-group.danger .status-list li::before { color: var(--red); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Custom Responsive Adjustments */
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      body { padding: 1.5rem 0.5rem; }
+      .tab-btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <!-- SVG Icono Balon/Estadistica -->
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+      </div>
+      <h1>Resumen de Rendimiento de Estrategias</h1>
+      <p class="subtitle">Análisis del bot "Alertas en vivo" — Histórico vs. Ayer</p>
+    </header>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="switchTab('yesterday')">Ayer (25 de Julio)</button>
+      <button class="tab-btn" onclick="switchTab('total')">Lectura Total (Histórico)</button>
+    </div>
+
+    <!-- SECCION AYER (25.07.2026) -->
+    <div id="section-yesterday" class="dashboard-section active">
+      <div class="overview-grid">
+        <div class="stat-card">
+          <span class="stat-label">Alertas de Ayer</span>
+          <span class="stat-value">79</span>
+        </div>
+        <div class="stat-card green-theme">
+          <span class="stat-label">Veredictos GREEN</span>
+          <span class="stat-value">65</span>
+        </div>
+        <div class="stat-card red-theme">
+          <span class="stat-label">Veredictos RED</span>
+          <span class="stat-value">14</span>
+        </div>
+        <div class="stat-card" style="--primary: #10b981;">
+          <span class="stat-label">Tasa de Acierto</span>
+          <span class="stat-value">82.28%</span>
+        </div>
+      </div>
+
+      <div class="strategies-title">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Estrategias Evaluadas Ayer
+      </div>
+
+      <div class="strategies-grid">
+        <!-- Tarjeta Roja Estratégica (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Tarjeta Roja Estratégica</span>
+            <span class="badge badge-excellent">Impecable</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">12</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">12</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">0</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--green);">100.00%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 100%; background: var(--green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Late Corners (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Late Corners</span>
+            <span class="badge badge-excellent">Prometedor</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">2</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">2</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">0</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--green);">100.00%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 100%; background: var(--green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sorpresa Tempranera (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Sorpresa Tempranera</span>
+            <span class="badge badge-consistent">Muy Consistente</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">44</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">36</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">8</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: #6366f1;">81.82%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 81.82%; background: var(--primary);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Favorito Sufre en HT (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Favorito Sufre en HT</span>
+            <span class="badge badge-consistent">Muy Consistente</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">11</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">9</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">2</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: #6366f1;">81.82%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 81.82%; background: var(--primary);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Partido Caliente / Tarjetas (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Partido Caliente / Tarjetas</span>
+            <span class="badge badge-unreliable">Estable</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">7</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">5</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">2</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--yellow);">71.43%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 71.43%; background: var(--yellow);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asedio Intenso (Late Goal) (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Asedio Intenso (Late Goal)</span>
+            <span class="badge badge-unreliable">Neutral</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">2</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">1</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">1</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--yellow);">50.00%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 50%; background: var(--yellow);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HT Comeback Favorito (Ayer) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">HT Comeback Favorito</span>
+            <span class="badge badge-review">Crítico</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">1</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">0</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">1</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--red);">0.00%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 0%; background: var(--red);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCION HISTORICO TOTAL -->
+    <div id="section-total" class="dashboard-section">
+      <div class="overview-grid">
+        <div class="stat-card">
+          <span class="stat-label">Alertas Totales</span>
+          <span class="stat-value">182</span>
+        </div>
+        <div class="stat-card green-theme">
+          <span class="stat-label">Total GREEN</span>
+          <span class="stat-value">144</span>
+        </div>
+        <div class="stat-card red-theme">
+          <span class="stat-label">Total RED</span>
+          <span class="stat-value">38</span>
+        </div>
+        <div class="stat-card" style="--primary: #10b981;">
+          <span class="stat-label">Tasa Global de Acierto</span>
+          <span class="stat-value">79.12%</span>
+        </div>
+      </div>
+
+      <div class="strategies-title">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Rendimiento Histórico por Estrategia
+      </div>
+
+      <div class="strategies-grid">
+        <!-- Late Corners (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Late Corners</span>
+            <span class="badge badge-excellent">Impecable</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">2</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">2</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">0</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--green);">100.00%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 100%; background: var(--green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta Roja Estratégica (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Tarjeta Roja Estratégica</span>
+            <span class="badge badge-excellent">Espectacular</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">26</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">24</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">2</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--green);">92.31%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 92.31%; background: var(--green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Partido Caliente / Tarjetas (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Partido Caliente / Tarjetas</span>
+            <span class="badge badge-excellent">Espectacular</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">23</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">21</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">2</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--green);">91.30%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 91.30%; background: var(--green);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Favorito Sufre en HT (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Favorito Sufre en HT</span>
+            <span class="badge badge-consistent">Muy Consistente</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">25</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">20</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">5</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: #6366f1;">80.00%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 80%; background: var(--primary);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sorpresa Tempranera (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Sorpresa Tempranera</span>
+            <span class="badge badge-consistent">Muy Consistente</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">96</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">71</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">25</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: #6366f1;">73.96%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 73.96%; background: var(--primary);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asedio Intenso (Late Goal) (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">Asedio Intenso (Late Goal)</span>
+            <span class="badge badge-unreliable">Estable</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">7</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">5</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">2</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--yellow);">71.43%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 71.43%; background: var(--yellow);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HT Comeback Favorito (Total) -->
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <span class="strategy-name">HT Comeback Favorito</span>
+            <span class="badge badge-review">Revisar</span>
+          </div>
+          <div class="strategy-metrics">
+            <div class="metric-group">
+              <div class="metric-num">3</div>
+              <div class="metric-lbl">Total</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num green-text">1</div>
+              <div class="metric-lbl">GREEN</div>
+            </div>
+            <div class="metric-group">
+              <div class="metric-num red-text">2</div>
+              <div class="metric-lbl">RED</div>
+            </div>
+          </div>
+          <div>
+            <div class="winrate-info">
+              <span>Efectividad</span>
+              <span style="color: var(--red);">33.33%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" style="width: 33.33%; background: var(--red);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANÁLISIS DE ESTRATEGIAS (FUNCIONA / NO FUNCIONA) -->
+    <div class="analysis-container">
+      <div class="analysis-title">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        Análisis y Recomendaciones de Optimización
+      </div>
+
+      <!-- Funcionando Excelente -->
+      <div class="status-group success">
+        <div class="status-header success">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Estrategias que están FUNCIONANDO EXCELENTE
+        </div>
+        <ul class="status-list">
+          <li>
+            <strong>Tarjeta Roja Estratégica (92.31% histórico / 100% ayer):</strong> 
+            Esta regla es la de mayor certeza. Aprovecha de manera impecable el impacto de las expulsiones en partidos clave. 
+            Ayer generó un impresionante 12/12 GREEN. <strong>Recomendación:</strong> Mantener intacta y considerarla pilar del sistema.
+          </li>
+          <li>
+            <strong>Partido Caliente / Tarjetas (91.30% histórico / 71.43% ayer):</strong> 
+            Excelente tasa de éxito general. Detecta muy bien los encuentros donde la intensidad escala. 
+            Ayer sufrió una pequeña corrección (5/7) pero sigue estando por encima del umbral de rentabilidad óptima.
+          </li>
+          <li>
+            <strong>Favorito Sufre en HT (80.00% histórico / 81.82% ayer):</strong> 
+            Muestra una regularidad muy valiosa. Es excelente para predecir cuándo el favorito aumentará la presión en la segunda parte y desequilibrará el marcador.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Funcionamiento Consistente -->
+      <div class="status-group warning">
+        <div class="status-header warning">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          Estrategias con Rendimiento Aceptable (Alto Volumen)
+        </div>
+        <ul class="status-list">
+          <li>
+            <strong>Sorpresa Tempranera (73.96% histórico / 81.82% ayer):</strong> 
+            Es la regla principal por volumen (más del 50% de las alertas totales). Su win rate de ~74% a largo plazo es sumamente rentable y ayer tuvo un rendimiento brillante con 36 aciertos y solo 8 fallos. <strong>Recomendación:</strong> Es ideal para combinar en selecciones de valor.
+          </li>
+          <li>
+            <strong>Late Corners & Asedio Intenso:</strong> 
+            Presentan buenos números (100% y 71.43% respectivamente en el histórico), pero la muestra estadística aún es pequeña. Se recomienda vigilarlas para ver si sostienen su precisión a medida que se acumulen más datos.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Requiere Revisión -->
+      <div class="status-group danger">
+        <div class="status-header danger">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          Estrategias que NO ESTÁN FUNCIONANDO / REQUIEREN REVISIÓN
+        </div>
+        <ul class="status-list">
+          <li>
+            <strong>HT Comeback Favorito (33.33% histórico / 0% ayer):</strong> 
+            Esta estrategia tiene un rendimiento deficiente. Solo 1 acierto de 3 intentos en el histórico y ayer falló su única alerta (0/1). 
+            Los favoritos en desventaja al entretiempo no están logrando remontar lo suficiente para justificar la recomendación. 
+            <strong>Recomendación:</strong> Apagar o revisar a fondo los parámetros de esta regla en el <a href="file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/rulesEngine.js">rulesEngine.js</a> (aumentar umbral de posesión, tiros a puerta esperados, o evitar ligas muy cerradas).
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      <p>Reporte generado automáticamente el 26 de Julio de 2026 a partir de <a href="file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/messages.html">messages.html</a>.</p>
+    </footer>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      // Remover clases activas de los botones de navegación
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      // Ocultar todas las secciones del dashboard
+      document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
+      
+      if (tabId === 'yesterday') {
+        document.querySelector('.tab-btn[onclick*="yesterday"]').classList.add('active');
+        document.getElementById('section-yesterday').classList.add('active');
+      } else {
+        document.querySelector('.tab-btn[onclick*="total"]').classList.add('active');
+        document.getElementById('section-total').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
