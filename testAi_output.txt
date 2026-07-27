@@ -1,0 +1,44 @@
+=== FÚTBOL ===
+🧠 Análisis de IA: El Real Madrid ejerce un dominio abrumador (65% de posesión, 18 remates y 9 córners) en concordancia con su destacada racha invicta reciente, mientras Barcelona sostiene la ventaja mediante un bloque defensivo reactivo con alto desgaste disciplinario (14 faltas y 3 amarillas). La notable disparidad en tiros a puerta (8 vs 2) y la intensificación del ataque local desde el minuto 70 fundamentan estadísticamente la alerta de asedio tardío. Con base en la inercia ofensiva y el volumen de llegadas, la probabilidad de que se registre una anotación adicional en el tramo final es sumamente elevada.
+
+🎯 Recomendación Inteligente: **Próximo Gol: Real Madrid** (Mercado In-Play: Gol 2 - Real Madrid)
+
+📈 Momio Sugerido: @1.75
+
+🔥 Confianza Estimada: 78%
+
+=== BÉISBOL ===
+🧠 Análisis de IA: El encuentro refleja una elevada volatilidad ofensiva con 18 imparables combinados y un desgaste evidente en la profundidad del bullpen local. La situación de bases llenas en la alta del octavo episodio genera un escenario de máximo apalancamiento a favor de la visita, con altísima probabilidad de generar un rally de carreras adicionales. Ante la necesidad de respuesta inmediata del equipo local en el cierre del juego, el entorno estadístico apunta a una resolución de alto carataje ofensivo.
+
+🎯 Recomendación Inteligente: **Over 10.5 Carreras Totales en Vivo (Línea de Carreras Totales del Partido)**
+
+📈 Momio Sugerido: @1.75
+
+🔥 Confianza Estimada: 78%
+
+=== CASO USUARIO ===
+🧠 Análisis de IA: El análisis de la primera mitad refleja un claro dominio territorial y de volumen ofensivo por parte de **Confiança** (58% de posesión y 4 tiros de esquina), aunque con una evidente falta de contundencia en la definición. **AO Itabaiana** sostiene una ventaja táctica tras capitalizar su oportunidad al minuto 15, planteando un segundo tiempo donde el equipo local incrementará la frecuencia de ataque para revertir la desventaja.
+
+🎯 Recomendación Inteligente: **Doble Oportunidad - Confiança o Empate (1X)**
+
+📈 Momio Sugerido: @1.72
+
+🔥 Confianza Estimada: 72%
+
+=== PARLAY DEL DÍA ===
+🏆 PARLAY DEL DÍA DE LA IA 🏆
+
+📊 SELECCIONES:
+1. Fútbol - Premier League Arsenal vs Chelsea -> Pronóstico: Victoria de Arsenal (Momio: @1.45)
+2. Fútbol - Bundesliga Bayern Munich vs Werder Bremen -> Pronóstico: Victoria de Bayern Munich (Momio: @1.22)
+
+📈 MOMIO TOTAL ESTIMADO: @1.77
+🔥 CONFIANZA COMBINADA: 85%
+
+🧠 JUSTIFICACIÓN TÉCNICA:
+• **Arsenal vs Chelsea:** El análisis estadístico refleja una notable divergencia en la dinámica competitiva de ambas escuadras. Arsenal mantiene un rendimiento óptimo con dos victorias consecutivas, acumulando cinco goles a favor y solo uno en contra, lo que respalda una probabilidad implícita de triunfo del **68.9%** derivada de su momio de 1.45. En contraposición, Chelsea muestra una inercia negativa al no registrar victorias en sus últimos compromisos (un empate y una derrota) y evidenciar falencias estructurales en defensa. La selección del conjunto local presenta un margen de riesgo sumamente controlado.
+• **Bayern Munich vs Werder Bremen:** Las métricas de rendimiento y las cuotas de mercado establecen una marcada superioridad a favor del Bayern Munich, asignándole una probabilidad implícita de victoria del **81.9%** (momio 1.22). El conjunto bávaro reconfirmó su capacidad goleadora en su última presentación con cuatro anotaciones, mientras que Werder Bremen mostró ineficiencia ofensiva al caer derrotado sin convertir goles. Esta selección actúa como un ancla de alta fiabilidad matemática para la combinación propuesta.
+
+=== VALIDACIÓN CONFIANZA ===
+Fútbol: 78%
+Béisbol: 78%

@@ -276,13 +276,13 @@ async function checkMatches() {
 
     const newLiveIds = new Set();
 
-    for (const match of liveMatches) {
+        await Promise.all(liveMatches.map(async (match) => {
         const fixtureId = match.fixture.id;
         newLiveIds.add(fixtureId);
 
         const leagueName = match.league && match.league.name ? match.league.name.toLowerCase() : '';
         if (leagueName.includes('friendl') || leagueName.includes('amistoso')) {
-            continue;
+            return;
         }
 
         const isTop = isMajorLeague(match.league);
@@ -295,7 +295,7 @@ async function checkMatches() {
 
         const matchOdds = oddsCache.get(fixtureId);
         if (!matchOdds || matchOdds === 'NO_ODDS') {
-            continue; // Si no hay momios disponibles, no podemos calcular las reglas
+            return; // Si no hay momios disponibles, no podemos calcular las reglas
         }
 
         let events = [];
@@ -329,15 +329,20 @@ async function checkMatches() {
         const alerts = evaluateRules(match, matchOdds, events, stats, isTop);
 
         if (alerts.length > 0) {
-            // Carga dinámica on-demand para alimentar a la IA con el contexto completo
-            if (stats.length === 0) {
-                console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando estadísticas para la IA...`);
-                stats = await getMatchStatistics(fixtureId);
-            }
-            if (events.length === 0) {
-                console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando eventos para la IA...`);
-                events = await getMatchEvents(fixtureId);
-            }
+            // Carga dinámica on-demand para alimentar a la IA con el contexto completo de forma paralela
+            const homeTeamId = match.teams.home.id;
+            const awayTeamId = match.teams.away.id;
+            console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando datos adicionales en paralelo para la IA...`);
+            
+            const [fetchedStats, fetchedEvents, lastMatchesHome, lastMatchesAway] = await Promise.all([
+                stats.length === 0 ? getMatchStatistics(fixtureId) : Promise.resolve(stats),
+                events.length === 0 ? getMatchEvents(fixtureId) : Promise.resolve(events),
+                getTeamLastMatches(homeTeamId, 5),
+                getTeamLastMatches(awayTeamId, 5)
+            ]);
+            
+            stats = fetchedStats;
+            events = fetchedEvents;
 
             if (!trackedMatches.has(fixtureId)) {
                 trackedMatches.set(fixtureId, {
@@ -348,14 +353,6 @@ async function checkMatches() {
             }
 
             const trackedInfo = trackedMatches.get(fixtureId);
-
-            // Obtener los últimos 5 partidos de cada equipo
-            const homeTeamId = match.teams.home.id;
-            const awayTeamId = match.teams.away.id;
-            console.log(`[index.js] Consultando últimos 5 partidos de ${match.teams.home.name} (ID: ${homeTeamId}) y ${match.teams.away.name} (ID: ${awayTeamId}) para la IA...`);
-            const lastMatchesHome = await getTeamLastMatches(homeTeamId, 5);
-            await new Promise(r => setTimeout(r, 100)); // Delay para respetar rate limit
-            const lastMatchesAway = await getTeamLastMatches(awayTeamId, 5);
 
             for (const alert of alerts) {
                 alert.metadata.isSent = false;
@@ -376,7 +373,7 @@ async function checkMatches() {
                         ruleName: alert.metadata.ruleName,
                         ruleDetails: cleanRuleDetails,
                         stats: stats,
-events: events,
+                        events: events,
                         lastMatchesHome: lastMatchesHome,
                         lastMatchesAway: lastMatchesAway
                     };
@@ -387,11 +384,9 @@ events: events,
                         if (recMatch) {
                             alert.metadata.aiRecommendation = recMatch[1].replace(/\*/g, '').trim();
                         }
-                        // Buscamos el primer emoji 🎯 que divide la alerta de las recomendaciones estáticas
                         const splitIndex = alert.text.indexOf('🎯');
                         const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
                         
-                        // Parsear y formatear la predicción de IA de forma premium
                         const analysisMatch = aiPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
                         const oddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
                         const confidenceMatch = aiPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
@@ -413,7 +408,7 @@ events: events,
                         // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                         const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
                         const suggestedOdd = suggestedOddMatch ? parseFloat(suggestedOddMatch[1]) : 1.60;
-                        const targetOdd = 1.60; // Cuota objetivo fija de 1.60 requerida por el usuario
+                        const targetOdd = 1.60;
                         
                         const currentHomeGoals = match.goals.home || 0;
                         const currentAwayGoals = match.goals.away || 0;
@@ -425,8 +420,39 @@ events: events,
                             liveOddVal = getLiveOddForRecommendation(oddsArray, alert.metadata.aiRecommendation, match.teams.home.name, match.teams.away.name);
                         }
                         
-                        if (liveOddVal === null || liveOddVal < targetOdd) {
-                            // Estimar cuota de inicio
+                        const recLower = (alert.metadata.aiRecommendation || '').toLowerCase();
+                        const isCards = recLower.includes('tarjeta') || recLower.includes('tarjetas') || recLower.includes('card') || recLower.includes('cards') || recLower.includes('roja') || recLower.includes('amarilla');
+                        const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('córner') || recLower.includes('córneres') || recLower.includes('tiro de esquina') || recLower.includes('tiros de esquina');
+                        const isUnsupportedMarket = isCards || isCorners;
+                        
+                        if (!oddsArray || isUnsupportedMarket) {
+                            const reason = !oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 'mercado no monitorizable en vivo (tarjetas/córneres)';
+                            console.log(`[SafeOdds] Enviando alerta de inmediato para ${match.teams.home.name} vs ${match.teams.away.name} por tratarse de un escenario ${reason}.`);
+                            for (const chatId of subscribedChats) {
+                                try {
+                                    await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                } catch (e) {
+                                    console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+                                }
+                            }
+                            alert.metadata.isSent = true;
+                            if (textToSend) {
+                                await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
+                            }
+                        } else if (liveOddVal !== null && liveOddVal >= targetOdd) {
+                            console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
+                            for (const chatId of subscribedChats) {
+                                try {
+                                    await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                } catch (e) {
+                                    console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+                                }
+                            }
+                            alert.metadata.isSent = true;
+                            if (textToSend) {
+                                await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
+                            }
+                        } else {
                             let estimatedStartOdd = 1.30;
                             const favOdd = matchOdds.home < matchOdds.away ? matchOdds.home : matchOdds.away;
                             
@@ -440,7 +466,6 @@ events: events,
                                 estimatedStartOdd = 1.30;
                             }
                             
-                            // Si la cuota de inicio estimada ya cumple la meta, enviar de inmediato
                             if (liveOddVal === null && estimatedStartOdd >= targetOdd) {
                                 console.log(`[SafeOdds] Alerta enviada de inmediato (cuota de inicio estimada @${estimatedStartOdd.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
                                 for (const chatId of subscribedChats) {
@@ -455,14 +480,13 @@ events: events,
                                     await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                                 }
                             } else {
-                                // Calcular minutos de espera
                                 const timeRemaining = 90 - elapsed;
                                 let waitMinutes = 0;
                                 const startOdd = liveOddVal !== null ? liveOddVal : estimatedStartOdd;
                                 if (startOdd < targetOdd && timeRemaining > 0) {
                                     const ratio = (startOdd - 1) / (targetOdd - 1);
                                     waitMinutes = timeRemaining * (1 - Math.pow(Math.max(0.01, ratio), 0.9));
-                                    waitMinutes = Math.max(1, Math.min(timeRemaining, Math.round(waitMinutes)));
+                                    waitMinutes = Math.max(1, Math.min(8, Math.round(waitMinutes))); // Acotado a 8 minutos máximo
                                 }
                                 
                                 console.log(`[SafeOdds] Encolando alerta pendiente para ${match.teams.home.name} vs ${match.teams.away.name}. Cuota inicial/en-vivo: @${startOdd.toFixed(2)}, Objetivo: @${targetOdd.toFixed(2)}, Espera: ${waitMinutes} min.`);
@@ -485,20 +509,6 @@ events: events,
                                     sent: false
                                 });
                             }
-                        } else {
-                            // Enviar de inmediato porque la cuota en vivo actual ya es mayor o igual a la objetivo
-                            console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
-                            for (const chatId of subscribedChats) {
-                                try {
-                                    await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
-                                } catch (e) {
-                                    console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
-                                }
-                            }
-                            alert.metadata.isSent = true;
-                            if (textToSend) {
-                                    await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
-                            }
                         }
                     }
                 } catch (aiError) {
@@ -506,7 +516,7 @@ events: events,
                 }
             }
         }
-    }
+    }));
 
     // Limpieza de cachés para partidos que ya no están en vivo
     for (const cachedFixtureId of lastEventsFetchTime.keys()) {
@@ -753,16 +763,26 @@ cron.schedule('30 10 * * *', async () => {
     timezone: TIMEZONE
 });
 
-// Programar revisión cada minuto para fútbol (solo en horario 7:00 AM a 9:00 PM CST/CDT)
-cron.schedule('* 7-21 * * *', async () => {
-    if (!isWithinActiveHours()) {
-        return;
+// Bucle asíncrono de monitoreo continuo cada 30 segundos
+async function startMonitoringLoop() {
+    while (true) {
+        if (isWithinActiveHours()) {
+            const startTime = Date.now();
+            try {
+                await checkMatches();
+                await checkFinishedMatches();
+            } catch (err) {
+                console.error("[startMonitoringLoop] Error en ciclo de monitoreo:", err);
+            }
+            const duration = Date.now() - startTime;
+            const delay = Math.max(5000, 30000 - duration); // Esperar lo necesario para completar 30 segundos, o al menos 5s
+            await new Promise(resolve => setTimeout(resolve, delay));
+        } else {
+            // Fuera de horario activo, chequear cada minuto
+            await new Promise(resolve => setTimeout(resolve, 60000));
+        }
     }
-    await checkMatches();
-    await checkFinishedMatches();
-}, {
-    timezone: TIMEZONE
-});
+}
 
 // Resumen Matutino todos los días a las 7:30 AM (Hora Centro México)
 cron.schedule('30 7 * * *', async () => {
@@ -801,11 +821,7 @@ cron.schedule('30 7 * * *', async () => {
 });
 
 console.log(`🟢 Bot de Monitoreo de Fútbol en vivo en marcha. Horario activo: 7:00 AM - 9:00 PM (${TIMEZONE}).`);
-// Ejecutar primera revisión únicamente si estamos dentro del horario activo
-if (isWithinActiveHours()) {
-    checkMatches();
-} else {
-    console.log(`⏰ Script iniciado fuera del horario de monitoreo (7 AM - 9 PM ${TIMEZONE}). En espera de la ventana activa...`);
-}
+// Iniciar bucle de monitoreo continuo
+startMonitoringLoop();
 
 
