@@ -82,6 +82,13 @@ function getLiveOddForRecommendation(oddsArray, recommendation, homeTeam, awayTe
     
     const recLower = recommendation.toLowerCase();
     
+    // Ignorar por completo si es una recomendación de tarjetas o córneres
+    const isCards = recLower.includes('tarjeta') || recLower.includes('tarjetas') || recLower.includes('card') || recLower.includes('cards') || recLower.includes('roja') || recLower.includes('amarilla');
+    const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('córner') || recLower.includes('córneres') || recLower.includes('tiro de esquina') || recLower.includes('tiros de esquina');
+    if (isCards || isCorners) {
+        return null;
+    }
+    
     // 1. Fulltime Result / Match Winner / 3-Way (ML)
     const isHomeWin = (recLower.includes('victoria') && recLower.includes(homeTeam.toLowerCase())) || 
                       recLower.includes(`${homeTeam.toLowerCase()} (resultado final)`) ||
@@ -136,7 +143,20 @@ function getLiveOddForRecommendation(oddsArray, recommendation, homeTeam, awayTe
     if (isOverGoals) {
         const goalsMarket = oddsArray.find(o => o.id === 25 || o.id === 36 || o.name.toLowerCase().includes('goals') || o.name.toLowerCase().includes('over/under') || o.name.toLowerCase().includes('total goals'));
         if (goalsMarket) {
-            const oddObj = goalsMarket.values.find(v => v.value === 'Over');
+            const lineMatch = recommendation.match(/(\d+\.\d+|\d+)/);
+            const lineVal = lineMatch ? lineMatch[1] : null;
+            const targetValue = (recLower.includes('under') || recLower.includes('menos de')) ? 'Under' : 'Over';
+            
+            let oddObj;
+            if (lineVal) {
+                // Buscar coincidencia exacta de la línea de goles en el handicap
+                oddObj = goalsMarket.values.find(v => v.value === targetValue && v.handicap === lineVal);
+            }
+            if (!oddObj) {
+                // Fallback a cualquier cuota activa del targetValue
+                oddObj = goalsMarket.values.find(v => v.value === targetValue && !v.suspended);
+            }
+            
             if (oddObj && !oddObj.suspended) {
                 return parseFloat(oddObj.odd);
             }
