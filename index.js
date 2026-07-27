@@ -410,7 +410,7 @@ events: events,
                         // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                         const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
                         const suggestedOdd = suggestedOddMatch ? parseFloat(suggestedOddMatch[1]) : 1.60;
-                        const targetOdd = Math.max(1.60, suggestedOdd);
+                        const targetOdd = 1.60; // Cuota objetivo fija de 1.60 requerida por el usuario
                         
                         const currentHomeGoals = match.goals.home || 0;
                         const currentAwayGoals = match.goals.away || 0;
