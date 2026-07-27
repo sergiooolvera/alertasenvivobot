@@ -363,6 +363,11 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
         let evaluatedByAI = false;
         let isOmitted = false;
 
+        // Interceptar si la alerta nunca se envió al usuario debido al sistema SafeOdds
+        if (meta.isSent === false) {
+            continue;
+        }
+
         // Interceptar si la IA recomendó evitar la apuesta
         if (meta.aiRecommendation && 
             (meta.aiRecommendation.toLowerCase().includes('evitar') || 
@@ -382,7 +387,9 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                     break;
                 case 3: // Sorpresa tempranera
                     {
-                        const isHomeUnderdog = meta.odds.home > meta.odds.away;
+                        const oddsHome = meta.odds ? meta.odds.home : 1;
+                        const oddsAway = meta.odds ? meta.odds.away : 1;
+                        const isHomeUnderdog = oddsHome > oddsAway;
                         const underdogGoals = isHomeUnderdog ? finalHome : finalAway;
                         const favoriteGoals = isHomeUnderdog ? finalAway : finalHome;
                         traditionalGreen = underdogGoals >= favoriteGoals;

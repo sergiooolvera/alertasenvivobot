@@ -224,21 +224,23 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         if (oddTriggered) {
             console.log(`[SafeOdds] ¡Alerta ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${currentOddValue.toFixed(2)} (${method}) en el minuto ${elapsed}'`);
             
-            let finalMsg = alert.textToSend;
-            const activationNote = `\n\n📊 *ALERTA ACTIVADA EN VIVO:* El momio alcanzó la cuota objetivo de *@${alert.targetOdd.toFixed(2)}* (Momio actual: *@${currentOddValue.toFixed(2)}* en el minuto ${elapsed}', detectado vía ${method}).`;
-            finalMsg += activationNote;
-            
             for (const chatId of subscribedChats) {
                 try {
-                    await bot.sendMessage(chatId, finalMsg, { parse_mode: 'Markdown' });
+                    await bot.sendMessage(chatId, alert.textToSend, { parse_mode: 'Markdown' });
                 } catch (e) {
-                    console.error(`Error enviando alerta fútbol en vivo activada al chat ${chatId}:`, e.message);
+                    console.error(`Error enviando alerta pendiente al chat ${chatId}:`, e.message);
                 }
             }
             
-            // Encolar para parlays en vivo si tiene alta confianza
-            await handleLiveParlayQueue(alert.fixtureId, 'football', alert.homeTeam, alert.awayTeam, finalMsg);
+            const tracked = trackedMatches.get(alert.fixtureId);
+            if (tracked) {
+                const meta = tracked.alertsMetadata.find(m => m.ruleName === alert.ruleName);
+                if (meta) meta.isSent = true;
+            }
             
+            if (alert.textToSend) {
+                await handleLiveParlayQueue(alert.fixtureId, 'football', alert.homeTeam, alert.awayTeam, alert.textToSend);
+            }
             pendingAlertsQueue.splice(i, 1);
         } else {
             console.log(`[SafeOdds] Esperando. ${alert.homeTeam} vs ${alert.awayTeam}. Momio objetivo: @${alert.targetOdd.toFixed(2)}, Momio en vivo/est: @${currentOddValue ? currentOddValue.toFixed(2) : 'N/D'} (${method}). Minuto actual: ${elapsed}' (espera est restante: ${alert.waitMinutes - (elapsed - alert.minuteAtIncident)}m)`);
@@ -356,6 +358,7 @@ async function checkMatches() {
             const lastMatchesAway = await getTeamLastMatches(awayTeamId, 5);
 
             for (const alert of alerts) {
+                alert.metadata.isSent = false;
                 trackedInfo.alertsMetadata.push(alert.metadata);
 
                 let textToSend = alert.text;
@@ -447,6 +450,7 @@ events: events,
                                         console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                                     }
                                 }
+                                alert.metadata.isSent = true;
                                 if (textToSend) {
                                     await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                                 }
@@ -491,6 +495,7 @@ events: events,
                                     console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                                 }
                             }
+                            alert.metadata.isSent = true;
                             if (textToSend) {
                                     await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                             }
@@ -527,23 +532,33 @@ async function checkFinishedMatches() {
             continue;
         }
 
-        const matchData = await getMatchById(fixtureId);
-        if (matchData && (matchData.fixture.status.short === 'FT' || matchData.fixture.status.short === 'AET' || matchData.fixture.status.short === 'PEN')) {
-            const finalEvents = await getMatchEvents(fixtureId);
-            const finalStats = await getMatchStatistics(fixtureId);
+        try {
+            const matchData = await getMatchById(fixtureId);
+            if (matchData) {
+                const status = matchData.fixture.status.short;
+                if (status === 'FT' || status === 'AET' || status === 'PEN') {
+                    const finalEvents = await getMatchEvents(fixtureId);
+                    const finalStats = await getMatchStatistics(fixtureId);
 
-            const results = await evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
+                    const results = await evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
 
-            for (const result of results) {
-                for (const chatId of subscribedChats) {
-                    try {
-                        await bot.sendMessage(chatId, result.msg, { parse_mode: 'Markdown' });
-                    } catch (e) {
-                        console.error(`Error enviando veredicto fútbol al chat ${chatId}:`, e.message);
+                    for (const result of results) {
+                        for (const chatId of subscribedChats) {
+                            try {
+                                await bot.sendMessage(chatId, result.msg, { parse_mode: 'Markdown' });
+                            } catch (e) {
+                                console.error(`Error enviando veredicto fútbol al chat ${chatId}:`, e.message);
+                            }
+                        }
                     }
+                    trackedMatches.delete(fixtureId);
+                } else if (['CANC', 'PST', 'ABD', 'AWD', 'WO', 'SUSP', 'INT'].includes(status)) {
+                    console.log(`[checkFinishedMatches] Partido ${fixtureId} cancelado o suspendido (${status}). Eliminando de rastreo.`);
+                    trackedMatches.delete(fixtureId);
                 }
             }
-            trackedMatches.delete(fixtureId);
+        } catch (error) {
+            console.error(`[checkFinishedMatches] Error procesando partido ${fixtureId}:`, error);
         }
     }
 }
