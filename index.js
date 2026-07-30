@@ -4,6 +4,8 @@ const TelegramBot = botModule.default || botModule;
 const cron = require('node-cron');
 const packageJson = require('./package.json');
 const VERSION = packageJson.version;
+const financialTracker = require('./financialTracker');
+
 
 // Módulos de Fútbol
 const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds } = require('./apiClient');
@@ -241,6 +243,18 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
             if (alert.textToSend) {
                 await handleLiveParlayQueue(alert.fixtureId, 'football', alert.homeTeam, alert.awayTeam, alert.textToSend);
             }
+            
+            // Registrar en el control financiero
+            financialTracker.addPlay({
+                fixtureId: alert.fixtureId,
+                home: alert.homeTeam,
+                away: alert.awayTeam,
+                recommendation: alert.aiRecommendation,
+                suggestedOdd: currentOddValue || alert.targetOdd || 1.60,
+                ruleName: alert.ruleName,
+                metadata: alert.metadata
+            });
+
             pendingAlertsQueue.splice(i, 1);
         } else {
             console.log(`[SafeOdds] Esperando. ${alert.homeTeam} vs ${alert.awayTeam}. Momio objetivo: @${alert.targetOdd.toFixed(2)}, Momio en vivo/est: @${currentOddValue ? currentOddValue.toFixed(2) : 'N/D'} (${method}). Minuto actual: ${elapsed}' (espera est restante: ${alert.waitMinutes - (elapsed - alert.minuteAtIncident)}m)`);
@@ -367,6 +381,8 @@ async function checkMatches() {
                     const matchData = {
                         homeTeam: match.teams.home.name,
                         awayTeam: match.teams.away.name,
+                        leagueName: match.league && match.league.name ? match.league.name : 'Desconocida',
+                        leagueRound: match.league && match.league.round ? match.league.round : 'Ronda Desconocida',
                         elapsed: match.fixture.status.elapsed,
                         score: { home: match.goals.home || 0, away: match.goals.away || 0 },
                         odds: matchOdds,
@@ -439,6 +455,17 @@ async function checkMatches() {
                             if (textToSend) {
                                 await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                             }
+                            
+                            // Registrar en el control financiero
+                            financialTracker.addPlay({
+                                fixtureId,
+                                home: match.teams.home.name,
+                                away: match.teams.away.name,
+                                recommendation: alert.metadata.aiRecommendation,
+                                suggestedOdd: suggestedOdd || 1.60,
+                                ruleName: alert.metadata.ruleName,
+                                metadata: alert.metadata
+                            });
                         } else if (liveOddVal !== null && liveOddVal >= targetOdd) {
                             console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
                             for (const chatId of subscribedChats) {
@@ -452,6 +479,17 @@ async function checkMatches() {
                             if (textToSend) {
                                 await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                             }
+
+                            // Registrar en el control financiero
+                            financialTracker.addPlay({
+                                fixtureId,
+                                home: match.teams.home.name,
+                                away: match.teams.away.name,
+                                recommendation: alert.metadata.aiRecommendation,
+                                suggestedOdd: liveOddVal || 1.60,
+                                ruleName: alert.metadata.ruleName,
+                                metadata: alert.metadata
+                            });
                         } else {
                             let estimatedStartOdd = 1.30;
                             const favOdd = matchOdds.home < matchOdds.away ? matchOdds.home : matchOdds.away;
@@ -479,6 +517,17 @@ async function checkMatches() {
                                 if (textToSend) {
                                     await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
                                 }
+
+                                // Registrar en el control financiero
+                                financialTracker.addPlay({
+                                    fixtureId,
+                                    home: match.teams.home.name,
+                                    away: match.teams.away.name,
+                                    recommendation: alert.metadata.aiRecommendation,
+                                    suggestedOdd: estimatedStartOdd || 1.60,
+                                    ruleName: alert.metadata.ruleName,
+                                    metadata: alert.metadata
+                                });
                             } else {
                                 const timeRemaining = 90 - elapsed;
                                 let waitMinutes = 0;
@@ -506,7 +555,8 @@ async function checkMatches() {
                                     minuteAtIncident: elapsed,
                                     estimatedStartOdd: startOdd,
                                     waitMinutes,
-                                    sent: false
+                                    sent: false,
+                                    metadata: alert.metadata // Guardar metadatos completos para el tracker
                                 });
                             }
                         }
@@ -560,6 +610,9 @@ async function checkFinishedMatches() {
                                 console.error(`Error enviando veredicto fútbol al chat ${chatId}:`, e.message);
                             }
                         }
+                        
+                        // Actualizar en el control financiero
+                        financialTracker.updatePlayVerdict(fixtureId, result.meta.ruleName, result.isGreen, result.isOmitted);
                     }
                     trackedMatches.delete(fixtureId);
                 } else if (['CANC', 'PST', 'ABD', 'AWD', 'WO', 'SUSP', 'INT'].includes(status)) {
@@ -815,6 +868,21 @@ cron.schedule('30 7 * * *', async () => {
         for (const chatId of subscribedChats) {
             bot.sendMessage(chatId, msg, { parse_mode: 'Markdown' }).catch(e => console.error(e));
         }
+    }
+}, {
+    timezone: TIMEZONE
+});
+
+// Reporte Financiero Matutino todos los días a las 7:35 AM (Hora Centro México)
+cron.schedule('35 7 * * *', async () => {
+    console.log("[Cron] Iniciando Reporte Financiero Matutino...");
+    try {
+        // Resolver cualquier veredicto que haya quedado pendiente
+        await financialTracker.resolvePendingPlays();
+        // Generar y enviar el reporte financiero diario
+        await financialTracker.sendDailyReport(bot, subscribedChats);
+    } catch (error) {
+        console.error("[Cron] Error crítico en Reporte Financiero Matutino:", error.message);
     }
 }, {
     timezone: TIMEZONE

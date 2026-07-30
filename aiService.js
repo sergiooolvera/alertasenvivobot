@@ -241,7 +241,7 @@ function formatLastMatches(teamName, matches) {
  * Construye el prompt para fútbol en tono formal y técnico.
  */
 function buildFootballPrompt(matchData) {
-    const { homeTeam, awayTeam, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway } = matchData;
+    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway } = matchData;
     
     const statsStr = formatFootballStats(stats);
     const eventsStr = formatFootballEvents(events);
@@ -252,6 +252,8 @@ function buildFootballPrompt(matchData) {
 
 Analiza este partido de fútbol en vivo que acaba de activar una alerta estadística:
 - Partido: ${homeTeam} vs ${awayTeam}
+- Competición: ${leagueName}
+- Ronda/Fase: ${leagueRound}
 - Minuto actual: ${elapsed}'
 - Marcador actual: ${score.home} - ${score.away}
 - Momios iniciales: Local ${odds.home} | Empate ${odds.draw} | Visitante ${odds.away}
@@ -270,6 +272,11 @@ ${lastMatchesAwayStr}
 
 Instrucciones para redactar la respuesta:
 1. Realice un análisis formal de la dinámica de juego combinando las estadísticas en vivo con el rendimiento histórico reciente provisto de ambos equipos (máximo 3 líneas).
+   * ANÁLISIS DE ELIMINATORIAS Y CONTEXTO: Evalúa el tipo de partido según la competición y ronda provistas:
+     1. Si es una eliminatoria de ida y vuelta (ej. Octavos, Cuartos, Semifinales en copas o liguillas), busca en el historial reciente de los últimos partidos provistos de ambos equipos el encuentro de ida (mismos rivales con localía invertida), deduce su marcador final y calcula el marcador global sumando el resultado en vivo para sopesar cuál equipo tiene la urgencia real de atacar en el vivo.
+     2. Si es un encuentro en Cancha Neutral (ej. finales a partido único, mundiales), ignora la ventaja de localía del equipo catalogado como "home" y asume que ambos compiten bajo igualdad de condiciones geográficas.
+     3. Si es un partido de torneo o liga regular normal (ej. jornadas semanales de liga regular), analízalo como un partido de liga estándar único donde el local tiene la ventaja habitual del estadio y ambos equipos pelean por los 3 puntos en disputa.
+     Incorpora explícitamente estas conclusiones en tu análisis de la dinámica de juego.
 2. Proporcione una recomendación de apuesta concreta y de alta probabilidad basada en los datos analizados.
    * REGLA DE DESCARTE DE APUESTAS: Si del análisis de datos en vivo (ej: marcador, pocos tiros a puerta, nula reacción) y del historial de partidos recientes concluyes que operar este partido es sumamente riesgoso, inestable o carece de valor matemático claro, debes recomendar evitar la operación. En ese caso, la recomendación inteligente DEBE ser exactamente: "Evitar apuesta / No recomendada" (sin comillas).
 3. Sugiera un momio objetivo en vivo (mínimo @1.60 o superior). Este momio DEBE ser realista para el mercado en vivo de acuerdo con la situación del partido. En caso de haber recomendado "Evitar apuesta / No recomendada", puedes poner "No aplica" o "@1.60" por compatibilidad de formato.
@@ -288,13 +295,15 @@ Formato de salida obligatorio (usa exactamente este formato en español, no alte
  * Construye el prompt para béisbol en tono formal y técnico.
  */
 function buildBaseballPrompt(matchData) {
-    const { homeTeam, awayTeam, inning, score, odds, ruleName, ruleDetails, stats } = matchData;
+    const { homeTeam, awayTeam, leagueName, leagueRound, inning, score, odds, ruleName, ruleDetails, stats } = matchData;
     const statsStr = formatBaseballStats(stats);
 
     return `Actúa como un analista profesional de apuestas deportivas de béisbol de la MLB. Tu estilo de análisis DEBE ser formal, técnico, objetivo y preciso. Evita el lenguaje informal, coloquial o irreverente. Presenta la información de forma estructurada y analítica, adecuada para inversionistas deportivos serios.
 
 Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 - Partido: ${homeTeam} vs ${awayTeam}
+- Competición: ${leagueName || 'MLB'}
+- Ronda/Fase: ${leagueRound || 'Regular Season'}
 - Inning actual: ${inning}
 - Marcador actual (Local - Visitante): ${score.home} - ${score.away}
 - Momios iniciales: Local ${odds.home} | Visitante ${odds.away}
@@ -304,7 +313,7 @@ Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 ${statsStr}
 
 Instrucciones para redactar la respuesta:
-1. Realice un análisis formal y técnico del juego (máximo 3 líneas) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo.
+1. Realice un análisis formal y técnico del juego (máximo 3 líneas) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo, y la importancia del partido de acuerdo con la competición y la ronda (ej. tensión extra si es postemporada/playoffs).
 2. Proporcione una recomendación de apuesta concreta basada en los datos estadísticos del partido.
    * REGLA DE DESCARTE DE APUESTAS: Si del análisis en vivo (ej: picheo inestable, alto porcentaje de hits del rival, tendencia a errores) concluyes que operar este partido es sumamente riesgoso, inestable o carece de valor matemático claro, debes recomendar evitar la operación. En ese caso, la recomendación inteligente DEBE ser exactamente: "Evitar apuesta / No recomendada" (sin comillas).
 3. Sugiera un momio objetivo (mínimo @1.60 o superior). Este momio DEBE ser realista para el mercado en vivo de acuerdo con la situación del partido. En caso de haber recomendado "Evitar apuesta / No recomendada", puedes poner "No aplica" o "@1.60" por compatibilidad de formato.
@@ -506,8 +515,94 @@ Instrucciones obligatorias:
     }
 }
 
+/**
+ * Busca en la web el resultado de un partido y evalúa la recomendación (GREEN / RED / CANCELLED).
+ */
+async function resolveVerdictViaWeb(sport, homeTeam, awayTeam, date, aiRecommendation) {
+    if (apiKeys.length === 0) {
+        console.warn("[AI-Service] No hay API keys de Gemini configuradas para buscar en la web.");
+        return null;
+    }
+
+    try {
+        const prompt = `Actúa como un validador oficial y objetivo de apuestas deportivas en español.
+Busca en la web el resultado final del partido de ${sport === 'baseball' ? 'Béisbol' : 'Fútbol'} jugado el ${date} entre ${homeTeam} y ${awayTeam}.
+Determina si la recomendación de apuesta "${aiRecommendation}" resultó ganadora (GREEN), perdedora (RED), o si el partido fue cancelado/suspendido/pospuesto (CANCELLED).
+
+Instrucciones obligatorias:
+1. Responde ÚNICAMENTE en formato JSON válido con la siguiente estructura exacta:
+{
+  "score": "Resultado final (ej. 2-1)",
+  "outcome": "GREEN" | "RED" | "CANCELLED",
+  "explanation": "Una breve explicación de por qué la recomendación fue GREEN, RED o CANCELLED basándote en el resultado del partido encontrado en la web."
+}
+2. No incluyas nada más en tu respuesta. No uses bloques de código con markdown (como \`\`\`json). Solo el texto plano del objeto JSON.`;
+
+        const models = ['gemini-2.5-flash', 'gemini-flash-latest'];
+        let attempts = 0;
+        const maxAttempts = apiKeys.length * models.length;
+
+        while (attempts < maxAttempts) {
+            const apiKey = getApiKey();
+            const modelIndex = Math.floor(attempts / apiKeys.length) % models.length;
+            const model = models[modelIndex];
+
+            try {
+                console.log(`[AI-Service-Web] Buscando resultado en web con modelo '${model}' usando clave de índice ${currentKeyIndex}`);
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+                const response = await axios.post(url, {
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }],
+                    tools: [
+                        {
+                            google_search: {}
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.1,
+                        maxOutputTokens: 1000
+                    }
+                }, {
+                    timeout: 25000
+                });
+
+                if (response.status === 200 && response.data.candidates && response.data.candidates[0].content.parts[0].text) {
+                    const resultText = response.data.candidates[0].content.parts[0].text.trim();
+                    const cleanJsonText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const jsonMatch = cleanJsonText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const resultObj = JSON.parse(jsonMatch[0]);
+                        return {
+                            score: resultObj.score || 'N/D',
+                            outcome: resultObj.outcome || 'RED',
+                            explanation: resultObj.explanation || 'Evaluación completada por búsqueda web.'
+                        };
+                    }
+                    throw new Error("No se pudo extraer un objeto JSON de la respuesta.");
+                }
+                throw new Error("La API no retornó una respuesta de texto válida.");
+            } catch (error) {
+                console.error(`[AI-Service-Web] Intento fallido con modelo '${model}' e índice de clave ${currentKeyIndex}: ${error.message}`);
+                rotateApiKey();
+                attempts++;
+            }
+        }
+
+        throw new Error("Todas las claves API de Gemini fallaron para la búsqueda web.");
+    } catch (error) {
+        console.error(`[AI-Service-Web] Error en búsqueda web: ${error.message}`);
+        return null;
+    }
+}
+
 module.exports = {
     generatePrediction,
     generateDailyParlay,
-    evaluatePredictionOutcome
+    evaluatePredictionOutcome,
+    resolveVerdictViaWeb
 };
+

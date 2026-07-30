@@ -6,6 +6,8 @@ async function testFootball() {
     const mockMatchData = {
         homeTeam: "Real Madrid",
         awayTeam: "Barcelona",
+        leagueName: "La Liga",
+        leagueRound: "Jornada 32",
         elapsed: 78,
         score: { home: 0, away: 1 },
         odds: { home: 1.85, draw: 3.40, away: 4.20 },
@@ -119,6 +121,8 @@ async function testBaseball() {
     const mockMatchData = {
         homeTeam: "New York Yankees",
         awayTeam: "Boston Red Sox",
+        leagueName: "MLB",
+        leagueRound: "Regular Season",
         inning: "Inning 8 (Alta)",
         score: { home: 4, away: 5 },
         odds: { home: 1.65, away: 2.25 },
@@ -159,6 +163,8 @@ async function run() {
         const mockMatchDataFootball = {
             homeTeam: "Real Madrid",
             awayTeam: "Barcelona",
+            leagueName: "La Liga",
+            leagueRound: "Jornada 32",
             elapsed: 78,
             score: { home: 0, away: 1 },
             odds: { home: 1.85, draw: 3.40, away: 4.20 },
@@ -268,6 +274,8 @@ async function run() {
         const mockMatchDataBaseball = {
             homeTeam: "New York Yankees",
             awayTeam: "Boston Red Sox",
+            leagueName: "MLB",
+            leagueRound: "Regular Season",
             inning: "Inning 8 (Alta)",
             score: { home: 4, away: 5 },
             odds: { home: 1.65, away: 2.25 },
@@ -300,6 +308,8 @@ async function run() {
         const mockUserCase = {
             homeTeam: "Confiança",
             awayTeam: "AO Itabaiana",
+            leagueName: "Campeonato Sergipano",
+            leagueRound: "Fase de Grupos",
             elapsed: 45,
             score: { home: 0, away: 1 },
             odds: { home: 1.90, draw: 3.00, away: 4.10 }, // AO Itabaiana es underdog
@@ -339,6 +349,90 @@ async function run() {
         console.log("Resultado del Caso del Usuario (AO Itabaiana va ganando):");
         console.log(predUserCase || "⚠️ ERROR: No se obtuvo respuesta.");
         outputText += `=== CASO USUARIO ===\n${predUserCase || 'Error'}\n\n`;
+
+        // --- Probando Caso Eliminatoria Champions League (Vuelta) ---
+        console.log("\n--- Probando Caso Eliminatoria Champions League (Vuelta) ---");
+        const mockChampionsLeagueLeg = {
+            homeTeam: "Real Madrid",
+            awayTeam: "Bayern Munich",
+            leagueName: "UEFA Champions League",
+            leagueRound: "Semi-finals",
+            elapsed: 80,
+            score: { home: 1, away: 1 },
+            odds: { home: 1.80, draw: 3.50, away: 4.50 },
+            ruleName: "Asedio de Favorito Tarde",
+            ruleDetails: "El partido va 1-1 en el minuto 80. Real Madrid presiona intensamente en tiros de esquina y tiros a puerta.",
+            stats: [
+                {
+                    team: { name: "Real Madrid" },
+                    statistics: [
+                        { type: "Ball Possession", value: "62%" },
+                        { type: "Total Shots", value: 16 },
+                        { type: "Shots on Goal", value: 7 },
+                        { type: "Corner Kicks", value: 8 },
+                        { type: "Fouls", value: 10 },
+                        { type: "Yellow Cards", value: 1 },
+                        { type: "Red Cards", value: 0 }
+                    ]
+                },
+                {
+                    team: { name: "Bayern Munich" },
+                    statistics: [
+                        { type: "Ball Possession", value: "38%" },
+                        { type: "Total Shots", value: 8 },
+                        { type: "Shots on Goal", value: 3 },
+                        { type: "Corner Kicks", value: 3 },
+                        { type: "Fouls", value: 15 },
+                        { type: "Yellow Cards", value: 2 },
+                        { type: "Red Cards", value: 0 }
+                    ]
+                }
+            ],
+            events: [
+                {
+                    time: { elapsed: 25 },
+                    team: { name: "Bayern Munich" },
+                    player: { name: "Harry Kane" },
+                    type: "Goal",
+                    detail: "Normal Goal"
+                },
+                {
+                    time: { elapsed: 68 },
+                    team: { name: "Real Madrid" },
+                    player: { name: "Vinicius Junior" },
+                    type: "Goal",
+                    detail: "Normal Goal"
+                }
+            ],
+            lastMatchesHome: [
+                {
+                    fixture: { date: "2026-07-23T20:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Bayern Munich" }, away: { name: "Real Madrid" } },
+                    goals: { home: 2, away: 1 } // PARTIDO DE IDA
+                },
+                {
+                    fixture: { date: "2026-07-19T18:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Real Madrid" }, away: { name: "Real Sociedad" } },
+                    goals: { home: 3, away: 0 }
+                }
+            ],
+            lastMatchesAway: [
+                {
+                    fixture: { date: "2026-07-23T20:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Bayern Munich" }, away: { name: "Real Madrid" } },
+                    goals: { home: 2, away: 1 } // PARTIDO DE IDA
+                },
+                {
+                    fixture: { date: "2026-07-20T19:00:00Z", status: { short: "FT" } },
+                    teams: { home: { name: "Stuttgart" }, away: { name: "Bayern Munich" } },
+                    goals: { home: 1, away: 1 }
+                }
+            ]
+        };
+        const predChampionsLeagueLeg = await aiService.generatePrediction(mockChampionsLeagueLeg, 'football');
+        console.log("Resultado de Champions League (Vuelta):");
+        console.log(predChampionsLeagueLeg || "⚠️ ERROR: No se obtuvo respuesta.");
+        outputText += `=== ELIMINATORIA CHAMPIONS LEAGUE VUELTA ===\n${predChampionsLeagueLeg || 'Error'}\n\n`;
 
         // --- Probando IA con Parlay del Día ---
         console.log("\n--- Probando IA con Parlay del Día (Pre-Partido) ---");
