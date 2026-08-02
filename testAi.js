@@ -493,6 +493,17 @@ async function run() {
 
         outputText += `=== VALIDACIÓN CONFIANZA ===\nFútbol: ${confFootball}\nBéisbol: ${confBaseball}\n`;
 
+        console.log("\n--- Probando IA con DeepSeek (Fútbol) ---");
+        try {
+            const predDeepSeek = await aiService.generatePredictionDeepSeek(mockMatchDataFootball, 'football');
+            console.log("Resultado de DeepSeek:");
+            console.log(predDeepSeek || "⚠️ DeepSeek retornó respuesta vacía (probablemente por falta de saldo).");
+            outputText += `\n=== DEEPSEEK FÚTBOL ===\n${predDeepSeek || 'No disponible / Sin saldo'}\n`;
+        } catch (dsErr) {
+            console.error("⚠️ Ocurrió un error llamando a DeepSeek en pruebas:", dsErr.message);
+            outputText += `\n=== DEEPSEEK FÚTBOL ===\nError: ${dsErr.message}\n`;
+        }
+
         fs.writeFileSync('testAi_output.txt', outputText, 'utf-8');
         console.log("Pruebas completadas. Archivo testAi_output.txt generado.");
     } catch (error) {

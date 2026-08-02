@@ -411,14 +411,47 @@ async function checkMatches() {
                         const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
                         const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
                         const confidence = confidenceMatch ? confidenceMatch[1] : '80';
+
+                        // Obtener predicción de DeepSeek para el bloque dual
+                        let deepseekPrediction = null;
+                        try {
+                            deepseekPrediction = await aiService.generatePredictionDeepSeek(matchData, 'football');
+                        } catch (err) {
+                            console.error("[index.js] Error al obtener recomendación de DeepSeek:", err.message);
+                        }
+
+                        let formattedAiSection = "";
+                        if (deepseekPrediction) {
+                            const dsAnalysisMatch = deepseekPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
+                            const dsRecMatch = deepseekPrediction.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
+                            const dsConfidenceMatch = deepseekPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+
+                            const dsAnalysis = dsAnalysisMatch ? dsAnalysisMatch[1].trim() : 'N/D';
+                            const dsRecommendation = dsRecMatch ? dsRecMatch[1].replace(/\*/g, '').trim() : 'N/D';
+                            const dsConfidence = dsConfidenceMatch ? dsConfidenceMatch[1] : '80';
+
+                            formattedAiSection = 
+                                `🤖 *ANÁLISIS DE IA - DUAL*\n` +
+                                `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                `♊ *GOOGLE GEMINI*\n` +
+                                `🧠 *Análisis:* ${analysis}\n` +
+                                `🎯 *Apuesta:* *${recommendation}* (Confianza: *${confidence}%*)\n` +
+                                `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                `🐳 *DEEPSEEK*\n` +
+                                `🧠 *Análisis:* ${dsAnalysis}\n` +
+                                `🎯 *Apuesta:* *${dsRecommendation}* (Confianza: *${dsConfidence}%*)\n` +
+                                `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                `📈 *Momio Sugerido de Entrada:* *@1.60*`;
+                        } else {
+                            // Fallback al formato clásico si DeepSeek falla (ej. falta de saldo)
+                            formattedAiSection = 
+                                `🤖 *ANÁLISIS INTELIGENTE DE IA*\n` +
+                                `🧠 ${analysis}\n\n` +
+                                `🎯 *Recomendación:* *${recommendation}*\n` +
+                                `📈 *Momio Sugerido:* *@${oddVal}*\n` +
+                                `🔥 *Confianza Estimada:* *${confidence}%*`;
+                        }
                         
-                        const formattedAiSection = 
-                            `🤖 *ANÁLISIS INTELIGENTE DE IA*\n` +
-                            `🧠 ${analysis}\n\n` +
-                            `🎯 *Recomendación:* *${recommendation}*\n` +
-                            `📈 *Momio Sugerido:* *@${oddVal}*\n` +
-                            `🔥 *Confianza Estimada:* *${confidence}%*`;
-                            
                         textToSend = `${header}\n\n${formattedAiSection}`;
 
                         // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---

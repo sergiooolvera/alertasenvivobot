@@ -6,6 +6,8 @@ if (process.env.GEMINI_API_KEYS) {
     apiKeys = process.env.GEMINI_API_KEYS.split(',').map(k => k.trim()).filter(Boolean);
 }
 
+const deepseekApiKey = process.env.DEEPSEEK_API_KEY || null;
+
 // Índice para la rotación de claves
 let currentKeyIndex = 0;
 
@@ -79,6 +81,78 @@ async function callGeminiWithRotation(prompt) {
     }
 
     throw new Error("Todas las claves API de Gemini y modelos de fallback fallaron.");
+}
+
+/**
+ * Realiza la llamada HTTP a la API de DeepSeek con fallback de modelos.
+ */
+async function callDeepSeekWithRotation(prompt) {
+    if (!deepseekApiKey) {
+        throw new Error("No hay API Key de DeepSeek configurada en las variables de entorno.");
+    }
+
+    const models = ['deepseek-chat', 'deepseek-v4-flash'];
+    let attempts = 0;
+
+    while (attempts < models.length) {
+        const model = models[attempts];
+        try {
+            console.log(`[AI-Service] Intentando generar contenido con DeepSeek usando modelo '${model}'`);
+            const response = await axios.post('https://api.deepseek.com/chat/completions', {
+                model: model,
+                messages: [
+                    { role: 'user', content: prompt }
+                ],
+                temperature: 0.85,
+                max_tokens: 2000
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${deepseekApiKey}`
+                },
+                timeout: 60000 // 60 segundos
+            });
+
+            if (response.status === 200 && response.data.choices && response.data.choices[0].message.content) {
+                return response.data.choices[0].message.content.trim();
+            }
+            throw new Error("La API de DeepSeek no retornó una respuesta de texto válida.");
+        } catch (error) {
+            console.error(`[AI-Service] Intento fallido con DeepSeek modelo '${model}': ${error.message}`);
+            if (error.response && error.response.status === 402) {
+                throw new Error("DeepSeek falló debido a saldo insuficiente (Error 402).");
+            }
+            attempts++;
+        }
+    }
+
+    throw new Error("Todos los modelos de DeepSeek fallaron.");
+}
+
+/**
+ * Genera el análisis y recomendación de IA usando DeepSeek.
+ * Devuelve null si ocurre un fallo.
+ */
+async function generatePredictionDeepSeek(matchData, sport = 'football') {
+    if (!deepseekApiKey) {
+        console.warn("[AI-Service] No hay API key de DeepSeek configurada en .env.");
+        return null;
+    }
+
+    try {
+        let prompt;
+        if (sport === 'baseball') {
+            prompt = buildBaseballPrompt(matchData);
+        } else {
+            prompt = buildFootballPrompt(matchData);
+        }
+
+        const result = await callDeepSeekWithRotation(prompt);
+        return result;
+    } catch (error) {
+        console.error(`[AI-Service] Error crítico generando recomendación con DeepSeek: ${error.message}`);
+        return null;
+    }
 }
 
 /**
@@ -601,6 +675,7 @@ Instrucciones obligatorias:
 
 module.exports = {
     generatePrediction,
+    generatePredictionDeepSeek,
     generateDailyParlay,
     evaluatePredictionOutcome,
     resolveVerdictViaWeb
