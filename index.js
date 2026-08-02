@@ -396,16 +396,16 @@ async function checkMatches() {
                     console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
                     const aiPrediction = await aiService.generatePrediction(matchData, 'football');
                     if (aiPrediction) {
-                        const recMatch = aiPrediction.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
+                        const recMatch = aiPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
                         if (recMatch) {
                             alert.metadata.aiRecommendation = recMatch[1].replace(/\*/g, '').trim();
                         }
                         const splitIndex = alert.text.indexOf('🎯');
                         const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
                         
-                        const analysisMatch = aiPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
-                        const oddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([^\n]+)/i);
-                        const confidenceMatch = aiPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+                        const analysisMatch = aiPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+                        const oddMatch = aiPrediction.match(/📈\s*\*?\*?Momio Sugerido\*?\*?:?\s*\*?\*?\s*@?\s*([^\n]+)/i);
+                        const confidenceMatch = aiPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
                         
                         const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
                         const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
@@ -422,9 +422,9 @@ async function checkMatches() {
 
                         let formattedAiSection = "";
                         if (deepseekPrediction) {
-                            const dsAnalysisMatch = deepseekPrediction.match(/🧠 Análisis de IA:\s*([^\n]+)/i);
-                            const dsRecMatch = deepseekPrediction.match(/🎯 Recomendación Inteligente:\s*([^\n]+)/i);
-                            const dsConfidenceMatch = deepseekPrediction.match(/🔥 Confianza Estimada:\s*(\d+)%/i);
+                            const dsAnalysisMatch = deepseekPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+                            const dsRecMatch = deepseekPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+                            const dsConfidenceMatch = deepseekPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
 
                             const dsAnalysis = dsAnalysisMatch ? dsAnalysisMatch[1].trim() : 'N/D';
                             const dsRecommendation = dsRecMatch ? dsRecMatch[1].replace(/\*/g, '').trim() : 'N/D';
