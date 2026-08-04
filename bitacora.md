@@ -4,8 +4,8 @@
 Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe alertas basadas en eventos en vivo (tarjetas rojas, empates al medio tiempo de favoritos, ventajas de underdogs, córneres, partidos calientes y entradas clave de béisbol) con seguimiento automatizado GREEN/RED post-partido.
 
 ## Estado Actual
-- Versión 1.8.3: Registro y envío asíncrono de los prompts de IA a Telegram como archivos de texto adjuntos para auditoría de desarrollo sin coste de almacenamiento en Railway.
-- Sistema de 7 reglas de fútbol + 3 reglas de MLB Béisbol completado y verificado. Servidor listo con redeploy automático a Railway.
+- Versión 1.8.4: Remoción definitiva de menciones de MLB/Béisbol en los mensajes del sistema (como el mensaje de bienvenida de Telegram) para alinearlo con el bot que opera exclusivamente para fútbol.
+- Sistema de 7 reglas de fútbol completado y verificado. Servidor listo con redeploy automático a Railway.
 
 ## Decisiones Tomadas
 - **Fuentes de datos:** 
@@ -54,3 +54,4 @@ Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe a
 - **[2026-08-02]**: Robustecimiento del parseador en `index.js` (Versión 1.8.1). Se actualizaron las expresiones regulares de extracción para ignorar los asteriscos de Markdown (`**`) en los encabezados, previniendo fallos si las APIs de IA (Gemini o DeepSeek) devuelven el análisis con formatos resaltados. Se documentó la necesidad de configurar la variable de entorno `DEEPSEEK_API_KEY` en el panel de control de Railway.
 - **[2026-08-04]**: Optimización de la integración de DeepSeek (Versión 1.8.2). Se crearon prompts dedicados (`buildFootballPromptDeepSeek` y `buildBaseballPromptDeepSeek`) para DeepSeek con instrucciones de síntesis: análisis de una sola frase (máximo 120 caracteres) y sugerencias directas de apuesta (de 2 a 8 palabras). Se redujo el sesgo de descarte de apuestas ("Evitar apuesta / No recomendada") para incentivar propuestas activas en vivo.
 - **[2026-08-04]**: Registro y auditoría de prompts de IA en Telegram sin costo en Railway (Versión 1.8.3). Se implementó un parámetro opcional `outContext` en las funciones `generatePrediction` y `generatePredictionDeepSeek` de `aiService.js` para extraer los prompts de entrada sin romper la compatibilidad con las pruebas unitarias. Se modificó `index.js` para capturar estos prompts y subirlos de forma asíncrona a un chat o canal secundario de Telegram (`TELEGRAM_PROMPTS_CHAT_ID`) utilizando `bot.sendDocument` con Buffers de texto en memoria. Esto permite al usuario auditar y depurar los prompts completos de forma totalmente gratuita y sin almacenamiento en Railway.
+- **[2026-08-04]**: Corrección del mensaje de inicio y remoción de textos de MLB (Versión 1.8.4). Se editó el comando `/start` en `index.js` para suprimir las menciones de "Bot Multideporte (Fútbol + MLB)" y la referencia a las 3 reglas de béisbol, alineándolo con el alcance de monitoreo actual exclusivo de fútbol.

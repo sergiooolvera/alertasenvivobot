@@ -54,7 +54,7 @@ if (bot.onText) {
         }
 
         subscribedChats.add(chatId);
-        bot.sendMessage(chatId, `⚽⚾ ¡Bienvenido jefe! Bot Multideporte (Fútbol + MLB) iniciado.\n*Versión:* v${VERSION} (Soporte de Parlays Pre-Partido y En Vivo 🚀)\n\nMonitoreando 7 Reglas de Fútbol y 3 Reglas de MLB con Verificación GREEN/RED.`, { parse_mode: 'Markdown' });
+        bot.sendMessage(chatId, `⚽ ¡Bienvenido jefe! Bot de Alertas de Fútbol iniciado.\n*Versión:* v${VERSION} (Soporte de Parlays Pre-Partido y En Vivo 🚀)\n\nMonitoreando 7 Reglas de Fútbol con Verificación GREEN/RED.`, { parse_mode: 'Markdown' });
         console.log(`Usuario principal conectado: ${chatId}`);
     });
 } else {
