@@ -38,6 +38,17 @@ if (token && token !== 'tu_token_aqui') {
     };
 }
 
+// Validación e información del canal/chat de auditoría de prompts
+if (process.env.TELEGRAM_PROMPTS_CHAT_ID) {
+    const promptChatId = process.env.TELEGRAM_PROMPTS_CHAT_ID;
+    console.log(`[Config] 📂 Auditoría de prompts ACTIVA. Canal/Chat destino: ${promptChatId}`);
+    if (promptChatId.startsWith('-') && !promptChatId.startsWith('-100')) {
+        console.warn(`[Config Warning] El ID del chat de prompts (${promptChatId}) parece un canal de Telegram pero no inicia con '-100'. Esto suele causar errores de envío.`);
+    }
+} else {
+    console.warn(`[Config Warning] 📂 Auditoría de prompts DESACTIVADA. La variable de entorno TELEGRAM_PROMPTS_CHAT_ID no está configurada.`);
+}
+
 // Almacenamos los chats suscritos
 const subscribedChats = new Set();
 
@@ -467,21 +478,27 @@ async function checkMatches() {
                             const matchClean = `${matchData.homeTeam}_vs_${matchData.awayTeam}`.replace(/[^a-zA-Z0-9_]/g, '_').replace(/_+/g, '_');
                             
                             if (contextGemini.prompt) {
+                                console.log(`[index.js] Intentando enviar prompt de Gemini a Telegram (${matchData.homeTeam} vs ${matchData.awayTeam}) al chat/canal: ${promptChatId}...`);
                                 bot.sendDocument(promptChatId, Buffer.from(contextGemini.prompt, 'utf-8'), {
                                     caption: `🤖 *Prompt Gemini* - ${matchData.homeTeam} vs ${matchData.awayTeam}\n📋 *Regla:* ${matchData.ruleName}`
                                 }, {
                                     filename: `prompt_gemini_${matchClean}.txt`,
                                     contentType: 'text/plain'
-                                }).catch(err => console.error(`[index.js] Error al enviar prompt Gemini a Telegram:`, err.message));
+                                })
+                                .then(() => console.log(`[index.js] ✅ Prompt Gemini enviado exitosamente a Telegram.`))
+                                .catch(err => console.error(`[index.js] ❌ Error al enviar prompt Gemini a Telegram:`, err.message));
                             }
                             
                             if (contextDeepSeek.prompt) {
+                                console.log(`[index.js] Intentando enviar prompt de DeepSeek a Telegram (${matchData.homeTeam} vs ${matchData.awayTeam}) al chat/canal: ${promptChatId}...`);
                                 bot.sendDocument(promptChatId, Buffer.from(contextDeepSeek.prompt, 'utf-8'), {
                                     caption: `🐳 *Prompt DeepSeek* - ${matchData.homeTeam} vs ${matchData.awayTeam}\n📋 *Regla:* ${matchData.ruleName}`
                                 }, {
                                     filename: `prompt_deepseek_${matchClean}.txt`,
                                     contentType: 'text/plain'
-                                }).catch(err => console.error(`[index.js] Error al enviar prompt DeepSeek a Telegram:`, err.message));
+                                })
+                                .then(() => console.log(`[index.js] ✅ Prompt DeepSeek enviado exitosamente a Telegram.`))
+                                .catch(err => console.error(`[index.js] ❌ Error al enviar prompt DeepSeek a Telegram:`, err.message));
                             }
                         }
 
