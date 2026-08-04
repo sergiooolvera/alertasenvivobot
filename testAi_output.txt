@@ -1,54 +1,53 @@
 === FÚTBOL ===
-Error
+🧠 Análisis de IA: Al tratarse de un encuentro de liga regular por los tres puntos, el Real Madrid intenta capitalizar su ventaja de localía mediante un asedio ofensivo tras ir abajo 0-1. Las métricas en vivo reflejan un dominio abrumador del cuadro local con 65% de posesión, 18 remates (8 a puerta) y 9 saques de esquina ante un Barcelona replegado. El volumen de llegadas profundas en este tramo final proyecta una elevada probabilidad de que se registre al menos un gol más antes del pitazo final.
+
+🎯 Recomendación Inteligente: **Over 1.5 Goles Totales en el partido**
+
+📈 Momio Sugerido: @1.80
+
+🔥 Confianza Estimada: 82%
 
 === BÉISBOL ===
-🧠 Análisis de IA: El cuerpo de picheo de los Yankees presenta una severa inestabilidad al permitir 10 imparables, cometer un error y encarar una situación de bases llenas en la alta de la octava entrada. La alta volatilidad ofensiva de Boston y el descontrol en el montículo local generan un entorno de juego extremadamente impredecible y de alto riesgo. Bajo estas condiciones en la recta final del encuentro de temporada regular, los mercados en vivo carecen de un valor matemático claro.
-
-🎯 Recomendación Inteligente: Evitar apuesta / No recomendada
-
-📈 Momio Sugerido: No aplica
-
-🔥 Confianza Estimada: 35%
-
-=== CASO USUARIO ===
-🧠 Análisis de IA: En este encuentro de fase regular de grupos del Campeonato Sergipano, el equipo local Confiança mantiene la obligación táctica de volcarse al ataque para disputar los tres puntos, acumulando 58% de posesión y 8 remates. Sin embargo, la ausencia total de tiros a puerta por ambos bandos y la falta de historial reciente evidencian un desarrollo errático e ineficiente, donde la ventaja de AO Itabaiana carece de sustento en generación de peligro real.
+🧠 Análisis de IA: El picheo relevista de New York refleja una severa pérdida de control al permitir 10 imparables y llenar las bases en la alta del octavo inning con un error registrado. La alta varianza situacional (*High-Leverage Index*) y la desventaja de 4-5 generan una volatilidad extrema en las probabilidades implícitas en vivo. En esta instancia decisiva de la temporada regular, el riesgo de ejecución supera sustancialmente el valor esperado de cualquier línea de mercado disponible.
 
 🎯 Recomendación Inteligente: Evitar apuesta / No recomendada
 
 📈 Momio Sugerido: @1.60
 
+🔥 Confianza Estimada: 38%
+
+=== CASO USUARIO ===
+🧠 Análisis de IA: En este duelo de fase de grupos del Campeonato Sergipano, Confiança asume la ventaja de localía y la urgencia de buscar el empate tras conceder el 0-1 ante AO Itabaiana al minuto 15. A pesar de monopolizar la posesión (58%) y los tiros de esquina (4), la ineficiencia ofensiva es crítica al registrar cero tiros a puerta combinados al descanso. La inconsistencia de las métricas en vivo y la ausencia de rendimiento histórico generan un escenario de altísima varianza e impredecibilidad táctica.
+🎯 Recomendación Inteligente: Evitar apuesta / No recomendada
+📈 Momio Sugerido: @1.60
 🔥 Confianza Estimada: 35%
 
 === ELIMINATORIA CHAMPIONS LEAGUE VUELTA ===
-🧠 Análisis de IA: En el marco del partido de vuelta de semifinales, el marcador global de 3-2 a favor del Bayern Munich (tras el 2-1 de la ida) genera la urgencia táctica para que el Real Madrid sostenga un volumen ofensivo total. La métrica en vivo evidencia este asedio con un 62% de posesión, 16 disparos totales (7 a puerta) y 8 tiros de esquina a favor del club local ante el bloque bajo visitante. Dicha inercia y la necesidad imperiosa de empatar la eliminatoria incrementan significativamente la probabilidad matemática de una anotación adicional en los minutos finales.
-
-🎯 Recomendación Inteligente: **Over 2.5 Goles Totales**
-
-📈 Momio Sugerido: @1.80
-
+🧠 Análisis de IA: Tras el resultado del partido de ida (2-1 favorable al Bayern Munich), el marcador global actual refleja un 3-2 a favor del conjunto visitante, lo que genera una necesidad táctica urgente en el Real Madrid para volcarse al ataque en busca del gol que mantenga con vida la eliminatoria. El volumen ofensivo de los locales al minuto 80 (62% de posesión, 16 tiros y 8 córneres) valida plenamente el patrón estadístico de asedio tardío ante un rival que se limita a contener mediante faltas (15) y ceder el terreno.
+🎯 Recomendación Inteligente: **Próximo Gol (Gol 3): Real Madrid**
+📈 Momio Sugerido: @1.75
 🔥 Confianza Estimada: 78%
 
 === PARLAY DEL DÍA ===
 🏆 PARLAY DEL DÍA DE LA IA 🏆
 
 📊 SELECCIONES:
-1. ⚽ Fútbol - Premier League Arsenal vs Chelsea -> Pronóstico: Victoria Directa de Arsenal (Momio: @1.45)
-2. ⚽ Fútbol - Bundesliga Bayern Munich vs Werder Bremen -> Pronóstico: Victoria Directa de Bayern Munich (Momio: @1.22)
+1. ⚽ FÚTBOL - Premier League Arsenal vs Chelsea -> Pronóstico: **Victoria Directa de Arsenal** (Momio: @1.45)
+2. ⚽ FÚTBOL - Bundesliga Bayern Munich vs Werder Bremen -> Pronóstico: **Victoria Directa de Bayern Munich** (Momio: @1.22)
 
 📈 MOMIO TOTAL ESTIMADO: @1.77
-🔥 CONFIANZA COMBINADA: 85%
+🔥 CONFIANZA COMBINADA: 82%
 
 🧠 JUSTIFICACIÓN TÉCNICA:
-• **Arsenal vs Chelsea**: El equipo local presenta una dinámica altamente favorable sustentada en dos victorias consecutivas en sus últimas presentaciones (3-0 ante Everton y 2-1 frente a West Ham), mostrando una sólida eficiencia goleadora (2.5 goles por partido) y consistencia defensiva. Por el contrario, Chelsea registra un rendimiento deficiente con un empate ante Leicester (1-1) y una derrota frente a Bournemouth (2-1), evidenciando severas desatenciones en la línea posterior. La probabilidad implícita del 68.9% asignada a la victoria del Arsenal en las cuotas iniciales (@1.45) refleja con precisión la disparidad actual de rendimiento entre ambas escuadras.
-
-• **Bayern Munich vs Werder Bremen**: El conjunto bávaro mantiene un volumen ofensivo determinante, reflejado en su reciente triunfo 4-2 ante Stuttgart. En contraste, Werder Bremen mostró considerables carencias tácticas y falta de contundencia en su última actuación al caer 2-0 frente al Mainz. El momio inicial de 1.22 atribuye al Bayern Munich una probabilidad matemática de victoria cercana al 82%, lo que, aunado al diferencial de calidad individual y registro histórico, convierte a este pick en un anclaje de muy bajo riesgo estructural para la dupla propuesta.
+• El **Arsenal** presenta un perfil probabilístico sumamente sólido impulsado por su inercia ganadora y consistencia táctica, habiendo registrado victorias consecutivas (3-0 ante Everton y 2-1 frente a West Ham) que demuestran alta eficiencia ofensiva y solvencia estructural. En contraste, el **Chelsea** exhibe un rendimiento deficiente sin victorias en sus registros recientes (empate 1-1 contra Leicester y derrota 2-1 ante Bournemouth). El momio inicial de 1.45 le otorga al equipo local una probabilidad implícita de victoria del 68.96%, la cual se consolida como una selección de bajo riesgo al cruzarse con el momento de forma actual de ambos planteles.
+• El **Bayern Munich** cuenta con un favoritismo estadístico abrumador respaldado por la clara disparidad de nivel de plantilla frente al **Werder Bremen**. El conjunto bávaro viene de ratificar su poderío ofensivo tras imponerse 4-2 al Stuttgart, mientras que el Werder Bremen llega tras ceder puntos y mostrar ineficiencia táctica al caer 2-0 frente al Mainz. El momio inicial de 1.22 asigna una probabilidad implícita del 81.97% al triunfo local, configurando un ancla de altísima certeza técnica para optimizar la cuota acumulada del parlay.
 
 === VALIDACIÓN CONFIANZA ===
-Fútbol: Error
-Béisbol: 35%
+Fútbol: 82%
+Béisbol: 38%
 
 === DEEPSEEK FÚTBOL ===
-🧠 Análisis de IA: Asedio total del Madrid con 65% de posesión y 9 córners; gol empate muy probable.
-🎯 Recomendación Inteligente: Próximo Gol de Real Madrid
-📈 Momio Sugerido: @1.70
-🔥 Confianza Estimada: 78%
+🧠 Análisis de IA: Asedio total del Madrid, 18 tiros y 9 córners; el gol es inminente.
+🎯 Recomendación Inteligente: Próximo gol de Real Madrid
+📈 Momio Sugerido: @1.65
+🔥 Confianza Estimada: 82%

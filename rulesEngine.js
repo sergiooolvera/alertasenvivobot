@@ -90,10 +90,15 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
     const isDraw = homeGoals === awayGoals;
     const underdogWinning = underdog.goals > favorite.goals;
 
+    const homeSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(fixture.teams.home.name + ' Flashscore')}`;
+    const awaySearchUrl = `https://www.google.com/search?q=${encodeURIComponent(fixture.teams.away.name + ' Flashscore')}`;
+    const matchSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(fixture.teams.home.name + ' vs ' + fixture.teams.away.name + ' Flashscore')}`;
+
     const msgHeader = `🏆 *Liga:* ${leagueName}
-⚽ *${fixture.teams.home.name}* vs *${fixture.teams.away.name}*
+⚽ *[${fixture.teams.home.name}](${homeSearchUrl})* vs *[${fixture.teams.away.name}](${awaySearchUrl})*
 ⏱️ *Minuto:* ${elapsed}'  |  📊 *Marcador:* ${homeGoals} - ${awayGoals}
-💵 *Momios Iniciales:* 🏠 ${odds.home}  •  🤝 ${odds.draw}  •  🚀 ${odds.away}`;
+💵 *Momios Iniciales:* 🏠 ${odds.home}  •  🤝 ${odds.draw}  •  🚀 ${odds.away}
+🔍 *Flashscore:* [Buscar Partido](${matchSearchUrl})`;
 
     // ==========================================
     // REGLAS GENERALES (APLICAN A TODAS LAS LIGAS)
