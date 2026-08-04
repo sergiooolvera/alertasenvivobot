@@ -4,7 +4,7 @@
 Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe alertas basadas en eventos en vivo (tarjetas rojas, empates al medio tiempo de favoritos, ventajas de underdogs, córneres, partidos calientes y entradas clave de béisbol) con seguimiento automatizado GREEN/RED post-partido.
 
 ## Estado Actual
-- Versión 1.8.4: Remoción definitiva de menciones de MLB/Béisbol en los mensajes del sistema (como el mensaje de bienvenida de Telegram) para alinearlo con el bot que opera exclusivamente para fútbol.
+- Versión 1.8.8: Ajuste y optimización de prompts y filtros de datos históricos. Exclusión del partido en vivo del historial, agregación de enfrentamientos directos (H2H), corrección de motivos vacíos ("N/A") y limitación a un párrafo de máximo 50 palabras.
 - Sistema de 7 reglas de fútbol completado y verificado. Servidor listo con redeploy automático a Railway.
 
 ## Decisiones Tomadas
@@ -58,5 +58,6 @@ Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe a
 - **[2026-08-04]**: Integración de enlaces dinámicos de búsqueda a Flashscore en alertas de Telegram (Versión 1.8.5). Se modificó la construcción de `msgHeader` en `rulesEngine.js` para añadir enlaces en formato Markdown a búsquedas pre-cargadas en Google con la palabra clave "Flashscore" para el equipo local, el equipo visitante y el partido completo. Esto permite al usuario consultar rápidamente estadísticas e historial desde Telegram en un solo tap sin requerir una API oficial de Flashscore.
 - **[2026-08-04]**: Robustecimiento de diagnóstico de auditoría de prompts (Versión 1.8.6). Se implementó la impresión del estado de la variable `TELEGRAM_PROMPTS_CHAT_ID` al arrancar el bot en `index.js`. Se añadieron logs detallados y explícitos de intento, éxito (con icono ✅) y error (con icono ❌) en el envío de los documentos de prompts a Telegram para facilitar su auditoría en el panel de control de Railway.
 - **[2026-08-04]**: Identificación de cuenta de bot en logs (Versión 1.8.7). Se agregó la llamada a `bot.getMe()` en la inicialización de `index.js` para imprimir en consola el nombre de usuario de Telegram del bot que está corriendo actualmente. Esto ayuda a contrastar si la cuenta agregada como administrador del canal coincide exactamente con el token en ejecución.
+- **[2026-08-04]**: Optimización de prompts e integración de enfrentamientos directos H2H (Versión 1.8.8). Se excluyó de forma estricta el partido en vivo en disputa de las listas de los últimos partidos recientes y enfrentamientos directos. Se implementó la consulta del H2H a través de la API-Football y su correspondiente formateo en los prompts de fútbol de Gemini y DeepSeek. Se controlaron los campos de motivo vacíos configurándolos por defecto como "N/A" para evitar instrucciones truncadas en la IA. Por último, se modificaron los prompts para limitar el análisis a un párrafo conciso de máximo 50 palabras (y mantener la brevedad máxima en DeepSeek).
 
 

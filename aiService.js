@@ -316,18 +316,43 @@ function formatLastMatches(teamName, matches) {
 }
 
 /**
+ * Formatea los últimos enfrentamientos directos (H2H) en un texto compacto.
+ */
+function formatH2HMatches(matches) {
+    if (!matches || matches.length === 0) return 'Enfrentamientos directos recientes: No disponibles';
+    
+    try {
+        const formatted = matches.map(m => {
+            const date = m.fixture.date ? m.fixture.date.split('T')[0] : 'N/A';
+            const homeName = m.teams.home.name;
+            const awayName = m.teams.away.name;
+            const homeGoals = m.goals.home !== null && m.goals.home !== undefined ? m.goals.home : '-';
+            const awayGoals = m.goals.away !== null && m.goals.away !== undefined ? m.goals.away : '-';
+            const status = m.fixture.status.short || 'N/A';
+            return `- [${date}] ${homeName} ${homeGoals} - ${awayGoals} ${awayName} (${status})`;
+        }).join('\n');
+        
+        return `Enfrentamientos directos recientes:\n${formatted}`;
+    } catch (e) {
+        console.error('[AI-Service] Error formateando enfrentamientos directos H2H:', e.message);
+        return 'Enfrentamientos directos recientes: Error al procesar.';
+    }
+}
+
+/**
  * Construye el prompt para fútbol en tono formal y técnico.
  */
 function buildFootballPrompt(matchData) {
-    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway } = matchData;
+    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway, h2hMatches } = matchData;
     
     const statsStr = formatFootballStats(stats);
     const eventsStr = formatFootballEvents(events);
     const lastMatchesHomeStr = formatLastMatches(homeTeam, lastMatchesHome);
     const lastMatchesAwayStr = formatLastMatches(awayTeam, lastMatchesAway);
+    const h2hMatchesStr = formatH2HMatches(h2hMatches);
 
     return `Actúa como un analista profesional de apuestas deportivas de fútbol. Tu estilo de análisis DEBE ser formal, técnico, objetivo y preciso. Evita el lenguaje informal, coloquial, vulgar o irreverente. Presenta la información de forma estructurada y analítica, adecuada para inversionistas deportivos serios.
-
+ 
 Analiza este partido de fútbol en vivo que acaba de activar una alerta estadística:
 - Partido: ${homeTeam} vs ${awayTeam}
 - Competición: ${leagueName}
@@ -336,20 +361,23 @@ Analiza este partido de fútbol en vivo que acaba de activar una alerta estadís
 - Marcador actual: ${score.home} - ${score.away}
 - Momios iniciales: Local ${odds.home} | Empate ${odds.draw} | Visitante ${odds.away}
 - Regla estadística activada: "${ruleName}"
-- Motivo: ${ruleDetails}
-
+- Motivo: ${ruleDetails && ruleDetails.trim() ? ruleDetails : 'N/A'}
+ 
 ${statsStr}
-
+ 
 📋 Línea de Tiempo de Eventos:
 ${eventsStr}
-
+ 
 📊 Rendimiento Histórico Reciente (Últimos 5 partidos):
 ${lastMatchesHomeStr}
-
+ 
 ${lastMatchesAwayStr}
 
+📊 Enfrentamientos Directos Recientes (Últimos 5 partidos H2H):
+${h2hMatchesStr}
+ 
 Instrucciones para redactar la respuesta:
-1. Realice un análisis formal de la dinámica de juego combinando las estadísticas en vivo con el rendimiento histórico reciente provisto de ambos equipos (máximo 3 líneas).
+1. Realice un análisis formal de la dinámica de juego combinando las estadísticas en vivo con el rendimiento histórico reciente provisto de ambos equipos y sus enfrentamientos directos (un solo párrafo conciso de máximo 50 palabras).
    * ANÁLISIS DE ELIMINATORIAS Y CONTEXTO: Evalúa el tipo de partido según la competición y ronda provistas:
      1. Si es una eliminatoria de ida y vuelta (ej. Octavos, Cuartos, Semifinales en copas o liguillas), busca en el historial reciente de los últimos partidos provistos de ambos equipos el encuentro de ida (mismos rivales con localía invertida), deduce su marcador final y calcula el marcador global sumando el resultado en vivo para sopesar cuál equipo tiene la urgencia real de atacar en el vivo.
      2. Si es un encuentro en Cancha Neutral (ej. finales a partido único, mundiales), ignora la ventaja de localía del equipo catalogado como "home" y asume que ambos compiten bajo igualdad de condiciones geográficas.
@@ -360,9 +388,9 @@ Instrucciones para redactar la respuesta:
 3. Sugiera un momio objetivo en vivo (mínimo @1.60 o superior). Este momio DEBE ser realista para el mercado en vivo de acuerdo con la situación del partido. En caso de haber recomendado "Evitar apuesta / No recomendada", puedes poner "No aplica" o "@1.60" por compatibilidad de formato.
    * REGLA DE REALISMO DE MOMIOS: Si el equipo recomendado ya va ganando, la Doble Oportunidad (1X/X2) o Hándicaps a su favor (como +1.5) NO tendrán momios de @1.60+ en vivo (serán de @1.10 o menores). Para obtener un momio de @1.60+ en este caso, debes recomendar su victoria directa (ML), que anotará el próximo gol, o el Over de Goles Totales del partido. Solo recomienda Doble Oportunidad o Hándicaps positivos de @1.60+ para el equipo que va empatando o perdiendo.
 4. Estime una probabilidad matemática/nivel de confianza de acierto para esta recomendación de apuesta basada estrictamente en los datos del análisis (entre 0% y 100%). Si recomiendas evitar la apuesta, indica una confianza baja (ej: menor al 50%) que refleje la peligrosidad del partido.
-
+ 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
-
+ 
 🧠 Análisis de IA: [Su análisis técnico y formal aquí]
 🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
@@ -377,7 +405,7 @@ function buildBaseballPrompt(matchData) {
     const statsStr = formatBaseballStats(stats);
 
     return `Actúa como un analista profesional de apuestas deportivas de béisbol de la MLB. Tu estilo de análisis DEBE ser formal, técnico, objetivo y preciso. Evita el lenguaje informal, coloquial o irreverente. Presenta la información de forma estructurada y analítica, adecuada para inversionistas deportivos serios.
-
+ 
 Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 - Partido: ${homeTeam} vs ${awayTeam}
 - Competición: ${leagueName || 'MLB'}
@@ -386,20 +414,20 @@ Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 - Marcador actual (Local - Visitante): ${score.home} - ${score.away}
 - Momios iniciales: Local ${odds.home} | Visitante ${odds.away}
 - Regla activada: "${ruleName}"
-- Motivo: ${ruleDetails}
-
+- Motivo: ${ruleDetails && ruleDetails.trim() ? ruleDetails : 'N/A'}
+ 
 ${statsStr}
-
+ 
 Instrucciones para redactar la respuesta:
-1. Realice un análisis formal y técnico del juego (máximo 3 líneas) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo, y la importancia del partido de acuerdo con la competición y la ronda (ej. tensión extra si es postemporada/playoffs).
+1. Realice un análisis formal y técnico del juego (un solo párrafo conciso de máximo 50 palabras) utilizando la dinámica del picheo, bateo, hits y errores mostrados en el vivo, y la importancia del partido de acuerdo con la competición y la ronda (ej. tensión extra si es postemporada/playoffs).
 2. Proporcione una recomendación de apuesta concreta basada en los datos estadísticos del partido.
    * REGLA DE DESCARTE DE APUESTAS: Si del análisis en vivo (ej: picheo inestable, alto porcentaje de hits del rival, tendencia a errores) concluyes que operar este partido es sumamente riesgoso, inestable o carece de valor matemático claro, debes recomendar evitar la operación. En ese caso, la recomendación inteligente DEBE ser exactamente: "Evitar apuesta / No recomendada" (sin comillas).
 3. Sugiera un momio objetivo (mínimo @1.60 o superior). Este momio DEBE ser realista para el mercado en vivo de acuerdo con la situación del partido. En caso de haber recomendado "Evitar apuesta / No recomendada", puedes poner "No aplica" o "@1.60" por compatibilidad de formato.
    * REGLA DE REALISMO DE MOMIOS: Si el equipo recomendado ya va ganando en las entradas medias/finales, la línea de dinero (ML) o Hándicaps a su favor NO tendrán momios de @1.60+ en vivo. Para obtener un momio de @1.60+ en este caso, debes sugerir el Over de Carreras Totales del juego, Hándicap negativo del líder, o apostar a la reacción del equipo que va perdiendo (ML o Hándicap positivo del equipo en desventaja).
 4. Estime una probabilidad matemática/nivel de confianza de acierto para esta recomendación de apuesta basada en los datos del partido (entre 0% y 100%). Si recomiendas evitar la apuesta, indica una confianza baja (ej: menor al 50%) que refleje la peligrosidad del partido.
-
+ 
 Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales sino tal cual se muestra a continuación, pero sí puedes usar negritas en el texto generado por ti):
-
+ 
 🧠 Análisis de IA: [Su análisis técnico y formal aquí]
 🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
@@ -410,15 +438,16 @@ Formato de salida obligatorio (usa exactamente este formato en español, no alte
  * Construye el prompt específico para DeepSeek (Fútbol) - Optimizado para brevedad.
  */
 function buildFootballPromptDeepSeek(matchData) {
-    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway } = matchData;
+    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway, h2hMatches } = matchData;
     
     const statsStr = formatFootballStats(stats);
     const eventsStr = formatFootballEvents(events);
     const lastMatchesHomeStr = formatLastMatches(homeTeam, lastMatchesHome);
     const lastMatchesAwayStr = formatLastMatches(awayTeam, lastMatchesAway);
+    const h2hMatchesStr = formatH2HMatches(h2hMatches);
 
     return `Actúa como un analista profesional de apuestas deportivas de fútbol. Tu estilo debe ser sumamente directo, conciso, objetivo y preciso. Evita dar explicaciones largas o análisis redundantes.
-
+ 
 Analiza este partido de fútbol en vivo que acaba de activar una alerta estadística:
 - Partido: ${homeTeam} vs ${awayTeam}
 - Competición: ${leagueName}
@@ -427,27 +456,30 @@ Analiza este partido de fútbol en vivo que acaba de activar una alerta estadís
 - Marcador actual: ${score.home} - ${score.away}
 - Momios iniciales: Local ${odds.home} | Empate ${odds.draw} | Visitante ${odds.away}
 - Regla estadística activada: "${ruleName}"
-- Motivo: ${ruleDetails}
-
+- Motivo: ${ruleDetails && ruleDetails.trim() ? ruleDetails : 'N/A'}
+ 
 ${statsStr}
-
+ 
 📋 Línea de Tiempo de Eventos:
 ${eventsStr}
-
+ 
 📊 Rendimiento Histórico Reciente (Últimos 5 partidos):
 ${lastMatchesHomeStr}
 ${lastMatchesAwayStr}
+ 
+📊 Enfrentamientos Directos Recientes (Últimos 5 partidos H2H):
+${h2hMatchesStr}
 
 Instrucciones obligatorias para redactar la respuesta:
-1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en una sola frase concisa de máximo 120 caracteres sobre la dinámica de juego actual.
+1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en un solo párrafo conciso de máximo 50 palabras (máximo 120 caracteres) sobre la dinámica de juego actual.
 2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 1.5 Goles en el Partido", "Siguiente Gol de ${awayTeam}", "Más de 8.5 Córners Totales"). NO utilices justificaciones, explicaciones largas ni rodeos.
 3. REGLA DE DESCARTE DE APUESTAS: Evita el sesgo de descarte ("Evitar apuesta / No recomendada"). Solo debes sugerir evitar la apuesta si el partido está completamente muerto (marcador abultado sin nada por jugar o total ausencia de datos). En cualquier otro escenario activo, analiza y busca una recomendación real de valor deportivo.
 4. Sugiera un momio objetivo en vivo realista (mínimo @1.60 o superior). Recuerda sugerir victoria directa, próximo gol o totales para momios realistas de @1.60+ si el equipo favorito va ganando.
 5. Estime una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
-
+ 
 Formato de salida obligatorio (usa exactamente este formato en español, no uses negritas en los nombres de los campos, no agregues texto extra fuera de este formato):
-
-🧠 Análisis de IA: [Frase ultra corta, máximo 120 caracteres]
+ 
+🧠 Análisis de IA: [Frase ultra corta, un solo párrafo de máximo 50 palabras]
 🎯 Recomendación Inteligente: [Apuesta ultra directa, de 2 a 8 palabras]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
 🔥 Confianza Estimada: [Porcentaje]%`;
@@ -461,7 +493,7 @@ function buildBaseballPromptDeepSeek(matchData) {
     const statsStr = formatBaseballStats(stats);
 
     return `Actúa como un analista profesional de apuestas deportivas de béisbol de la MLB. Tu estilo debe ser sumamente directo, conciso, objetivo y preciso. Evita dar explicaciones largas o análisis redundantes.
-
+ 
 Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 - Partido: ${homeTeam} vs ${awayTeam}
 - Competición: ${leagueName || 'MLB'}
@@ -470,20 +502,20 @@ Analiza este partido de béisbol en vivo que acaba de activar una alerta:
 - Marcador actual (Local - Visitante): ${score.home} - ${score.away}
 - Momios iniciales: Local ${odds.home} | Visitante ${odds.away}
 - Regla activada: "${ruleName}"
-- Motivo: ${ruleDetails}
-
+- Motivo: ${ruleDetails && ruleDetails.trim() ? ruleDetails : 'N/A'}
+ 
 ${statsStr}
-
+ 
 Instrucciones obligatorias para redactar la respuesta:
-1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en una sola frase concisa de máximo 120 caracteres sobre la dinámica de juego actual.
+1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en un solo párrafo conciso de máximo 50 palabras (máximo 120 caracteres) sobre la dinámica de juego actual.
 2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 7.5 Carreras en el Juego", "Hándicap de Run Line ${awayTeam} +1.5"). NO utilices justificaciones, explicaciones largas ni rodeos.
 3. REGLA DE DESCARTE DE APUESTAS: Evita el sesgo de descarte ("Evitar apuesta / No recomendada"). Solo debes sugerir evitar la apuesta si el partido está completamente resuelto o no hay datos estadísticos de picheo y bateo. En cualquier otro escenario activo, analiza y busca una recomendación real de valor deportivo.
 4. Sugiera un momio objetivo en vivo realista (mínimo @1.60 o superior).
 5. Estime una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
-
+ 
 Formato de salida obligatorio (usa exactamente este formato en español, no uses negritas en los nombres de los campos, no agregues texto extra fuera de este formato):
-
-🧠 Análisis de IA: [Frase ultra corta, máximo 120 caracteres]
+ 
+🧠 Análisis de IA: [Frase ultra corta, un solo párrafo de máximo 50 palabras]
 🎯 Recomendación Inteligente: [Apuesta ultra directa, de 2 a 8 palabras]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
 🔥 Confianza Estimada: [Porcentaje]%`;

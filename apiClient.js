@@ -143,6 +143,18 @@ async function getLiveOdds() {
   }
 }
 
+// Obtiene los últimos N enfrentamientos directos entre dos equipos
+async function getHeadToHead(team1Id, team2Id, last = 5) {
+  if (checkRateLimit()) return [];
+  try {
+    const response = await apiClient.get('/fixtures/headtohead', { params: { h2h: `${team1Id}-${team2Id}`, last: last } });
+    return response.data.response || [];
+  } catch (error) {
+    handleApiError(`h2h for ${team1Id} vs ${team2Id}`, error);
+    return [];
+  }
+}
+
 module.exports = {
   getLiveMatches,
   getMatchEvents,
@@ -151,7 +163,8 @@ module.exports = {
   getMatchesByDate,
   getMatchById,
   getTeamLastMatches,
-  getLiveOdds
+  getLiveOdds,
+  getHeadToHead
 };
 
 

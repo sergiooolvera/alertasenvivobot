@@ -8,7 +8,7 @@ const financialTracker = require('./financialTracker');
 
 
 // Módulos de Fútbol
-const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds } = require('./apiClient');
+const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds, getHeadToHead } = require('./apiClient');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
@@ -367,16 +367,30 @@ async function checkMatches() {
             const awayTeamId = match.teams.away.id;
             console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando datos adicionales en paralelo para la IA...`);
             
-            const [fetchedStats, fetchedEvents, lastMatchesHome, lastMatchesAway] = await Promise.all([
+            const [fetchedStats, fetchedEvents, rawLastMatchesHome, rawLastMatchesAway, rawH2hMatches] = await Promise.all([
                 stats.length === 0 ? getMatchStatistics(fixtureId) : Promise.resolve(stats),
                 events.length === 0 ? getMatchEvents(fixtureId) : Promise.resolve(events),
-                getTeamLastMatches(homeTeamId, 5),
-                getTeamLastMatches(awayTeamId, 5)
+                getTeamLastMatches(homeTeamId, 6),
+                getTeamLastMatches(awayTeamId, 6),
+                getHeadToHead(homeTeamId, awayTeamId, 6)
             ]);
             
             stats = fetchedStats;
             events = fetchedEvents;
 
+            // Filtrar para excluir el partido actual (fixtureId) y limitar a los últimos 5
+            const lastMatchesHome = (rawLastMatchesHome || [])
+                .filter(m => m.fixture && m.fixture.id !== fixtureId)
+                .slice(0, 5);
+
+            const lastMatchesAway = (rawLastMatchesAway || [])
+                .filter(m => m.fixture && m.fixture.id !== fixtureId)
+                .slice(0, 5);
+
+            const h2hMatches = (rawH2hMatches || [])
+                .filter(m => m.fixture && m.fixture.id !== fixtureId)
+                .slice(0, 5);
+            
             if (!trackedMatches.has(fixtureId)) {
                 trackedMatches.set(fixtureId, {
                     home: match.teams.home.name,
@@ -410,7 +424,8 @@ async function checkMatches() {
                         stats: stats,
                         events: events,
                         lastMatchesHome: lastMatchesHome,
-                        lastMatchesAway: lastMatchesAway
+                        lastMatchesAway: lastMatchesAway,
+                        h2hMatches: h2hMatches
                     };
                     console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
                     const contextGemini = {};
