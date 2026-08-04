@@ -26,6 +26,9 @@ let bot;
 if (token && token !== 'tu_token_aqui') {
     bot = new TelegramBot(token, { polling: true });
     console.log("✅ Bot de Telegram conectado exitosamente.");
+    bot.getMe().then(me => {
+        console.log(`[Telegram] Bot conectado en producción: @${me.username} (${me.first_name})`);
+    }).catch(err => console.error(`[Telegram] Error al obtener info del bot:`, err.message));
 } else {
     console.warn("⚠️ TELEGRAM_BOT_TOKEN no configurado en .env. Las alertas se mostrarán en la consola.");
     bot = {
