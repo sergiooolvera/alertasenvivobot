@@ -142,9 +142,9 @@ async function generatePredictionDeepSeek(matchData, sport = 'football') {
     try {
         let prompt;
         if (sport === 'baseball') {
-            prompt = buildBaseballPrompt(matchData);
+            prompt = buildBaseballPromptDeepSeek(matchData);
         } else {
-            prompt = buildFootballPrompt(matchData);
+            prompt = buildFootballPromptDeepSeek(matchData);
         }
 
         const result = await callDeepSeekWithRotation(prompt);
@@ -400,6 +400,89 @@ Formato de salida obligatorio (usa exactamente este formato en español, no alte
 🎯 Recomendación Inteligente: [Su recomendación técnica de apuesta aquí]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
 🔥 Confianza Estimada: [Porcentaje de confianza entre 0% y 100%, solo el número con el símbolo %]`;
+}
+
+/**
+ * Construye el prompt específico para DeepSeek (Fútbol) - Optimizado para brevedad.
+ */
+function buildFootballPromptDeepSeek(matchData) {
+    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway } = matchData;
+    
+    const statsStr = formatFootballStats(stats);
+    const eventsStr = formatFootballEvents(events);
+    const lastMatchesHomeStr = formatLastMatches(homeTeam, lastMatchesHome);
+    const lastMatchesAwayStr = formatLastMatches(awayTeam, lastMatchesAway);
+
+    return `Actúa como un analista profesional de apuestas deportivas de fútbol. Tu estilo debe ser sumamente directo, conciso, objetivo y preciso. Evita dar explicaciones largas o análisis redundantes.
+
+Analiza este partido de fútbol en vivo que acaba de activar una alerta estadística:
+- Partido: ${homeTeam} vs ${awayTeam}
+- Competición: ${leagueName}
+- Ronda/Fase: ${leagueRound}
+- Minuto actual: ${elapsed}'
+- Marcador actual: ${score.home} - ${score.away}
+- Momios iniciales: Local ${odds.home} | Empate ${odds.draw} | Visitante ${odds.away}
+- Regla estadística activada: "${ruleName}"
+- Motivo: ${ruleDetails}
+
+${statsStr}
+
+📋 Línea de Tiempo de Eventos:
+${eventsStr}
+
+📊 Rendimiento Histórico Reciente (Últimos 5 partidos):
+${lastMatchesHomeStr}
+${lastMatchesAwayStr}
+
+Instrucciones obligatorias para redactar la respuesta:
+1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en una sola frase concisa de máximo 120 caracteres sobre la dinámica de juego actual.
+2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 1.5 Goles en el Partido", "Siguiente Gol de ${awayTeam}", "Más de 8.5 Córners Totales"). NO utilices justificaciones, explicaciones largas ni rodeos.
+3. REGLA DE DESCARTE DE APUESTAS: Evita el sesgo de descarte ("Evitar apuesta / No recomendada"). Solo debes sugerir evitar la apuesta si el partido está completamente muerto (marcador abultado sin nada por jugar o total ausencia de datos). En cualquier otro escenario activo, analiza y busca una recomendación real de valor deportivo.
+4. Sugiera un momio objetivo en vivo realista (mínimo @1.60 o superior). Recuerda sugerir victoria directa, próximo gol o totales para momios realistas de @1.60+ si el equipo favorito va ganando.
+5. Estime una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
+
+Formato de salida obligatorio (usa exactamente este formato en español, no uses negritas en los nombres de los campos, no agregues texto extra fuera de este formato):
+
+🧠 Análisis de IA: [Frase ultra corta, máximo 120 caracteres]
+🎯 Recomendación Inteligente: [Apuesta ultra directa, de 2 a 8 palabras]
+📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
+🔥 Confianza Estimada: [Porcentaje]%`;
+}
+
+/**
+ * Construye el prompt específico para DeepSeek (Béisbol) - Optimizado para brevedad.
+ */
+function buildBaseballPromptDeepSeek(matchData) {
+    const { homeTeam, awayTeam, leagueName, leagueRound, inning, score, odds, ruleName, ruleDetails, stats } = matchData;
+    const statsStr = formatBaseballStats(stats);
+
+    return `Actúa como un analista profesional de apuestas deportivas de béisbol de la MLB. Tu estilo debe ser sumamente directo, conciso, objetivo y preciso. Evita dar explicaciones largas o análisis redundantes.
+
+Analiza este partido de béisbol en vivo que acaba de activar una alerta:
+- Partido: ${homeTeam} vs ${awayTeam}
+- Competición: ${leagueName || 'MLB'}
+- Ronda/Fase: ${leagueRound || 'Regular Season'}
+- Inning actual: ${inning}
+- Marcador actual (Local - Visitante): ${score.home} - ${score.away}
+- Momios iniciales: Local ${odds.home} | Visitante ${odds.away}
+- Regla activada: "${ruleName}"
+- Motivo: ${ruleDetails}
+
+${statsStr}
+
+Instrucciones obligatorias para redactar la respuesta:
+1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en una sola frase concisa de máximo 120 caracteres sobre la dinámica de juego actual.
+2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 7.5 Carreras en el Juego", "Hándicap de Run Line ${awayTeam} +1.5"). NO utilices justificaciones, explicaciones largas ni rodeos.
+3. REGLA DE DESCARTE DE APUESTAS: Evita el sesgo de descarte ("Evitar apuesta / No recomendada"). Solo debes sugerir evitar la apuesta si el partido está completamente resuelto o no hay datos estadísticos de picheo y bateo. En cualquier otro escenario activo, analiza y busca una recomendación real de valor deportivo.
+4. Sugiera un momio objetivo en vivo realista (mínimo @1.60 o superior).
+5. Estime una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
+
+Formato de salida obligatorio (usa exactamente este formato en español, no uses negritas en los nombres de los campos, no agregues texto extra fuera de este formato):
+
+🧠 Análisis de IA: [Frase ultra corta, máximo 120 caracteres]
+🎯 Recomendación Inteligente: [Apuesta ultra directa, de 2 a 8 palabras]
+📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
+🔥 Confianza Estimada: [Porcentaje]%`;
 }
 
 /**

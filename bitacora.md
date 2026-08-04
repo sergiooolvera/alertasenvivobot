@@ -4,7 +4,7 @@
 Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe alertas basadas en eventos en vivo (tarjetas rojas, empates al medio tiempo de favoritos, ventajas de underdogs, córneres, partidos calientes y entradas clave de béisbol) con seguimiento automatizado GREEN/RED post-partido.
 
 ## Estado Actual
-- Versión 1.8.1: Robustez del parseador de respuestas de IA para el bloque dual (Gemini + DeepSeek) y corrección de expresiones regulares ante marcas Markdown de negritas.
+- Versión 1.8.2: Optimización del prompt de DeepSeek para hacerlo conciso, directo a la recomendación (hasta 8 palabras) y reducir el sesgo de omisión de apuestas.
 - Sistema de 7 reglas de fútbol + 3 reglas de MLB Béisbol completado y verificado. Servidor listo con redeploy automático a Railway.
 
 ## Decisiones Tomadas
@@ -52,6 +52,7 @@ Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe a
 - **[2026-08-01]**: Actualización de credenciales de Gemini en el archivo `.env`. Se reemplazaron las claves API de la cuenta con facturación por las nuevas claves gratuitas proporcionadas por el usuario para migrar al plan sin costos (Free Tier).
 - **[2026-08-01]**: Integración de DeepSeek para análisis predictivo dual en vivo. Se configuró la variable de entorno `DEEPSEEK_API_KEY` en el archivo `.env` y se crearon las funciones `callDeepSeekWithRotation` y `generatePredictionDeepSeek` en `aiService.js` con soporte para modelos `deepseek-v4-flash` and `deepseek-v4-pro`. Se adaptó `index.js` para realizar consultas paralelas protegidas a ambos proveedores de IA y dar formato al mensaje dual unificado en Telegram. Se implementó un robusto fallback al formato de Gemini clásico si DeepSeek falla o no cuenta con saldo suficiente (Error 402), validando el comportamiento con `testAi.js` y `scratch/test_deepseek.js`.
 - **[2026-08-02]**: Robustecimiento del parseador en `index.js` (Versión 1.8.1). Se actualizaron las expresiones regulares de extracción para ignorar los asteriscos de Markdown (`**`) en los encabezados, previniendo fallos si las APIs de IA (Gemini o DeepSeek) devuelven el análisis con formatos resaltados. Se documentó la necesidad de configurar la variable de entorno `DEEPSEEK_API_KEY` en el panel de control de Railway.
+- **[2026-08-04]**: Optimización de la integración de DeepSeek (Versión 1.8.2). Se crearon prompts dedicados (`buildFootballPromptDeepSeek` y `buildBaseballPromptDeepSeek`) para DeepSeek con instrucciones de síntesis: análisis de una sola frase (máximo 120 caracteres) y sugerencias directas de apuesta (de 2 a 8 palabras). Se redujo el sesgo de descarte de apuestas ("Evitar apuesta / No recomendada") para incentivar propuestas activas en vivo.
 
 
 
