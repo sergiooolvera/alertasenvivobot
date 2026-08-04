@@ -54,9 +54,12 @@ if (process.env.TELEGRAM_PROMPTS_CHAT_ID) {
 
 // Almacenamos los chats suscritos
 const subscribedChats = new Set();
+const MI_CHAT_ID = 890184744; // Tu ID exclusivo
 
 if (bot.onText) {
-    const MI_CHAT_ID = 890184744; // Tu ID exclusivo
+    // Suscribir automáticamente al inicio para evitar que los reinicios corten las notificaciones
+    subscribedChats.add(MI_CHAT_ID);
+    console.log(`[Inicio] Chat principal ${MI_CHAT_ID} auto-suscrito por defecto.`);
 
     bot.onText(/\/start/, (msg) => {
         const chatId = msg.chat.id;
@@ -97,6 +100,37 @@ let currentLiveBaseballIds = new Set();
 
 // Cola de alertas pendientes del sistema SafeOdds por cuota objetivo
 const pendingAlertsQueue = [];
+
+// Reconstrucción del mapa trackedMatches a partir de las jugadas pendientes en financial_tracker.json
+try {
+    const pendingPlays = financialTracker.getPendingPlays();
+    if (pendingPlays && pendingPlays.length > 0) {
+        console.log(`[Inicio] Cargando ${pendingPlays.length} jugadas pendientes desde financial_tracker.json para monitoreo...`);
+        for (const play of pendingPlays) {
+            const fixtureId = play.fixtureId;
+            if (!trackedMatches.has(fixtureId)) {
+                trackedMatches.set(fixtureId, {
+                    home: play.home,
+                    away: play.away,
+                    alertsMetadata: []
+                });
+            }
+            const trackedInfo = trackedMatches.get(fixtureId);
+            const hasRule = trackedInfo.alertsMetadata.some(m => m.ruleName === play.ruleName);
+            if (!hasRule && play.metadata) {
+                // Forzar que isSent sea true porque la alerta ya fue enviada en la ejecución previa
+                const meta = { ...play.metadata, isSent: true };
+                trackedInfo.alertsMetadata.push(meta);
+            }
+        }
+        console.log(`[Inicio] Se reconstruyó el monitoreo de trackedMatches para ${trackedMatches.size} partidos.`);
+    } else {
+        console.log(`[Inicio] No hay jugadas pendientes en financial_tracker.json.`);
+    }
+} catch (error) {
+    console.error(`[Inicio] Error al reconstruir trackedMatches desde jugadas pendientes:`, error.message);
+}
+
 
 function getLiveOddForRecommendation(oddsArray, recommendation, homeTeam, awayTeam) {
     if (!oddsArray || !recommendation) return null;

@@ -342,6 +342,17 @@ async function sendDailyReport(bot, subscribedChats) {
     console.log(`[FinancialTracker] Reporte financiero diario enviado con éxito.`);
 }
 
+// Obtiene todas las jugadas en estado PENDING
+function getPendingPlays() {
+    try {
+        const data = loadData();
+        return data.plays.filter(p => p.status === 'PENDING');
+    } catch (e) {
+        console.error('[FinancialTracker] Error al obtener jugadas pendientes:', e.message);
+        return [];
+    }
+}
+
 module.exports = {
     addPlay,
     updatePlayVerdict,
@@ -350,5 +361,7 @@ module.exports = {
     sendDailyReport,
     getLocalDateString,
     getYesterdayDateString,
-    getPreviousSundayDateString
+    getPreviousSundayDateString,
+    getPendingPlays
 };
+

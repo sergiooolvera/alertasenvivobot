@@ -4,7 +4,7 @@
 Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe alertas basadas en eventos en vivo (tarjetas rojas, empates al medio tiempo de favoritos, ventajas de underdogs, córneres, partidos calientes y entradas clave de béisbol) con seguimiento automatizado GREEN/RED post-partido.
 
 ## Estado Actual
-- Versión 1.8.8: Ajuste y optimización de prompts y filtros de datos históricos. Exclusión del partido en vivo del historial, agregación de enfrentamientos directos (H2H), corrección de motivos vacíos ("N/A") y limitación a un párrafo de máximo 50 palabras.
+- Versión 1.9.0: Persistencia de seguimiento post-partido y auto-suscripción del ID de usuario principal al arrancar. Evita la pérdida de alertas o veredictos (GREEN/RED) tras despliegues o reinicios del bot en Railway.
 - Sistema de 7 reglas de fútbol completado y verificado. Servidor listo con redeploy automático a Railway.
 
 ## Decisiones Tomadas
@@ -59,5 +59,7 @@ Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe a
 - **[2026-08-04]**: Robustecimiento de diagnóstico de auditoría de prompts (Versión 1.8.6). Se implementó la impresión del estado de la variable `TELEGRAM_PROMPTS_CHAT_ID` al arrancar el bot en `index.js`. Se añadieron logs detallados y explícitos de intento, éxito (con icono ✅) y error (con icono ❌) en el envío de los documentos de prompts a Telegram para facilitar su auditoría en el panel de control de Railway.
 - **[2026-08-04]**: Identificación de cuenta de bot en logs (Versión 1.8.7). Se agregó la llamada a `bot.getMe()` en la inicialización de `index.js` para imprimir en consola el nombre de usuario de Telegram del bot que está corriendo actualmente. Esto ayuda a contrastar si la cuenta agregada como administrador del canal coincide exactamente con el token en ejecución.
 - **[2026-08-04]**: Optimización de prompts e integración de enfrentamientos directos H2H (Versión 1.8.8). Se excluyó de forma estricta el partido en vivo en disputa de las listas de los últimos partidos recientes y enfrentamientos directos. Se implementó la consulta del H2H a través de la API-Football y su correspondiente formateo en los prompts de fútbol de Gemini y DeepSeek. Se controlaron los campos de motivo vacíos configurándolos por defecto como "N/A" para evitar instrucciones truncadas en la IA. Por último, se modificaron los prompts para limitar el análisis a un párrafo conciso de máximo 50 palabras (y mantener la brevedad máxima en DeepSeek).
+- **[2026-08-04]**: Implementación de persistencia y auto-suscripción ante reinicios de servidor (Versión 1.9.0). Se implementó la función `getPendingPlays` en `financialTracker.js` para extraer las jugadas en estado `PENDING` del archivo `financial_tracker.json`. Se modificó `index.js` para que al arrancar lea estas jugadas pendientes y reconstruya en memoria el mapa `trackedMatches` para no perder el seguimiento de partidos en curso. Asimismo, se agregó el ID del usuario principal (`890184744`) por defecto al Set `subscribedChats` en el inicio del bot para asegurar la recepción de mensajes tras despliegues sin necesidad de enviar `/start` manualmente.
+
 
 
