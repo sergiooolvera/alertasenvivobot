@@ -133,7 +133,7 @@ async function callDeepSeekWithRotation(prompt) {
  * Genera el análisis y recomendación de IA usando DeepSeek.
  * Devuelve null si ocurre un fallo.
  */
-async function generatePredictionDeepSeek(matchData, sport = 'football') {
+async function generatePredictionDeepSeek(matchData, sport = 'football', outContext = null) {
     if (!deepseekApiKey) {
         console.warn("[AI-Service] No hay API key de DeepSeek configurada en .env.");
         return null;
@@ -145,6 +145,10 @@ async function generatePredictionDeepSeek(matchData, sport = 'football') {
             prompt = buildBaseballPromptDeepSeek(matchData);
         } else {
             prompt = buildFootballPromptDeepSeek(matchData);
+        }
+
+        if (outContext && typeof outContext === 'object') {
+            outContext.prompt = prompt;
         }
 
         const result = await callDeepSeekWithRotation(prompt);
@@ -489,7 +493,7 @@ Formato de salida obligatorio (usa exactamente este formato en español, no uses
  * Genera el análisis y recomendación de IA usando Gemini.
  * Devuelve null si ocurre un fallo para que el bot use la alerta predeterminada.
  */
-async function generatePrediction(matchData, sport = 'football') {
+async function generatePrediction(matchData, sport = 'football', outContext = null) {
     if (apiKeys.length === 0) {
         console.warn("[AI-Service] No hay API keys de Gemini configuradas en .env. Se usará el análisis estático predeterminado.");
         return null;
@@ -501,6 +505,10 @@ async function generatePrediction(matchData, sport = 'football') {
             prompt = buildBaseballPrompt(matchData);
         } else {
             prompt = buildFootballPrompt(matchData);
+        }
+
+        if (outContext && typeof outContext === 'object') {
+            outContext.prompt = prompt;
         }
 
         const result = await callGeminiWithRotation(prompt);

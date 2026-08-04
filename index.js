@@ -29,7 +29,12 @@ if (token && token !== 'tu_token_aqui') {
 } else {
     console.warn("⚠️ TELEGRAM_BOT_TOKEN no configurado en .env. Las alertas se mostrarán en la consola.");
     bot = {
-        sendMessage: (chatId, text, options) => console.log(`\n🔔 [ALERTA TELEGRAM para ${chatId}]:\n${text}\n`)
+        sendMessage: (chatId, text, options) => console.log(`\n🔔 [ALERTA TELEGRAM para ${chatId}]:\n${text}\n`),
+        sendDocument: (chatId, doc, options, fileOptions) => {
+            console.log(`\n📄 [DOCUMENTO TELEGRAM para ${chatId}]: ${fileOptions.filename}`);
+            console.log(`[Contenido Documento]:\n${doc.toString('utf-8').substring(0, 300)}...\n[Fin de vista previa de documento]\n`);
+            return Promise.resolve();
+        }
     };
 }
 
@@ -394,7 +399,8 @@ async function checkMatches() {
                         lastMatchesAway: lastMatchesAway
                     };
                     console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
-                    const aiPrediction = await aiService.generatePrediction(matchData, 'football');
+                    const contextGemini = {};
+                    const aiPrediction = await aiService.generatePrediction(matchData, 'football', contextGemini);
                     if (aiPrediction) {
                         const recMatch = aiPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
                         if (recMatch) {
@@ -414,8 +420,9 @@ async function checkMatches() {
 
                         // Obtener predicción de DeepSeek para el bloque dual
                         let deepseekPrediction = null;
+                        const contextDeepSeek = {};
                         try {
-                            deepseekPrediction = await aiService.generatePredictionDeepSeek(matchData, 'football');
+                            deepseekPrediction = await aiService.generatePredictionDeepSeek(matchData, 'football', contextDeepSeek);
                         } catch (err) {
                             console.error("[index.js] Error al obtener recomendación de DeepSeek:", err.message);
                         }
@@ -453,6 +460,30 @@ async function checkMatches() {
                         }
                         
                         textToSend = `${header}\n\n${formattedAiSection}`;
+
+                        // Enviar prompts de IA a Telegram si el chat de logs está configurado
+                        if (process.env.TELEGRAM_PROMPTS_CHAT_ID) {
+                            const promptChatId = process.env.TELEGRAM_PROMPTS_CHAT_ID;
+                            const matchClean = `${matchData.homeTeam}_vs_${matchData.awayTeam}`.replace(/[^a-zA-Z0-9_]/g, '_').replace(/_+/g, '_');
+                            
+                            if (contextGemini.prompt) {
+                                bot.sendDocument(promptChatId, Buffer.from(contextGemini.prompt, 'utf-8'), {
+                                    caption: `🤖 *Prompt Gemini* - ${matchData.homeTeam} vs ${matchData.awayTeam}\n📋 *Regla:* ${matchData.ruleName}`
+                                }, {
+                                    filename: `prompt_gemini_${matchClean}.txt`,
+                                    contentType: 'text/plain'
+                                }).catch(err => console.error(`[index.js] Error al enviar prompt Gemini a Telegram:`, err.message));
+                            }
+                            
+                            if (contextDeepSeek.prompt) {
+                                bot.sendDocument(promptChatId, Buffer.from(contextDeepSeek.prompt, 'utf-8'), {
+                                    caption: `🐳 *Prompt DeepSeek* - ${matchData.homeTeam} vs ${matchData.awayTeam}\n📋 *Regla:* ${matchData.ruleName}`
+                                }, {
+                                    filename: `prompt_deepseek_${matchClean}.txt`,
+                                    contentType: 'text/plain'
+                                }).catch(err => console.error(`[index.js] Error al enviar prompt DeepSeek a Telegram:`, err.message));
+                            }
+                        }
 
                         // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                         const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
