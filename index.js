@@ -18,6 +18,7 @@ const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
 // Servicio de IA
 const aiService = require('./aiService');
+const alertsHistory = require('./alertsHistory');
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 let bot;
@@ -308,6 +309,20 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                 metadata: alert.metadata
             });
 
+            // Registrar en el historial de alertas
+            alertsHistory.addAlert({
+                fixtureId: alert.fixtureId,
+                home: alert.homeTeam,
+                away: alert.awayTeam,
+                league: alert.metadata.leagueName || 'Desconocida',
+                ruleName: alert.ruleName,
+                initialScore: alert.scoreAtTime ? `${alert.scoreAtTime.home} - ${alert.scoreAtTime.away}` : '0-0',
+                geminiRec: alert.metadata.geminiRecommendation,
+                geminiConf: alert.metadata.geminiConfidence,
+                deepseekRec: alert.metadata.deepseekRecommendation,
+                deepseekConf: alert.metadata.deepseekConfidence
+            });
+
             pendingAlertsQueue.splice(i, 1);
         } else {
             console.log(`[SafeOdds] Esperando. ${alert.homeTeam} vs ${alert.awayTeam}. Momio objetivo: @${alert.targetOdd.toFixed(2)}, Momio en vivo/est: @${currentOddValue ? currentOddValue.toFixed(2) : 'N/D'} (${method}). Minuto actual: ${elapsed}' (espera est restante: ${alert.waitMinutes - (elapsed - alert.minuteAtIncident)}m)`);
@@ -522,6 +537,13 @@ async function checkMatches() {
                                 `🔥 *Confianza Estimada:* *${confidence}%*`;
                         }
                         
+                        // Guardar recomendaciones estructuradas en los metadatos para el historial
+                        alert.metadata.geminiRecommendation = recommendation;
+                        alert.metadata.geminiConfidence = confidence;
+                        alert.metadata.deepseekRecommendation = deepseekPrediction ? dsRecommendation : 'N/D';
+                        alert.metadata.deepseekConfidence = deepseekPrediction ? dsConfidence : '80';
+                        alert.metadata.leagueName = matchData.leagueName;
+                        
                         textToSend = `${header}\n\n${formattedAiSection}`;
 
                         // Enviar prompts de IA a Telegram si el chat de logs está configurado
@@ -599,6 +621,20 @@ async function checkMatches() {
                                 ruleName: alert.metadata.ruleName,
                                 metadata: alert.metadata
                             });
+
+                            // Registrar en el historial de alertas
+                            alertsHistory.addAlert({
+                                fixtureId,
+                                home: match.teams.home.name,
+                                away: match.teams.away.name,
+                                league: alert.metadata.leagueName || 'Desconocida',
+                                ruleName: alert.metadata.ruleName,
+                                initialScore: `${match.goals.home}-${match.goals.away}`,
+                                geminiRec: alert.metadata.geminiRecommendation,
+                                geminiConf: alert.metadata.geminiConfidence,
+                                deepseekRec: alert.metadata.deepseekRecommendation,
+                                deepseekConf: alert.metadata.deepseekConfidence
+                            });
                         } else if (liveOddVal !== null && liveOddVal >= targetOdd) {
                             console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
                             for (const chatId of subscribedChats) {
@@ -622,6 +658,20 @@ async function checkMatches() {
                                 suggestedOdd: liveOddVal || 1.60,
                                 ruleName: alert.metadata.ruleName,
                                 metadata: alert.metadata
+                            });
+
+                            // Registrar en el historial de alertas
+                            alertsHistory.addAlert({
+                                fixtureId,
+                                home: match.teams.home.name,
+                                away: match.teams.away.name,
+                                league: alert.metadata.leagueName || 'Desconocida',
+                                ruleName: alert.metadata.ruleName,
+                                initialScore: `${match.goals.home}-${match.goals.away}`,
+                                geminiRec: alert.metadata.geminiRecommendation,
+                                geminiConf: alert.metadata.geminiConfidence,
+                                deepseekRec: alert.metadata.deepseekRecommendation,
+                                deepseekConf: alert.metadata.deepseekConfidence
                             });
                         } else {
                             let estimatedStartOdd = 1.30;
@@ -746,6 +796,16 @@ async function checkFinishedMatches() {
                         
                         // Actualizar en el control financiero
                         financialTracker.updatePlayVerdict(fixtureId, result.meta.ruleName, result.isGreen, result.isOmitted);
+
+                        // Actualizar historial de alertas
+                        await alertsHistory.updateAlertVerdict({
+                            fixtureId,
+                            ruleName: result.meta.ruleName,
+                            finalHome: matchData.goals.home,
+                            finalAway: matchData.goals.away,
+                            finalEvents,
+                            finalStats
+                        });
                     }
                     trackedMatches.delete(fixtureId);
                 } else if (['CANC', 'PST', 'ABD', 'AWD', 'WO', 'SUSP', 'INT'].includes(status)) {
@@ -916,6 +976,9 @@ async function generateAndSendDailyParlay(timeString) {
                 }
             }
             console.log(`[Parlay ${timeString}] ¡Parlay del Día enviado exitosamente!`);
+            
+            // Registrar parlay en el historial de alertas
+            alertsHistory.addDailyParlay(timeString, parlayMsg);
         } else {
             console.warn(`[Parlay ${timeString}] La IA no pudo generar el mensaje del parlay.`);
         }
@@ -1016,6 +1079,23 @@ cron.schedule('35 7 * * *', async () => {
         await financialTracker.sendDailyReport(bot, subscribedChats);
     } catch (error) {
         console.error("[Cron] Error crítico en Reporte Financiero Matutino:", error.message);
+    }
+}, {
+    timezone: TIMEZONE
+});
+
+// Reporte de Rendimiento Diario Comparativo (Gemini vs DeepSeek) todos los días a las 12:30 PM (Hora Centro México)
+cron.schedule('30 12 * * *', async () => {
+    console.log("[Cron] Iniciando Reporte de Rendimiento Diario Comparativo a las 12:30 PM...");
+    const promptChatId = process.env.TELEGRAM_PROMPTS_CHAT_ID;
+    if (promptChatId) {
+        try {
+            await alertsHistory.sendDailySummaryToTelegram(bot, promptChatId);
+        } catch (error) {
+            console.error("[Cron] Error crítico en Reporte de Rendimiento Diario 12:30 PM:", error.message);
+        }
+    } else {
+        console.warn("[Cron] Reporte de Rendimiento Diario omitido: TELEGRAM_PROMPTS_CHAT_ID no configurado.");
     }
 }, {
     timezone: TIMEZONE
