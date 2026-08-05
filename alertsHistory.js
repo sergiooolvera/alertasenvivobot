@@ -215,42 +215,58 @@ function loadHistory() {
             parlays: []
         };
         saveHistory(initial);
-        
-        // Carga inicial automática si existe messages.html
-        try {
-            const htmlPath = path.join(__dirname, 'messages.html');
-            if (fs.existsSync(htmlPath)) {
-                console.log('[alertsHistory] Importando datos de messages.html para inicializar el historial...');
-                const imported = importFromHtml(htmlPath);
-                initial.alerts = imported.alerts;
-                initial.parlays = imported.parlays;
-                saveHistory(initial);
-                console.log(`[alertsHistory] Éxito: Se importaron ${initial.alerts.length} alertas y ${initial.parlays.length} parlays.`);
-            }
-        } catch (err) {
-            console.error('[alertsHistory] Falló la importación inicial:', err.message);
-        }
-        
-        return initial;
     }
     try {
-        // También intentar importar si el archivo existe pero está vacío (alerts y parlays vacíos)
         const content = fs.readFileSync(HISTORY_FILE, 'utf8');
         const parsed = JSON.parse(content);
-        if ((!parsed.alerts || parsed.alerts.length === 0) && (!parsed.parlays || parsed.parlays.length === 0)) {
-            const htmlPath = path.join(__dirname, 'messages.html');
-            if (fs.existsSync(htmlPath)) {
-                console.log('[alertsHistory] El historial está vacío. Intentando importar desde messages.html...');
-                const imported = importFromHtml(htmlPath);
-                parsed.alerts = imported.alerts;
-                parsed.parlays = imported.parlays;
+        
+        // Sincronización incremental automática desde messages.html
+        const htmlPath = path.join(__dirname, 'messages.html');
+        if (fs.existsSync(htmlPath)) {
+            console.log('[alertsHistory] Sincronizando historial con messages.html...');
+            const imported = importFromHtml(htmlPath);
+            
+            let newAlertsCount = 0;
+            let newParlaysCount = 0;
+
+            if (!parsed.alerts) parsed.alerts = [];
+            if (!parsed.parlays) parsed.parlays = [];
+
+            // Fusionar alertas que no existan (mismo día, mismos equipos y misma regla)
+            imported.alerts.forEach(impAlert => {
+                const exists = parsed.alerts.some(a => 
+                    a.date === impAlert.date && 
+                    a.home === impAlert.home && 
+                    a.ruleName === impAlert.ruleName
+                );
+                if (!exists) {
+                    parsed.alerts.push(impAlert);
+                    newAlertsCount++;
+                }
+            });
+
+            // Fusionar parlays que no existan (mismo día y misma hora)
+            imported.parlays.forEach(impParlay => {
+                const exists = parsed.parlays.some(p => 
+                    p.date === impParlay.date && 
+                    p.time === impParlay.time
+                );
+                if (!exists) {
+                    parsed.parlays.push(impParlay);
+                    newParlaysCount++;
+                }
+            });
+
+            if (newAlertsCount > 0 || newParlaysCount > 0) {
                 saveHistory(parsed);
-                console.log(`[alertsHistory] Éxito: Se importaron ${parsed.alerts.length} alertas y ${parsed.parlays.length} parlays.`);
+                console.log(`[alertsHistory] Sincronización exitosa: se añadieron ${newAlertsCount} alertas y ${newParlaysCount} parlays nuevos.`);
+            } else {
+                console.log('[alertsHistory] El historial ya está al día. No se requirieron importaciones.');
             }
         }
         return parsed;
     } catch (e) {
-        console.error('[alertsHistory] Error leyendo alerts_history.json, retornando valores iniciales:', e.message);
+        console.error('[alertsHistory] Error leyendo/sincronizando alerts_history.json, retornando valores en memoria:', e.message);
         return { alerts: [], parlays: [] };
     }
 }

@@ -1111,15 +1111,15 @@ cron.schedule('35 7 * * *', async () => {
     timezone: TIMEZONE
 });
 
-// Reporte de Rendimiento Diario Comparativo (Gemini vs DeepSeek) todos los días a las 12:45 PM (Hora Centro México)
-cron.schedule('45 12 * * *', async () => {
-    console.log("[Cron] Iniciando Reporte de Rendimiento Diario Comparativo a las 12:45 PM...");
+// Reporte de Rendimiento Diario Comparativo (Gemini vs DeepSeek) todos los días a las 1:00 PM (Hora Centro México)
+cron.schedule('0 13 * * *', async () => {
+    console.log("[Cron] Iniciando Reporte de Rendimiento Diario Comparativo a las 1:00 PM...");
     const promptChatId = process.env.TELEGRAM_PROMPTS_CHAT_ID;
     if (promptChatId) {
         try {
             await alertsHistory.sendDailySummaryToTelegram(bot, promptChatId);
         } catch (error) {
-            console.error("[Cron] Error crítico en Reporte de Rendimiento Diario 12:45 PM:", error.message);
+            console.error("[Cron] Error crítico en Reporte de Rendimiento Diario 1:00 PM:", error.message);
         }
     } else {
         console.warn("[Cron] Reporte de Rendimiento Diario omitido: TELEGRAM_PROMPTS_CHAT_ID no configurado.");
