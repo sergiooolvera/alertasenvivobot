@@ -102,6 +102,9 @@ let currentLiveBaseballIds = new Set();
 // Cola de alertas pendientes del sistema SafeOdds por cuota objetivo
 const pendingAlertsQueue = [];
 
+// Lista de alertas descartadas de la cola en la última hora (para auditoría)
+let discardedAlertsLog = [];
+
 // Reconstrucción del mapa trackedMatches a partir de las jugadas pendientes en financial_tracker.json
 try {
     const pendingPlays = financialTracker.getPendingPlays();
@@ -235,6 +238,17 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         // 1. Si el partido ya no está en vivo o ya finalizó, eliminar la alerta
         if (!match) {
             console.log(`[SafeOdds] Partido finalizado o no en vivo. Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            discardedAlertsLog.push({
+                timestamp: new Date(),
+                homeTeam: alert.homeTeam,
+                awayTeam: alert.awayTeam,
+                ruleName: alert.ruleName,
+                reason: "Partido finalizado o ya no está en vivo",
+                scoreAtTime: alert.scoreAtTime,
+                currentScore: null,
+                targetOdd: alert.targetOdd,
+                elapsedAtIncident: alert.minuteAtIncident
+            });
             pendingAlertsQueue.splice(i, 1);
             continue;
         }
@@ -245,6 +259,17 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         // 2. Si el marcador cambió, la alerta ya no sirve, eliminar de la cola
         if (currentHomeGoals !== alert.scoreAtTime.home || currentAwayGoals !== alert.scoreAtTime.away) {
             console.log(`[SafeOdds] El marcador cambió (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} -> ${currentHomeGoals}-${currentAwayGoals}). Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            discardedAlertsLog.push({
+                timestamp: new Date(),
+                homeTeam: alert.homeTeam,
+                awayTeam: alert.awayTeam,
+                ruleName: alert.ruleName,
+                reason: "Cambio de marcador",
+                scoreAtTime: alert.scoreAtTime,
+                currentScore: { home: currentHomeGoals, away: currentAwayGoals },
+                targetOdd: alert.targetOdd,
+                elapsedAtIncident: alert.minuteAtIncident
+            });
             pendingAlertsQueue.splice(i, 1);
             continue;
         }
@@ -1096,6 +1121,69 @@ cron.schedule('30 12 * * *', async () => {
         }
     } else {
         console.warn("[Cron] Reporte de Rendimiento Diario omitido: TELEGRAM_PROMPTS_CHAT_ID no configurado.");
+    }
+}, {
+    timezone: TIMEZONE
+});
+
+// Función para reportar alertas descartadas en la última hora a Telegram
+async function sendDiscardedAlertsReport() {
+    const promptChatId = process.env.TELEGRAM_PROMPTS_CHAT_ID;
+    if (!promptChatId) {
+        console.warn("[Reporte descartados] TELEGRAM_PROMPTS_CHAT_ID no configurado. Omitiendo reporte.");
+        discardedAlertsLog = [];
+        return;
+    }
+
+    if (discardedAlertsLog.length === 0) {
+        console.log("[Reporte descartados] No hay alertas descartadas en el último lapso. Omitiendo envío.");
+        return;
+    }
+
+    try {
+        console.log(`[Reporte descartados] Enviando reporte de ${discardedAlertsLog.length} alertas descartadas a Telegram...`);
+        
+        let reportContent = `📋 REPORTE DE ALERTAS DESCARTADAS (SafeOdds / Momio Seguro)
+Generado el: ${new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })} (Hora Centro México)
+Total descartes en el último lapso: ${discardedAlertsLog.length}
+
+============================================================\n\n`;
+
+        discardedAlertsLog.forEach((item, index) => {
+            const timeStr = item.timestamp.toLocaleTimeString('es-MX', { timeZone: 'America/Mexico_City', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            reportContent += `Partido #${index + 1}:
+- Evento: ${item.homeTeam} vs ${item.awayTeam}
+- Regla: ${item.ruleName} (Encolado al Minuto ${item.elapsedAtIncident}')
+- Hora del descarte: ${timeStr}
+- Motivo de cancelación: ${item.reason}
+- Marcador al encolar (IA): ${item.scoreAtTime.home} - ${item.scoreAtTime.away}
+- Marcador al cancelar: ${item.currentScore ? `${item.currentScore.home} - ${item.currentScore.away}` : 'N/D (Partido finalizado)'}
+- Momio objetivo que se esperaba: @${item.targetOdd.toFixed(2)}
+------------------------------------------------------------\n\n`;
+        });
+
+        const buffer = Buffer.from(reportContent, 'utf-8');
+        const filename = `alertas_descartadas_${new Date().toISOString().split('T')[0]}_${Date.now()}.txt`;
+
+        await bot.sendDocument(promptChatId, buffer, {
+            caption: `📋 *Reporte de Alertas Descartadas*\nSe descartaron *${discardedAlertsLog.length}* partidos de la cola en la última hora por cambio de marcador o finalización.`
+        }, {
+            filename: filename
+        });
+
+        console.log("[Reporte descartados] Reporte enviado con éxito.");
+    } catch (error) {
+        console.error("[Reporte descartados] Error al enviar reporte de descartados a Telegram:", error.message);
+    } finally {
+        // Limpiar para la siguiente hora
+        discardedAlertsLog = [];
+    }
+}
+
+// Programar Reporte de Alertas Descartadas cada hora
+cron.schedule('0 * * * *', async () => {
+    if (isWithinActiveHours()) {
+        await sendDiscardedAlertsReport();
     }
 }, {
     timezone: TIMEZONE
