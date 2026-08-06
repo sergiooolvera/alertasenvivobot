@@ -796,66 +796,11 @@ Instrucciones obligatorias:
     }
 }
 
-/**
- * Realiza una consulta genérica a Gemini habilitando la herramienta Google Search (Grounding)
- */
-async function callGeminiWithGoogleSearch(prompt) {
-    if (apiKeys.length === 0) {
-        console.warn("[AI-Service] No hay API keys de Gemini configuradas para búsqueda web genérica.");
-        return null;
-    }
-
-    const models = ['gemini-2.5-flash', 'gemini-flash-latest'];
-    let attempts = 0;
-    const maxAttempts = apiKeys.length * models.length;
-
-    while (attempts < maxAttempts) {
-        const apiKey = getApiKey();
-        const modelIndex = Math.floor(attempts / apiKeys.length) % models.length;
-        const model = models[modelIndex];
-
-        try {
-            console.log(`[AI-Service-Web-Generic] Ejecutando prompt con modelo '${model}' usando clave de índice ${currentKeyIndex}`);
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-            const response = await axios.post(url, {
-                contents: [{
-                    parts: [{
-                        text: prompt
-                    }]
-                }],
-                tools: [
-                    {
-                        google_search: {}
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 1000
-                }
-            }, {
-                timeout: 25000
-            });
-
-            if (response.status === 200 && response.data.candidates && response.data.candidates[0].content.parts[0].text) {
-                return response.data.candidates[0].content.parts[0].text.trim();
-            }
-            throw new Error("La API no retornó una respuesta de texto válida.");
-        } catch (error) {
-            console.error(`[AI-Service-Web-Generic] Intento fallido con modelo '${model}' e índice de clave ${currentKeyIndex}: ${error.message}`);
-            rotateApiKey();
-            attempts++;
-        }
-    }
-    throw new Error("Todas las claves API de Gemini fallaron para la consulta web genérica.");
-}
-
 module.exports = {
     generatePrediction,
     generatePredictionDeepSeek,
     generateDailyParlay,
     evaluatePredictionOutcome,
-    resolveVerdictViaWeb,
-    callGeminiWithGoogleSearch
+    resolveVerdictViaWeb
 };
 
