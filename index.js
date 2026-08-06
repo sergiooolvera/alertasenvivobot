@@ -52,6 +52,36 @@ if (process.env.TELEGRAM_PROMPTS_CHAT_ID) {
     console.warn(`[Config Warning] 📂 Auditoría de prompts DESACTIVADA. La variable de entorno TELEGRAM_PROMPTS_CHAT_ID no está configurada.`);
 }
 
+// Función auxiliar para enviar mensajes con formato Markdown de forma segura y con fallback a texto plano en caso de error de parseo
+async function sendSafeMarkdownMessage(chatId, text, options = {}) {
+    try {
+        const sendOptions = { parse_mode: 'Markdown', ...options };
+        return await bot.sendMessage(chatId, text, sendOptions);
+    } catch (error) {
+        console.error(`[Telegram] Error al enviar mensaje con Markdown al chat ${chatId}:`, error.message);
+        if (error.message.includes('parse') || error.message.includes('Markdown')) {
+            console.log(`[Telegram] Reintentando envío en texto plano al chat ${chatId} debido a fallo de parsing.`);
+            try {
+                const plainOptions = { ...options };
+                delete plainOptions.parse_mode;
+                return await bot.sendMessage(chatId, text, plainOptions);
+            } catch (fallbackError) {
+                console.error(`[Telegram] Error fatal en envío de fallback al chat ${chatId}:`, fallbackError.message);
+                throw fallbackError;
+            }
+        }
+        throw error;
+    }
+}
+
+// Función auxiliar para registrar logs de SafeOdds en el canal de prompts/auditoría
+function logSafeOddsEvent(message) {
+    if (process.env.TELEGRAM_PROMPTS_CHAT_ID) {
+        bot.sendMessage(process.env.TELEGRAM_PROMPTS_CHAT_ID, message, { parse_mode: 'Markdown' })
+            .catch(err => console.error(`[SafeOdds Log] Error al enviar log a Telegram:`, err.message));
+    }
+}
+
 // Almacenamos los chats suscritos
 const subscribedChats = new Set();
 const MI_CHAT_ID = 890184744; // Tu ID exclusivo
@@ -233,7 +263,9 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         
         // 1. Si el partido ya no está en vivo o ya finalizó, eliminar la alerta
         if (!match) {
+            const logMsg = `⚠️ *[SafeOdds]* Alerta cancelada para *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}) porque el partido finalizó o ya no está en vivo.`;
             console.log(`[SafeOdds] Partido finalizado o no en vivo. Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            logSafeOddsEvent(logMsg);
             pendingAlertsQueue.splice(i, 1);
             continue;
         }
@@ -243,7 +275,9 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         
         // 2. Si el marcador cambió, la alerta ya no sirve, eliminar de la cola
         if (currentHomeGoals !== alert.scoreAtTime.home || currentAwayGoals !== alert.scoreAtTime.away) {
+            const logMsg = `❌ *[SafeOdds]* Alerta cancelada para *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}) por cambio de marcador (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} ➔ ${currentHomeGoals}-${currentAwayGoals}).`;
             console.log(`[SafeOdds] El marcador cambió (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} -> ${currentHomeGoals}-${currentAwayGoals}). Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            logSafeOddsEvent(logMsg);
             pendingAlertsQueue.splice(i, 1);
             continue;
         }
@@ -277,11 +311,13 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         
         // 5. Si se activa el trigger, enviar la alerta
         if (oddTriggered) {
+            const logMsg = `✅ *[SafeOdds]* ¡Alerta ACTIVADA! *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}). Momio: *@${currentOddValue.toFixed(2)}* (${method}) en el minuto ${elapsed}'`;
             console.log(`[SafeOdds] ¡Alerta ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${currentOddValue.toFixed(2)} (${method}) en el minuto ${elapsed}'`);
+            logSafeOddsEvent(logMsg);
             
             for (const chatId of subscribedChats) {
                 try {
-                    await bot.sendMessage(chatId, alert.textToSend, { parse_mode: 'Markdown' });
+                    await sendSafeMarkdownMessage(chatId, alert.textToSend);
                 } catch (e) {
                     console.error(`Error enviando alerta pendiente al chat ${chatId}:`, e.message);
                 }
@@ -579,7 +615,7 @@ async function checkMatches() {
                             console.log(`[SafeOdds] Enviando alerta de inmediato para ${match.teams.home.name} vs ${match.teams.away.name} por tratarse de un escenario ${reason}.`);
                             for (const chatId of subscribedChats) {
                                 try {
-                                    await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                    await sendSafeMarkdownMessage(chatId, textToSend);
                                 } catch (e) {
                                     console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                                 }
@@ -603,7 +639,7 @@ async function checkMatches() {
                             console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
                             for (const chatId of subscribedChats) {
                                 try {
-                                    await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                    await sendSafeMarkdownMessage(chatId, textToSend);
                                 } catch (e) {
                                     console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                                 }
@@ -641,7 +677,7 @@ async function checkMatches() {
                                 console.log(`[SafeOdds] Alerta enviada de inmediato (cuota de inicio estimada @${estimatedStartOdd.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
                                 for (const chatId of subscribedChats) {
                                     try {
-                                        await bot.sendMessage(chatId, textToSend, { parse_mode: 'Markdown' });
+                                        await sendSafeMarkdownMessage(chatId, textToSend);
                                     } catch (e) {
                                         console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
                                     }
@@ -671,7 +707,10 @@ async function checkMatches() {
                                     waitMinutes = Math.max(1, Math.min(8, Math.round(waitMinutes))); // Acotado a 8 minutos máximo
                                 }
                                 
+                                const logMsg = `⏳ *[SafeOdds]* Alerta encolada para *${match.teams.home.name} vs ${match.teams.away.name}* (Regla: ${alert.metadata.ruleName}). Cuota inicial: *@${startOdd.toFixed(2)}*, Objetivo: *@${targetOdd.toFixed(2)}*, Tiempo máx espera: *${waitMinutes} min*.`;
                                 console.log(`[SafeOdds] Encolando alerta pendiente para ${match.teams.home.name} vs ${match.teams.away.name}. Cuota inicial/en-vivo: @${startOdd.toFixed(2)}, Objetivo: @${targetOdd.toFixed(2)}, Espera: ${waitMinutes} min.`);
+                                logSafeOddsEvent(logMsg);
+                                
                                 pendingAlertsQueue.push({
                                     id: `${fixtureId}_${alert.metadata.ruleName}`,
                                     fixtureId,
@@ -738,7 +777,7 @@ async function checkFinishedMatches() {
                     for (const result of results) {
                         for (const chatId of subscribedChats) {
                             try {
-                                await bot.sendMessage(chatId, result.msg, { parse_mode: 'Markdown' });
+                                await sendSafeMarkdownMessage(chatId, result.msg);
                             } catch (e) {
                                 console.error(`Error enviando veredicto fútbol al chat ${chatId}:`, e.message);
                             }
@@ -832,7 +871,7 @@ async function handleLiveParlayQueue(fixtureId, sport, homeTeam, awayTeam, textT
 
         for (const chatId of subscribedChats) {
             try {
-                await bot.sendMessage(chatId, msg, { parse_mode: 'Markdown' });
+                await sendSafeMarkdownMessage(chatId, msg);
             } catch (e) {
                 console.error(`Error enviando parlay en vivo al chat ${chatId}:`, e.message);
             }
@@ -910,7 +949,7 @@ async function generateAndSendDailyParlay(timeString) {
         if (parlayMsg) {
             for (const chatId of subscribedChats) {
                 try {
-                    await bot.sendMessage(chatId, parlayMsg, { parse_mode: 'Markdown' });
+                    await sendSafeMarkdownMessage(chatId, parlayMsg);
                 } catch (e) {
                     console.error(`Error enviando Parlay ${timeString} al chat ${chatId}:`, e.message);
                 }
@@ -999,7 +1038,7 @@ cron.schedule('30 7 * * *', async () => {
     if (topFavorites.length > 0) {
         const msg = `☀️ *Resumen Matutino (Fútbol & Ligas Principales)*\nFavoritos claros del día (Momio < 1.35):\n\n${topFavorites.join('\n')}`;
         for (const chatId of subscribedChats) {
-            bot.sendMessage(chatId, msg, { parse_mode: 'Markdown' }).catch(e => console.error(e));
+            sendSafeMarkdownMessage(chatId, msg).catch(e => console.error(e));
         }
     }
 }, {
