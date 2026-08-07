@@ -77,3 +77,4 @@ Crear un sistema automatizado multideporte (Fútbol + MLB Béisbol) que envíe a
   - Regla 4 (Asedio): Exigencia de tiros a puerta (>= 4) y ataques peligrosos.
   - Regla 5 (HT Comeback): Verificación cruzada de dominio en tiros y córneres.
   - Regla 7 (Caliente): Exigencia de marcador apretado (diferencia máxima de 1 gol).
+- **[2026-08-07]**: Implementación de Regla 9: Gol Inminente Global (Versión 2.2.0). Se creó una nueva regla puramente estadística que se dispara cuando la suma de tiros a puerta de ambos equipos es inusualmente alta en proporción a los minutos jugados `(Tiros Totales a Puerta > Minuto / 6)`. Para prevenir el agotamiento de la cuota diaria de API-Sports, el consumo de datos se empotró en el sistema de Degradación Elegante, limitando el monitoreo estadístico de esta regla estrictamente a las ventanas de tiempo existentes (minutos 1-60 y 70-85), consiguiendo un rastreo del 85% del partido sin costo extra en peticiones.

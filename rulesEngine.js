@@ -240,6 +240,44 @@ ${msgHeader}
         }
     }
 
+    // --- REGLA 9: Gol Inminente Global ---
+    if (hasStats && elapsed > 0) {
+        const homeShotsOnGoal = getStat(fixture.teams.home.name, 'Shots on Goal');
+        const awayShotsOnGoal = getStat(fixture.teams.away.name, 'Shots on Goal');
+        const totalShotsOnGoal = homeShotsOnGoal + awayShotsOnGoal;
+        
+        // Dispara si el total de tiros a puerta supera 1 tiro cada 6 minutos (ej. 10 tiros al min 60)
+        // Se requiere un mínimo de 5 tiros a puerta para evitar alertas prematuras en los primeros minutos.
+        if (totalShotsOnGoal >= 5 && totalShotsOnGoal > (elapsed / 6)) {
+            const ruleId = `${fixtureId}_rule9`;
+            if (!alertedMatches.has(ruleId)) {
+                const text = `💥 *REGLA 9: GOL INMINENTE GLOBAL*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${msgHeader}
+⚠️ *Análisis:* Partido muy abierto. Ambos equipos combinan *${totalShotsOnGoal}* tiros a puerta en ${elapsed} minutos.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 *Recomendación:* Over 0.5 Goles Adicionales / Más Goles.
+🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
+                alerts.push({
+                    text,
+                    metadata: {
+                        ruleId,
+                        ruleType: 9,
+                        ruleName: 'Gol Inminente Global',
+                        fixtureId,
+                        homeTeam: fixture.teams.home.name,
+                        awayTeam: fixture.teams.away.name,
+                        totalShotsOnGoal,
+                        scoreAtAlert: { home: homeGoals, away: awayGoals },
+                        totalGoalsAtAlert: homeGoals + awayGoals,
+                        odds
+                    }
+                });
+                alertedMatches.add(ruleId);
+            }
+        }
+    }
+
     // ====================================================
     // REGLAS AVANZADAS (EXCLUSIVAS PARA LIGAS IMPORTANTES)
     // ====================================================
@@ -430,6 +468,12 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                         const totalCards = finalEvents.filter(e => e.type === 'Card').length;
                         traditionalGreen = totalCards >= 5 || finalEvents.some(e => e.detail === 'Red Card');
                     }
+                    break;
+                case 8: // Favorito Domina HT
+                    traditionalGreen = (finalHome + finalAway) > (meta.scoreAtAlert.home + meta.scoreAtAlert.away);
+                    break;
+                case 9: // Gol Inminente Global
+                    traditionalGreen = (finalHome + finalAway) > meta.totalGoalsAtAlert;
                     break;
                 default:
                     traditionalGreen = true;
