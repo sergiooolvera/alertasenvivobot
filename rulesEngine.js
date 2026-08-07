@@ -113,6 +113,7 @@ ${msgHeader}
             }
         }
     }
+    }
 
     // --- REGLA 8: Favorito Domina HT (Cualquier Empate) ---
     if (favorite.odd < 1.40 && isDraw) {
