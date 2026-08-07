@@ -1,0 +1,84 @@
+
+--- RESULTADOS GLOBALES DEL BOT ---
+Veredictos Totales: 35
+🟢 GREEN (Aciertos): 23 (65.7%)
+🔴 RED (Fallos): 12 (34.3%)
+⚪ APUESTA EVITADA: 0 (0.0%)
+
+--- EFECTIVIDAD POR IA (Basado en 35 alertas emparejadas con veredicto) ---
+Google Gemini:
+  - Apuestas Recomendadas (Operadas): 33
+  - Aciertos (GREEN): 21 (63.6%)
+  - Fallos (RED): 12 (36.4%)
+  - Alertas que recomendó EVITAR en total: 2
+DeepSeek:
+  - Apuestas Recomendadas (Operadas): 35
+  - Aciertos (GREEN): 23 (65.7%)
+  - Fallos (RED): 12 (34.3%)
+  - Alertas que recomendó EVITAR en total: 0
+
+--- ALERTAS POR REGLA Y RECOMENDACIONES ---
+REGLA 3: SORPRESA TEMPRANERA: 28 alertas
+  - Gemini recomendó entrar en: 24 (Evitó: 4)
+  - DeepSeek recomendó entrar en: 28 (Evitó: 0)
+REGLA 2: EL FAVORITO SUFRE: 3 alertas
+  - Gemini recomendó entrar en: 2 (Evitó: 1)
+  - DeepSeek recomendó entrar en: 3 (Evitó: 0)
+REGLA 1: TARJETA ROJA ESTRATÉGICA: 8 alertas
+  - Gemini recomendó entrar en: 8 (Evitó: 0)
+  - DeepSeek recomendó entrar en: 8 (Evitó: 0)
+REGLA 7: PARTIDO CALIENTE (TOP LEAGUE): 7 alertas
+  - Gemini recomendó entrar en: 7 (Evitó: 0)
+  - DeepSeek recomendó entrar en: 7 (Evitó: 0)
+REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE): 1 alertas
+  - Gemini recomendó entrar en: 1 (Evitó: 0)
+  - DeepSeek recomendó entrar en: 1 (Evitó: 0)
+REGLA 4: ASEDIO INTENSO (HUELE A GOL): 2 alertas
+  - Gemini recomendó entrar en: 2 (Evitó: 0)
+  - DeepSeek recomendó entrar en: 2 (Evitó: 0)
+
+--- ALERTAS SIN VEREDICTO EN EL HTML (14) ---
+- [REGLA 3: SORPRESA TEMPRANERA] Montana vs Nesebar (Minuto 10', Marcador 0 - 1)
+  Gemini: Victoria de Montana (68%) - Recomienda entrar: SÍ
+  DeepSeek: Próximo gol de Montana (68%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Rodina Moskva vs Rubin (Minuto 13', Marcador 1 - 0)
+  Gemini: Doble Oportunidad - Rubin o Empate (74%) - Recomienda entrar: SÍ
+  DeepSeek: Victoria de Rodina Moskva (62%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Dinamo Makhachkala vs Krylia Sovetov (Minuto 15', Marcador 0 - 1)
+  Gemini: Doble Oportunidad: Dinamo Makhachkala o Empate (70%) - Recomienda entrar: SÍ
+  DeepSeek: Siguiente gol de Dinamo Makhachkala (62%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Sydkysten vs Ishøj (Minuto 22', Marcador 1 - 0)
+  Gemini: Línea de Goles - Más de 2.5 Goles Totales (78%) - Recomienda entrar: SÍ
+  DeepSeek: Victoria de Ishøj (68%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Brønshøj vs HB Koge (Minuto 19', Marcador 1 - 0)
+  Gemini: Evitar apuesta / No recomendada (35%) - Recomienda entrar: NO
+  DeepSeek: Victoria de HB Koge (65%) - Recomienda entrar: SÍ
+- [REGLA 2: EL FAVORITO SUFRE] Viby vs ASA Aarhus (Minuto 45', Marcador 0 - 0)
+  Gemini: Evitar apuesta / No recomendada (35%) - Recomienda entrar: NO
+  DeepSeek: ASA Aarhus Gana el Partido (72%) - Recomienda entrar: SÍ
+- [REGLA 1: TARJETA ROJA ESTRATÉGICA] Sydkysten vs Ishøj (Minuto 51', Marcador 2 - 1)
+  Gemini: Victoria directa de Sydkysten (78%) - Recomienda entrar: SÍ
+  DeepSeek: Victoria de Sydkysten (72%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Hapoel Beer Sheva vs FK Crvena Zvezda (Minuto 38', Marcador 1 - 0)
+  Gemini: Over 2.5 Goles Totales (75%) - Recomienda entrar: SÍ
+  DeepSeek: Victoria de Hapoel Beer Sheva (40%) - Recomienda entrar: SÍ
+- [REGLA 1: TARJETA ROJA ESTRATÉGICA] Godoy Cruz Res. vs Racing Club Res. (Minuto 27', Marcador 1 - 1)
+  Gemini: Victoria de Godoy Cruz Res. (75%) - Recomienda entrar: SÍ
+  DeepSeek: Victoria de Godoy Cruz Res. (62%) - Recomienda entrar: SÍ
+- [REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)] Union St. Gilloise vs Bodo/Glimt (Minuto 44', Marcador 1 - 2)
+  Gemini: Over 6.5 Tarjetas Totales en el partido (82%) - Recomienda entrar: SÍ
+  DeepSeek: Más de 3.5 goles en el partido (78%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Odder vs Skive (Minuto 12', Marcador 1 - 0)
+  Gemini: Más de 2.5 Goles Totales (78%) - Recomienda entrar: SÍ
+  DeepSeek: Próximo Gol de Skive (65%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Køge W vs Riga W (Minuto 5', Marcador 0 - 1)
+  Gemini: Victoria Directa: Køge W (78%) - Recomienda entrar: SÍ
+  DeepSeek: Victoria de Køge W (85%) - Recomienda entrar: SÍ
+- [REGLA 3: SORPRESA TEMPRANERA] Brann vs Apollon Limassol (Minuto 23', Marcador 0 - 1)
+  Gemini: Evitar apuesta / No recomendada (42%) - Recomienda entrar: NO
+  DeepSeek: Victoria de Brann (65%) - Recomienda entrar: SÍ
+- [REGLA 1: TARJETA ROJA ESTRATÉGICA] Monterrey vs Orlando City SC (Minuto 52', Marcador 0 - 1)
+  Gemini: Victoria de Orlando City (90%) - Recomienda entrar: SÍ
+  DeepSeek: Doble Oportunidad Orlando City o Empate (85%) - Recomienda entrar: SÍ
+
+--- VEREDICTOS SIN ALERTA EMPAREJADA EN EL HTML (0) ---

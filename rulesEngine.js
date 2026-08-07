@@ -11,64 +11,32 @@ function needsStats(fixture, odds, isTopLeague = false) {
         return false;
     }
     const elapsed = fixture.fixture.status.elapsed;
-    const homeGoals = fixture.goals.home || 0;
-    const awayGoals = fixture.goals.away || 0;
-    const favoriteOdd = odds.home < odds.away ? odds.home : odds.away;
-    const favoriteGoals = odds.home < odds.away ? homeGoals : awayGoals;
-    const underdogGoals = odds.home < odds.away ? awayGoals : homeGoals;
-
-    // Regla 4 (Todas las ligas): Asedio min 75-83
-    if (elapsed >= 75 && elapsed <= 83 && favoriteOdd < 1.50 && favoriteGoals <= underdogGoals) {
-        return true;
-    }
-
-    // Regla 6 (Solo Ligas Top): Córneres min 70-85
-    if (isTopLeague && elapsed >= 70 && elapsed <= 85 && favoriteOdd < 1.60 && favoriteGoals <= underdogGoals) {
-        return true;
-    }
-
-    return false;
+    return (elapsed > 0 && elapsed <= 60) || (elapsed >= 70 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
 
 /**
  * Determina si se requiere consultar el endpoint de eventos.
  */
 function needsEvents(fixture, odds, isTopLeague = false) {
+    if (!odds || odds === 'NO_ODDS') return false;
     const elapsed = fixture.fixture.status.elapsed;
-
-    // Regla 7 (Solo Ligas Top): Partido caliente min 25-45 (no depende del marcador)
-    if (isTopLeague && elapsed >= 25 && elapsed <= 45) {
-        return true;
-    }
-
-    // Regla 1 (Todas las ligas): Tarjeta roja min 1-60.
-    // Solo nos interesa si va empatado o ganando el underdog, y tenemos momios para identificar al favorito.
-    if (elapsed > 0 && elapsed <= 60 && odds && odds !== 'NO_ODDS') {
-        const homeGoals = fixture.goals.home || 0;
-        const awayGoals = fixture.goals.away || 0;
-        const isDraw = homeGoals === awayGoals;
-
-        let underdogWinning = false;
-        if (odds.home < odds.away) {
-            // Favorito local, underdog visitante
-            underdogWinning = awayGoals > homeGoals;
-        } else {
-            // Favorito visitante, underdog local
-            underdogWinning = homeGoals > awayGoals;
-        }
-
-        if (isDraw || underdogWinning) {
-            return true;
-        }
-    }
-
-    return false;
+    return (elapsed > 0 && elapsed <= 60) || (elapsed >= 70 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
 
 /**
  * Evalúa las reglas para un partido dado y genera alertas estructuradas.
  */
 function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = false) {
+    const hasStats = stats && stats.length > 0;
+    const getStat = (teamName, statType) => {
+        if (!hasStats) return 0;
+        const teamStats = stats.find(s => s.team.name === teamName);
+        if (!teamStats || !teamStats.statistics) return 0;
+        const stat = teamStats.statistics.find(s => s.type === statType);
+        if (!stat || !stat.value) return 0;
+        if (typeof stat.value === 'string' && stat.value.includes('%')) return parseInt(stat.value.replace('%', ''));
+        return parseInt(stat.value);
+    };
     const alerts = [];
     const fixtureId = fixture.fixture.id;
     const elapsed = fixture.fixture.status.elapsed; 
@@ -108,9 +76,18 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
     if (elapsed < 60 && (isDraw || underdogWinning)) {
         const redCards = events.filter(e => e.type === 'Card' && (e.detail === 'Red Card' || e.detail === 'Yellow 2nd'));
         if (redCards.length > 0) {
-            const ruleId = `${fixtureId}_rule1`;
-            if (!alertedMatches.has(ruleId)) {
-                const teamWithRed = redCards[0].team.name;
+            const teamWithRed = redCards[0].team.name;
+            const teamWithAdvantage = teamWithRed === favorite.team ? underdog.team : favorite.team;
+            
+            let isDominating = true;
+            if (hasStats) {
+                const advPoss = getStat(teamWithAdvantage, 'Ball Possession');
+                isDominating = advPoss >= 55;
+            }
+            
+            if (isDominating) {
+                const ruleId = `${fixtureId}_rule1`;
+                if (!alertedMatches.has(ruleId)) {
                 const text = `🟥 *REGLA 1: TARJETA ROJA ESTRATÉGICA*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
@@ -137,39 +114,58 @@ ${msgHeader}
         }
     }
 
-    // --- REGLA 2: Favorito Sufre ---
-    if (favorite.odd < 1.40 && homeGoals === 0 && awayGoals === 0) {
+    // --- REGLA 8: Favorito Domina HT (Cualquier Empate) ---
+    if (favorite.odd < 1.40 && isDraw) {
         if (fixture.fixture.status.short === 'HT' || elapsed === 45) {
-            const ruleId = `${fixtureId}_rule2`;
-            if (!alertedMatches.has(ruleId)) {
-                const text = `⏳ *REGLA 2: EL FAVORITO SUFRE*
+            let isDominating = false;
+            if (hasStats) {
+                const favPoss = getStat(favorite.team, 'Ball Possession');
+                const favShots = getStat(favorite.team, 'Shots on Goal');
+                const favCorners = getStat(favorite.team, 'Corner Kicks');
+                isDominating = favPoss >= 60 && (favShots >= 3 || favCorners >= 4);
+            } else {
+                isDominating = favorite.odd < 1.30; // Fallback: super favorito
+            }
+
+            if (isDominating) {
+                const ruleId = `${fixtureId}_rule8`;
+                if (!alertedMatches.has(ruleId)) {
+                    const text = `⏳ *REGLA 8: FAVORITO DOMINA HT*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
-⚠️ *Análisis:* El favorito (${favorite.team}) no puede anotar al medio tiempo (0-0).
+⚠️ *Análisis:* El favorito (${favorite.team}) empata al medio tiempo pero domina estadísticamente.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Over 0.5 Goles en la 2da Mitad o Gana Favorito 2da Mitad.
+🎯 *Recomendación:* Gana Favorito 2da Mitad o Over Goles.
 🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-                alerts.push({
-                    text,
-                    metadata: {
-                        ruleId,
-                        ruleType: 2,
-                        ruleName: 'Favorito Sufre en HT',
-                        fixtureId,
-                        homeTeam: fixture.teams.home.name,
-                        awayTeam: fixture.teams.away.name,
-                        favoriteTeam: favorite.team,
-                        scoreAtAlert: { home: homeGoals, away: awayGoals },
-                        odds
-                    }
-                });
-                alertedMatches.add(ruleId);
+                    alerts.push({
+                        text,
+                        metadata: {
+                            ruleId,
+                            ruleType: 8,
+                            ruleName: 'Favorito Domina HT',
+                            fixtureId,
+                            homeTeam: fixture.teams.home.name,
+                            awayTeam: fixture.teams.away.name,
+                            favoriteTeam: favorite.team,
+                            scoreAtAlert: { home: homeGoals, away: awayGoals },
+                            odds
+                        }
+                    });
+                    alertedMatches.add(ruleId);
+                }
             }
         }
     }
 
     // --- REGLA 3: Sorpresa Tempranera ---
-    if (underdog.odd > 3.50 && elapsed < 60 && underdogWinning) {
+    if (underdog.odd > 3.50 && elapsed <= 41 && underdogWinning) {
+        let isMasacrado = false;
+        if (hasStats) {
+            const favPoss = getStat(favorite.team, 'Ball Possession');
+            const favShots = getStat(favorite.team, 'Total Shots');
+            isMasacrado = favPoss >= 70 && favShots >= 8;
+        }
+        if (isMasacrado) return alerts; // Abortamos la regla 3 si el favorito está arrasando
         const ruleId = `${fixtureId}_rule3`;
         if (!alertedMatches.has(ruleId)) {
             const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA*
@@ -205,10 +201,15 @@ ${msgHeader}
             const possessionStat = teamStats.statistics.find(s => s.type === 'Ball Possession');
             
             const totalShots = totalShotsStat && totalShotsStat.value ? parseInt(totalShotsStat.value) : 0;
+            const shotsOnGoal = getStat(favorite.team, 'Shots on Goal');
+            const dangerousAttacks = getStat(favorite.team, 'Dangerous Attacks');
             const possessionStr = possessionStat && possessionStat.value ? possessionStat.value : "0%";
             const possession = parseInt(possessionStr.replace('%', ''));
 
-            if (totalShots > 12 || possession > 65) {
+            // Graceful fallback: si no reporta shots on goal, usamos el viejo > 15
+            const asedioFuerte = (shotsOnGoal >= 4 && dangerousAttacks >= 25) || (totalShots >= 15);
+
+            if (asedioFuerte || possession >= 70) {
                 const ruleId = `${fixtureId}_rule4`;
                 if (!alertedMatches.has(ruleId)) {
                     const text = `🚨 *REGLA 4: ASEDIO INTENSO (HUELE A GOL)*
@@ -245,9 +246,19 @@ ${msgHeader}
     if (isTopLeague) {
 
         // --- REGLA 5: HT Comeback (Remontada al Descanso) ---
-        if ((fixture.fixture.status.short === 'HT' || elapsed === 45) && favorite.odd < 1.45 && favorite.goals < underdog.goals) {
+        if ((fixture.fixture.status.short === 'HT' || elapsed === 45) && favorite.odd < 1.45 && favorite.goals === underdog.goals - 1) {
+            let favDomina = true;
+            if (hasStats) {
+                const favCorners = getStat(favorite.team, 'Corner Kicks');
+                const underCorners = getStat(underdog.team, 'Corner Kicks');
+                const favShots = getStat(favorite.team, 'Shots on Goal');
+                const underShots = getStat(underdog.team, 'Shots on Goal');
+                if (underCorners > favCorners || underShots > favShots) {
+                    favDomina = false;
+                }
+            }
             const ruleId = `${fixtureId}_rule5`;
-            if (!alertedMatches.has(ruleId)) {
+            if (favDomina && !alertedMatches.has(ruleId)) {
                 const text = `🔄 *REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
@@ -313,7 +324,7 @@ ${msgHeader}
         }
 
         // --- REGLA 7: Partido Caliente (Over Tarjetas) ---
-        if (elapsed >= 25 && elapsed <= 45 && events && events.length > 0) {
+        if (elapsed >= 25 && elapsed <= 45 && events && events.length > 0 && Math.abs(homeGoals - awayGoals) <= 1) {
             const cards = events.filter(e => e.type === 'Card');
             const yellowCards = cards.filter(e => e.detail === 'Yellow Card').length;
             const redCards = cards.filter(e => e.detail === 'Red Card' || e.detail === 'Yellow 2nd').length;

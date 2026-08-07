@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Rendimiento IA - 4 de Agosto de 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131b2e;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --accent-gemini: #4d90fe;
+            --accent-deepseek: #00d2ff;
+            --green-glow: #10b981;
+            --green-bg: rgba(16, 185, 129, 0.15);
+            --red-glow: #ef4444;
+            --red-bg: rgba(239, 68, 68, 0.15);
+            --yellow-glow: #f59e0b;
+            --yellow-bg: rgba(245, 158, 11, 0.15);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(77, 144, 254, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .date-badge {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* GRID ESTADÍSTICAS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .card-desc span {
+            font-weight: 600;
+        }
+
+        .gemini-card {
+            border-left: 4px solid var(--accent-gemini);
+        }
+
+        .gemini-text {
+            color: var(--accent-gemini);
+        }
+
+        .deepseek-card {
+            border-left: 4px solid var(--accent-deepseek);
+        }
+
+        .deepseek-text {
+            color: var(--accent-deepseek);
+        }
+
+        .highlight-green {
+            color: var(--green-glow);
+        }
+
+        /* SECCIÓN INSIGHTS (NUEVA: FRECUENCIA Y EFECTIVIDAD) */
+        .insights-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .insight-block {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .insight-item {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .insight-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .insight-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .insight-stats {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .pbar-frequency {
+            background: linear-gradient(90deg, #3b82f6, #00d2ff);
+        }
+
+        .pbar-efficiency {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .insight-pill-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+
+        .pill-tag {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+        }
+
+        /* SECCIÓN PARLAYS */
+        .parlays-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .parlays-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .parlay-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .parlay-item.failed {
+            border-left: 4px solid var(--red-glow);
+        }
+
+        .parlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .parlay-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-red {
+            background-color: var(--red-bg);
+            color: var(--red-glow);
+        }
+
+        .badge-green {
+            background-color: var(--green-bg);
+            color: var(--green-glow);
+        }
+
+        .badge-yellow {
+            background-color: var(--yellow-bg);
+            color: var(--yellow-glow);
+        }
+
+        .parlay-selections {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .parlay-selections li {
+            margin-bottom: 0.6rem;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .parlay-selections li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--text-secondary);
+        }
+
+        .parlay-selections li.hit::before {
+            content: "✓";
+            color: var(--green-glow);
+            font-weight: bold;
+        }
+
+        .parlay-selections li.miss::before {
+            content: "✗";
+            color: var(--red-glow);
+            font-weight: bold;
+        }
+
+        .parlay-meta {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* TABLA DE ALERTAS */
+        .table-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: rgba(15, 23, 42, 0.8);
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .match-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .match-teams {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .match-league {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .rule-badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .odds-info {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .result-box {
+            background-color: rgba(15, 23, 42, 0.6);
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            font-weight: 700;
+            display: inline-block;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .ai-verdict {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            min-width: 140px;
+        }
+
+        .ai-pick {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .ai-conf {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .status-green {
+            background-color: var(--green-bg);
+            color: var(--green-glow);
+        }
+
+        .status-red {
+            background-color: var(--red-bg);
+            color: var(--red-glow);
+        }
+
+        .status-yellow {
+            background-color: var(--yellow-bg);
+            color: var(--yellow-glow);
+        }
+
+        .status-gray {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            table {
+                font-size: 0.85rem;
+            }
+            td, th {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Dashboard de Rendimiento - Alertas en Vivo</h1>
+                <p style="color: var(--text-secondary); margin-top: 0.3rem;">Resumen Comparativo de Inteligencia Artificial Dual</p>
+            </div>
+            <div class="date-badge">Ayer: 4 de Agosto de 2026</div>
+        </header>
+
+        <!-- GRID DE ESTADÍSTICAS GLOBALES -->
+        <div class="stats-grid">
+            <div class="card">
+                <div class="card-title">
+                    <span style="font-size: 1.2rem;">📊</span> Total Alertas en Vivo
+                </div>
+                <div class="card-value">18</div>
+                <div class="card-desc">Registradas en el archivo <span>messages.html</span></div>
+            </div>
+
+            <div class="card gemini-card">
+                <div class="card-title">
+                    <span style="font-size: 1.2rem;">♊</span> Google Gemini
+                </div>
+                <div class="card-value gemini-text">60.0%</div>
+                <div class="card-desc">Efectividad: <span class="highlight-green">9 Verdes</span> / 6 Rojas / <span>3 Evitadas</span></div>
+            </div>
+
+            <div class="card border-left: 4px solid var(--accent-deepseek); deepseek-card">
+                <div class="card-title">
+                    <span style="font-size: 1.2rem;">🐳</span> DeepSeek
+                </div>
+                <div class="card-value deepseek-text">66.67%</div>
+                <div class="card-desc">Efectividad: <span class="highlight-green">12 Verdes</span> / 6 Rojas / 0 Evitadas</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span style="font-size: 1.2rem;">💰</span> Rendimiento Financiero
+                </div>
+                <div class="card-value highlight-green">+$795.75</div>
+                <div class="card-desc">Balance final del día (Tracker de 7 apuestas en vivo ejecutadas)</div>
+            </div>
+        </div>
+
+        <!-- NUEVA SECCIÓN: FRECUENCIA Y EFECTIVIDAD DE REGLAS Y APUESTAS -->
+        <div class="insights-section">
+            <div class="section-title">🔍 Patrones de Frecuencia y Efectividad de la Operación</div>
+            <div class="insights-grid">
+                
+                <!-- Columna 1: Frecuencia de las Reglas -->
+                <div class="insight-block">
+                    <h3 style="font-size: 1.1rem; color: var(--accent-gemini); margin-bottom: 0.5rem;">📈 Frecuencia de Reglas Utilizadas</h3>
+                    
+                    <!-- Regla 3 -->
+                    <div class="insight-item">
+                        <div class="insight-item-header">
+                            <span class="insight-name">Regla 3: Sorpresa Tempranera</span>
+                            <span class="insight-stats">12 Alertas (66.67%)</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill pbar-frequency" style="width: 66.67%;"></div>
+                        </div>
+                        <div class="insight-pill-group">
+                            <span class="pill-tag">Gemini: 6 G / 4 R / 2 Evitadas</span>
+                            <span class="pill-tag">DeepSeek: 8 G / 4 R</span>
+                        </div>
+                    </div>
+
+                    <!-- Regla 1 -->
+                    <div class="insight-item">
+                        <div class="insight-item-header">
+                            <span class="insight-name">Regla 1: Tarjeta Roja Estratégica</span>
+                            <span class="insight-stats">4 Alertas (22.22%)</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill pbar-frequency" style="width: 22.22%;"></div>
+                        </div>
+                        <div class="insight-pill-group">
+                            <span class="pill-tag">Gemini: 3 G / 1 R</span>
+                            <span class="pill-tag">DeepSeek: 3 G / 1 R</span>
+                        </div>
+                    </div>
+
+                    <!-- Reglas 2 y 7 -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="insight-item">
+                            <div class="insight-item-header" style="margin-bottom: 0.2rem;">
+                                <span class="insight-name" style="font-size: 0.85rem;">Regla 2: Favorito Sufre</span>
+                            </div>
+                            <span class="insight-stats">1 Alerta (5.56%)</span>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-item-header" style="margin-bottom: 0.2rem;">
+                                <span class="insight-name" style="font-size: 0.85rem;">Regla 7: Partido Caliente</span>
+                            </div>
+                            <span class="insight-stats">1 Alerta (5.56%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna 2: Frecuencia y Efectividad de los Mercados (Apuestas) -->
+                <div class="insight-block">
+                    <h3 style="font-size: 1.1rem; color: var(--green-glow); margin-bottom: 0.5rem;">🎯 Efectividad por Tipo de Apuesta</h3>
+                    
+                    <!-- Victoria Directa -->
+                    <div class="insight-item">
+                        <div class="insight-item-header">
+                            <span class="insight-name">Victoria Directa (Línea de Dinero / ML)</span>
+                            <span class="insight-stats" style="color: var(--green-glow); font-weight: 600;">64.29% Efectiva</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill pbar-efficiency" style="width: 64.29%;"></div>
+                        </div>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                            <span>Recomendada 14 veces (9 G / 5 R)</span>
+                            <span>Más Frecuente</span>
+                        </div>
+                    </div>
+
+                    <!-- Línea de Goles -->
+                    <div class="insight-item">
+                        <div class="insight-item-header">
+                            <span class="insight-name">Línea de Goles (Over 1.5, 2.5, 3.5)</span>
+                            <span class="insight-stats" style="color: var(--green-glow); font-weight: 600;">66.67% Efectiva</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill pbar-efficiency" style="width: 66.67%;"></div>
+                        </div>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                            <span>Recomendada 9 veces (6 G / 3 R)</span>
+                            <span>Mayor Consistencia</span>
+                        </div>
+                    </div>
+
+                    <!-- Próximo Gol -->
+                    <div class="insight-item">
+                        <div class="insight-item-header">
+                            <span class="insight-name">Próximo Gol / Siguiente Gol</span>
+                            <span class="insight-stats" style="color: var(--green-glow); font-weight: 600;">66.67% Efectiva</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill pbar-efficiency" style="width: 66.67%;"></div>
+                        </div>
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                            <span>Recomendada 6 veces (4 G / 2 R)</span>
+                            <span>Exclusivo DeepSeek</span>
+                        </div>
+                    </div>
+
+                    <!-- Doble Oportunidad -->
+                    <div class="insight-item" style="padding: 0.6rem 1rem;">
+                        <div class="insight-item-header" style="margin-bottom: 0;">
+                            <span class="insight-name" style="font-size: 0.85rem;">Doble Oportunidad (1X / X2)</span>
+                            <span class="insight-stats" style="color: var(--red-glow); font-weight: 600; font-size: 0.85rem;">33.33% Efectiva (1 G / 2 R)</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE PARLAYS PRE-PARTIDO -->
+        <div class="parlays-section">
+            <div class="section-title">🏆 Parlays del Día de la IA (Pre-Partido)</div>
+            <div class="parlays-grid">
+                <!-- Parlay 1 -->
+                <div class="parlay-item failed">
+                    <div class="parlay-header">
+                        <span class="parlay-title">Parlay Sugerido 1 (09:30)</span>
+                        <span class="badge badge-red">Fallido</span>
+                    </div>
+                    <ul class="parlay-selections">
+                        <li class="miss">Hapoel Beer Sheva vs Crvena Zvezda<br><span style="color: var(--text-secondary); font-size: 0.8rem;">Gana Crvena Zvezda (@1.63) | Result: 1-0</span></li>
+                        <li class="hit">Levski Sofia vs Kairat Almaty<br><span style="color: var(--text-secondary); font-size: 0.8rem;">Gana Levski Sofia (@1.61) | Result: 1-0</span></li>
+                    </ul>
+                    <div class="parlay-meta">
+                        <span>Momio Combinado: @2.62</span>
+                        <span>Confianza: 83%</span>
+                    </div>
+                </div>
+
+                <!-- Parlay 2 -->
+                <div class="parlay-item failed">
+                    <div class="parlay-header">
+                        <span class="parlay-title">Parlay Sugerido 2 (10:30)</span>
+                        <span class="badge badge-red">Fallido</span>
+                    </div>
+                    <ul class="parlay-selections">
+                        <li class="miss">Hapoel Beer Sheva vs Crvena Zvezda<br><span style="color: var(--text-secondary); font-size: 0.8rem;">Gana Crvena Zvezda (@1.63) | Result: 1-0</span></li>
+                        <li class="hit">Dinamo Zagreb vs Kauno Žalgiris<br><span style="color: var(--text-secondary); font-size: 0.8rem;">Gana Dinamo Zagreb (@1.16) | Result: 5-0</span></li>
+                    </ul>
+                    <div class="parlay-meta">
+                        <span>Momio Combinado: @1.89</span>
+                        <span>Confianza: 86%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE TABLA DETALLADA -->
+        <h2 class="section-title" style="margin-bottom: 1rem;">⚽ Detalle de Alertas en Vivo y Resultados</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hora / Liga</th>
+                        <th>Partido / Marcador Alerta</th>
+                        <th>Regla</th>
+                        <th>Marcador Final</th>
+                        <th>Pronóstico Gemini (IA 1)</th>
+                        <th>Pronóstico DeepSeek (IA 2)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fila 1: Montana vs Nesebar -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">09:42</span>
+                                <span class="match-league">Bulgaria Second League</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Montana vs Nesebar</span>
+                                <span class="match-league">Min 10' | Marcador: 0 - 1</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">3 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Montana</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 68%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Siguiente gol Montana</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 68%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 2: Rodina vs Rubin -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">09:43</span>
+                                <span class="match-league">Copa de Rusia</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Rodina Moskva vs Rubin Kazan</span>
+                                <span class="match-league">Min 13' | Marcador: 1 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">5 - 0</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Empate o Rubin (X2)</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 74%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Rodina Moskva</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 62%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 3: Dinamo Makhachkala vs Krylia -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">09:47</span>
+                                <span class="match-league">Copa de Rusia</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Dinamo Makhachkala vs Krylia Sovetov</span>
+                                <span class="match-league">Min 15' | Marcador: 0 - 1</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 2</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Empate o Dinamo (1X)</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 70%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Siguiente gol Dinamo</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 62%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 4: Sydkysten vs Ishøj (Alerta 1) -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">10:25</span>
+                                <span class="match-league">Dinamarca DBU Pokalen</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Sydkysten vs Ishøj (Alerta 1)</span>
+                                <span class="match-league">Min 22' | Marcador: 1 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">3 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 78%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Ishøj</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 68%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 5: Brønshøj vs HB Køge -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">10:57</span>
+                                <span class="match-league">Dinamarca DBU Pokalen</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Brønshøj BK vs HB Køge</span>
+                                <span class="match-league">Min 19' | Marcador: 1 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 0</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Evitar apuesta</span>
+                                <span class="status-pill status-gray">EVITADA</span>
+                                <span class="ai-conf">Conf: 35%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana HB Køge</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 65%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 6: Viby vs ASA Aarhus -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">11:10</span>
+                                <span class="match-league">Dinamarca DBU Pokalen</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Viby IF vs ASA Aarhus</span>
+                                <span class="match-league">Min 45' | Marcador: 0 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 2: El Favorito Sufre</span></td>
+                        <td><div class="result-box">0 - 0</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Evitar apuesta</span>
+                                <span class="status-pill status-gray">EVITADA</span>
+                                <span class="ai-conf">Conf: 35%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana ASA Aarhus (ML)</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 72%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 7: Sydkysten vs Ishøj (Alerta 2) -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">11:12</span>
+                                <span class="match-league">Dinamarca DBU Pokalen</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Sydkysten vs Ishøj (Alerta 2)</span>
+                                <span class="match-league">Min 51' | Marcador: 2 - 1 (Roja Ishøj)</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 1: Roja Estratégica</span></td>
+                        <td><div class="result-box highlight-green">3 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Sydkysten</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 78%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Sydkysten</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 72%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 8: Hapoel Beer Sheva vs Crvena Zvezda -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">12:08</span>
+                                <span class="match-league">UEFA Champions League</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Hapoel Beer Sheva vs FK Crvena Zvezda</span>
+                                <span class="match-league">Min 38' | Marcador: 1 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 0</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Hapoel Beer Sheva</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 40%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 9: Godoy Cruz Res vs Racing Res -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">12:29</span>
+                                <span class="match-league">Argentina Liga Reservas</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Godoy Cruz Res vs Racing Res</span>
+                                <span class="match-league">Min 27' | Marcador: 1 - 1 (Roja Racing)</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 1: Roja Estratégica</span></td>
+                        <td><div class="result-box">1 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Godoy Cruz Res.</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Godoy Cruz Res.</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 62%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 10: Union SG vs Bodo/Glimt -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">12:44</span>
+                                <span class="match-league">UEFA Champions League</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Union St. Gilloise vs Bodo/Glimt</span>
+                                <span class="match-league">Min 44' | Marcador: 1 - 2 (5 amarillas 1T)</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 7: Partido Caliente</span></td>
+                        <td><div class="result-box highlight-green">3 - 3</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 6.5 Tarjetas</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 82%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 3.5 Goles</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 78%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 11: Thor Akureyri vs Breidablik -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">13:14</span>
+                                <span class="match-league">Islandia Úrvalsdeild</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Thor Akureyri vs Breidablik</span>
+                                <span class="match-league">Min 43' | Marcador: 1 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 0</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Siguiente gol Breidablik</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 12: Costa Rica U20 vs Haiti U20 -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">14:09</span>
+                                <span class="match-league">CONCACAF U20</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Costa Rica U20 vs Haiti U20</span>
+                                <span class="match-league">Min 9' | Marcador: 0 - 1</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 76%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 1.5 Goles</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 78%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 13: Independiente Petrolero vs Aurora -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">17:13</span>
+                                <span class="match-league">Bolivia Primera División</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Independiente Petrolero vs Aurora</span>
+                                <span class="match-league">Min 55' | Marcador: 1 - 0 (Roja Petrolero)</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 1: Roja Estratégica</span></td>
+                        <td><div class="result-box highlight-green">1 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Empate o Aurora (X2)</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Siguiente gol Aurora</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 65%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 14: Deportes Tolima vs Independiente Medellín -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">17:17</span>
+                                <span class="match-league">Colombia Primera A</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Deportes Tolima vs Ind. Medellín</span>
+                                <span class="match-league">Min 1' | Marcador: 0 - 1</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">2 - 3</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 65%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 15: Minnesota United vs Juarez -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">19:10</span>
+                                <span class="match-league">Leagues Cup</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Minnesota United FC vs FC Juarez</span>
+                                <span class="match-league">Min 23' | Marcador: 0 - 1</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 2</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Evitar apuesta</span>
+                                <span class="status-pill status-gray">EVITADA</span>
+                                <span class="ai-conf">Conf: 42%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Siguiente gol Juarez</span>
+                                <span class="status-pill status-red">RED</span>
+                                <span class="ai-conf">Conf: 68%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 16: Remo vs Santos -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">19:22</span>
+                                <span class="match-league">Copa do Brasil</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Remo vs Santos</span>
+                                <span class="match-league">Min 31' | Marcador: 0 - 0 (Roja Remo)</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 1: Roja Estratégica</span></td>
+                        <td><div class="result-box highlight-green">0 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Santos</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 72%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana Santos</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 72%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 17: USA U20 vs Guatemala U20 -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">19:37</span>
+                                <span class="match-league">CONCACAF U20</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">United States U20 vs Guatemala U20</span>
+                                <span class="match-league">Min 37' | Marcador: 0 - 1</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">3 - 1</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana USA U20</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Gana USA U20</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 78%</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fila 18: Diriangén vs Alajuelense -->
+                    <tr>
+                        <td>
+                            <div class="match-info">
+                                <span style="font-weight: 600;">20:10</span>
+                                <span class="match-league">CONCACAF Central American Cup</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <span class="match-teams">Diriangén vs LD Alajuelense</span>
+                                <span class="match-league">Min 1' | Marcador: 1 - 0</span>
+                            </div>
+                        </td>
+                        <td><span class="rule-badge">Regla 3: Sorpresa Tempranera</span></td>
+                        <td><div class="result-box highlight-green">1 - 3</div></td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Más de 2.5 Goles</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 75%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-verdict">
+                                <span class="ai-pick">Siguiente gol Alajuelense</span>
+                                <span class="status-pill status-green">GREEN</span>
+                                <span class="ai-conf">Conf: 68%</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

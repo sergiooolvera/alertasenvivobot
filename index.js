@@ -558,6 +558,16 @@ async function checkMatches() {
                                 `🔥 *Confianza Estimada:* *${confidence}%*`;
                         }
                         
+                        // --- FILTRO DE CONSENSO IA ---
+                        const isGeminiLowConfidence = parseInt(confidence) < 40;
+                        const isGeminiAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada');
+                        if (isGeminiLowConfidence || isGeminiAvoiding) {
+                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Gemini detectó alto riesgo (${confidence}% - ${recommendation}).`);
+                            alert.metadata.isSent = false;
+                            alert.metadata.aiRecommendation = recommendation;
+                            continue;
+                        }
+
                         textToSend = `${header}\n\n${formattedAiSection}`;
 
                         // Enviar prompts de IA a Telegram si el chat de logs está configurado

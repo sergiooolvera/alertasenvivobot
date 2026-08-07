@@ -1,0 +1,2135 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeOdds AI - Auditoría Completa de Rendimiento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #121824;
+            --bg-header: #162032;
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --green: #10b981;
+            --green-bg: rgba(16, 185, 129, 0.15);
+            --red: #ef4444;
+            --red-bg: rgba(239, 68, 68, 0.15);
+            --yellow: #f59e0b;
+            --yellow-bg: rgba(245, 158, 11, 0.15);
+            --gray: #6b7280;
+            --text-main: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-header), var(--bg-dark));
+            border-bottom: 1px solid var(--border);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 30%, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard KPIs */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: -30px auto 40px auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .kpi-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-light);
+        }
+
+        .kpi-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .kpi-card.green .kpi-val { color: var(--green); }
+        .kpi-card.red .kpi-val { color: var(--red); }
+        .kpi-card.primary .kpi-val { color: var(--primary-light); }
+
+        .kpi-lbl {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Comparador de IAs */
+        .ia-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .ia-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ia-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ia-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .ia-card.gemini::after {
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+        }
+
+        .ia-card.deepseek::after {
+            background: radial-gradient(circle, #0ea5e9 0%, transparent 70%);
+        }
+
+        .ia-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .ia-icon {
+            font-size: 2rem;
+        }
+
+        .ia-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .winrate-gauge {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .gauge-circle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .gauge-svg {
+            transform: rotate(-90deg);
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: #1f2937;
+            stroke-width: 8;
+        }
+
+        .gauge-bar {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .gemini .gauge-bar { stroke: var(--primary-light); }
+        .deepseek .gauge-bar { stroke: #0ea5e9; }
+
+        .gauge-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .winrate-desc h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .winrate-desc p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .ia-stats-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .ia-stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background-color: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.95rem;
+        }
+
+        .ia-stat-item span {
+            color: var(--text-secondary);
+        }
+
+        .ia-stat-item strong {
+            color: #fff;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge.green { background-color: var(--green-bg); color: var(--green); }
+        .badge.red { background-color: var(--red-bg); color: var(--red); }
+        .badge.yellow { background-color: var(--yellow-bg); color: var(--yellow); }
+
+        /* Acordeón de Reglas */
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 40px 0 20px 0;
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
+            color: #fff;
+        }
+
+        .accordion-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255,255,255,0.01);
+            transition: background-color 0.2s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: rgba(255,255,255,0.03);
+        }
+
+        .accordion-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-title span.count {
+            background-color: rgba(255,255,255,0.08);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background-color: rgba(0,0,0,0.15);
+        }
+
+        .accordion-arrow {
+            transition: transform 0.2s ease;
+            color: var(--text-secondary);
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+
+        .accordion-item.active .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Tabla de Partidos */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: rgba(255,255,255,0.02);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255,255,255,0.01);
+        }
+
+        .partido-cell {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .liga-cell {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .ia-pred-cell {
+            font-size: 0.85rem;
+        }
+
+        .ia-pred-cell strong {
+            display: block;
+            color: #fff;
+        }
+
+        .ia-pred-cell span {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .source-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .source-badge.web {
+            background-color: rgba(79,70,229,0.15);
+            color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>SafeOdds AI</h1>
+            <div class="subtitle">Auditoría completa de efectividad del bot y análisis comparativo de IAs en base a messages.html</div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <div class="kpi-card primary">
+                <div class="kpi-val">49</div>
+                <div class="kpi-lbl">Alertas Totales</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-val">27</div>
+                <div class="kpi-lbl">Aciertos (GREEN)</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-val">16</div>
+                <div class="kpi-lbl">Fallos (RED)</div>
+            </div>
+            <div class="kpi-card yellow">
+                <div class="kpi-val">2</div>
+                <div class="kpi-lbl">Apuestas Evitadas</div>
+            </div>
+        </div>
+
+        <div class="section-title">Análisis de Desempeño de Inteligencia Artificial</div>
+
+        <!-- Comparación IAs -->
+        <div class="ia-comparison">
+            
+            <!-- Gemini Card -->
+            <div class="ia-card gemini">
+                <div class="ia-header">
+                    <span class="ia-icon">♊</span>
+                    <div>
+                        <div class="ia-name">Google Gemini</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Modelo Principal de Filtro</div>
+                    </div>
+                </div>
+                
+                <div class="winrate-gauge">
+                    <div class="gauge-circle">
+                        <svg class="gauge-svg" width="100" height="100">
+                            <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                            <circle class="gauge-bar" cx="50" cy="50" r="42" stroke-dasharray="263.8" stroke-dashoffset="113.9616"></circle>
+                        </svg>
+                        <div class="gauge-text">56.8%</div>
+                    </div>
+                    <div class="winrate-desc">
+                        <h4>Porcentaje de Aciertos</h4>
+                        <p>Efectividad real basada en recomendaciones marcadas como operables.</p>
+                    </div>
+                </div>
+
+                <div class="ia-stats-list">
+                    <div class="ia-stat-item">
+                        <span>Total Recomendadas (Operadas)</span>
+                        <strong>44</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Aciertos (GREEN)</span>
+                        <strong style="color: var(--green);">25</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Fallos (RED)</span>
+                        <strong style="color: var(--red);">16</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Recomendó Evitar (Filtro de Riesgo)</span>
+                        <strong>5</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Efectividad de Evitadas (RED prevenidos)</span>
+                        <strong style="color: var(--green);">40.0% (2/5)</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DeepSeek Card -->
+            <div class="ia-card deepseek">
+                <div class="ia-header">
+                    <span class="ia-icon">🐳</span>
+                    <div>
+                        <div class="ia-name">DeepSeek</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Modelo Secundario Dual</div>
+                    </div>
+                </div>
+                
+                <div class="winrate-gauge">
+                    <div class="gauge-circle">
+                        <svg class="gauge-svg" width="100" height="100">
+                            <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                            <circle class="gauge-bar" cx="50" cy="50" r="42" stroke-dasharray="263.8" stroke-dashoffset="118.4462"></circle>
+                        </svg>
+                        <div class="gauge-text">55.1%</div>
+                    </div>
+                    <div class="winrate-desc">
+                        <h4>Porcentaje de Aciertos</h4>
+                        <p>Efectividad real basada en recomendaciones marcadas como operables.</p>
+                    </div>
+                </div>
+
+                <div class="ia-stats-list">
+                    <div class="ia-stat-item">
+                        <span>Total Recomendadas (Operadas)</span>
+                        <strong>49</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Aciertos (GREEN)</span>
+                        <strong style="color: var(--green);">27</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Fallos (RED)</span>
+                        <strong style="color: var(--red);">18</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Recomendó Evitar (Filtro de Riesgo)</span>
+                        <strong>0</strong>
+                    </div>
+                    <div class="ia-stat-item">
+                        <span>Efectividad de Evitadas</span>
+                        <strong>N/A (No evitó alertas)</strong>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-title">Registro Detallado por Estrategias de Fútbol</div>
+
+        <!-- Renderizado de Acordeones -->
+        <div class="accordion-container">
+            
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">📋</span>
+                            REGLA 3: SORPRESA TEMPRANERA
+                            <span class="count">28 alertas</span>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Partido / Liga</th>
+                                        <th>Min. / Marcador</th>
+                                        <th>Recomendación Gemini</th>
+                                        <th>Recomendación DeepSeek</th>
+                                        <th>Resultado Final / Auditoría</th>
+                                        <th>Veredicto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Montana vs Nesebar</div>
+                                                <div class="liga-cell">Second League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 10'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Montana</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de Montana</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 3-1. Gana local.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Rodina Moskva vs Rubin</div>
+                                                <div class="liga-cell">Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 13'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad - Rubin o Empate</strong>
+                                                <span>Confianza: 74% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Rodina Moskva</strong>
+                                                <span>Confianza: 62% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 5-0. Gana local. Rubin perdió.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Dinamo Makhachkala vs Krylia Sovetov</div>
+                                                <div class="liga-cell">Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 15'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad: Dinamo Makhachkala o Empate</strong>
+                                                <span>Confianza: 70% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Siguiente gol de Dinamo Makhachkala</strong>
+                                                <span>Confianza: 62% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 1-2. Gana visitante.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Sydkysten vs Ishøj</div>
+                                                <div class="liga-cell">DBU Pokalen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 22'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Línea de Goles - Más de 2.5 Goles Totales</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Ishøj</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Resultado no registrado en el chat
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge yellow">PENDIENTE</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Brønshøj vs HB Koge</div>
+                                                <div class="liga-cell">DBU Pokalen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 19'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Evitar apuesta / No recomendada</strong>
+                                                <span>Confianza: 35% ❌</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de HB Koge</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Resultado no registrado en el chat
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge yellow">PENDIENTE</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Hapoel Beer Sheva vs FK Crvena Zvezda</div>
+                                                <div class="liga-cell">UEFA Champions League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 38'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 2.5 Goles Totales</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Hapoel Beer Sheva</strong>
+                                                <span>Confianza: 40% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 1-0. Underdog defendió ventaja.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Thor Akureyri vs Breidablik</div>
+                                                <div class="liga-cell">Úrvalsdeild</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 43'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 2.5 Goles Totales</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de Breidablik</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es perdedora porque el partido terminó con un marcador global de 1-0 (1 gol en total), lo cual es inferior a los 2.5 goles requeridos.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Costa Rica U20 vs Haiti U20</div>
+                                                <div class="liga-cell">CONCACAF U20</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 9'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles Totales</strong>
+                                                <span>Confianza: 76% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 1.5 Goles en el Partido</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es perdedora porque el partido finalizó 1-1 con un total de 2 goles en el tiempo reglamentario, no superando el límite de 2.5 goles ya que las tandas de penaltis no contabilizan.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Deportes Tolima vs Independiente Medellin</div>
+                                                <div class="liga-cell">Primera A</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 1'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Total de Goles - Más de 2.5</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora porque se anotaron 5 goles en total (marcador 2-3), superando la línea requerida de más de 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Minnesota United FC vs FC Juarez</div>
+                                                <div class="liga-cell">Leagues Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 23'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Evitar apuesta / No recomendada</strong>
+                                                <span>Confianza: 42% ❌</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de FC Juarez</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Alerta identificada con alto riesgo por la IA. Se recomendó EVITAR la operación. El resultado de control tradicional habría sido GREEN.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">United States U20 vs Guatemala U20</div>
+                                                <div class="liga-cell">CONCACAF U20</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 37'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria directa de United States U20</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de United States U20</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora ya que United States U20 obtuvo la victoria con un marcador final de 3-1 sobre Guatemala U20.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Diriangén vs LD Alajuelense</div>
+                                                <div class="liga-cell">CONCACAF Central American Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 1'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles Totales</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de LD Alajuelense</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    El favorito remontó y el partido terminó 1-3.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Apollon Limassol W vs Czarni Sosnowiec W</div>
+                                                <div class="liga-cell">UEFA Champions League Women</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 12'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 2.5 Goles Totales</strong>
+                                                <span>Confianza: 82% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de Czarni Sosnowiec W</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora ya que el partido finalizó con un total de 6 goles (3-3 en tiempo regular/prórroga), superando con claridad la línea de Over 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Gintra-Universitetas W vs Hearts W</div>
+                                                <div class="liga-cell">UEFA Champions League Women</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 43'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 2.5 Goles Totales</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Siguiente Gol de Hearts W</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora porque el partido finalizó con un total de 3 goles (1-2), superando el umbral de 2.5 goles requeridos.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">OLS vs TPV</div>
+                                                <div class="liga-cell">Ykkönen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 17'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Total de Goles - Más de 2.5</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>OLS Remonta y Gana</strong>
+                                                <span>Confianza: 55% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora debido a que se anotaron 6 goles en total (4-2), superando el mínimo requerido de 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Dumbrăviţa vs CSM Satu Mare</div>
+                                                <div class="liga-cell">Liga II</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 26'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Total de Goles - Más de 2.5</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad Visitante o Empate</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La recomendación resultó perdedora ya que el partido finalizó con un marcador de 1-1, sumando un total de 2 goles, lo cual no supera el límite de más de 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Rops vs FC jazz</div>
+                                                <div class="liga-cell">Ykkönen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 19'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo Gol</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de FC jazz</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora porque el FC Jazz anotó el segundo gol del partido en el minuto 37.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Warta Poznań vs Resovia Rzeszów</div>
+                                                <div class="liga-cell">Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 28'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 2.5 Goles Totales</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de Warta Poznań</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es perdedora porque el partido terminó con solo 1 gol en total (0-1), por debajo del umbral de 2.5 goles requeridos.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Odder vs Skive</div>
+                                                <div class="liga-cell">DBU Pokalen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 12'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles Totales</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo Gol de Skive</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 2-2. Más de 2.5 goles y gol Skive acertados.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Køge W vs Riga W</div>
+                                                <div class="liga-cell">UEFA Champions League Women</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 5'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria Directa: Køge W</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Køge W</strong>
+                                                <span>Confianza: 85% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Resultado no registrado en el chat
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge yellow">PENDIENTE</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Brann vs Apollon Limassol</div>
+                                                <div class="liga-cell">UEFA Europa Conference League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 23'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Evitar apuesta / No recomendada</strong>
+                                                <span>Confianza: 42% ❌</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Brann</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 0-1. Gana visitante. Favorito falló.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge yellow">APUESTA EVITADA</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Stabæk U19 vs Fredrikstad FK U19</div>
+                                                <div class="liga-cell">Nasjonal U19 Champions League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 47'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 2.5 Goles Totales</strong>
+                                                <span>Confianza: 76% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Fredrikstad FK U19</strong>
+                                                <span>Confianza: 74% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora ya que se anotaron un total de 6 goles entre ambos equipos, superando la línea requerida de más de 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Maccabi Tel Aviv vs CSKA Sofia</div>
+                                                <div class="liga-cell">UEFA Europa League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 9'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad: Maccabi Tel Aviv o Empate</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 1.5 goles en el partido</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta resultó perdedora ya que CSKA Sofia se llevó la victoria con un marcador de 0-3, impidiendo que Maccabi Tel Aviv ganara o empatara el encuentro.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">PAOK vs Anderlecht</div>
+                                                <div class="liga-cell">UEFA Europa League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 1'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Total de goles - Más de 2.5</strong>
+                                                <span>Confianza: 82% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>PAOK o Empate</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta resultó perdedora ya que solo se anotó 1 gol en el partido (0-1), quedando por debajo de los 3 goles requeridos para superar la línea de Más de 2.5.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Bristol City vs Walsall</div>
+                                                <div class="liga-cell">League Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 47'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol: Bristol City</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Bristol City Gana el Partido</strong>
+                                                <span>Confianza: 70% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    El underdog (Walsall) mantuvo el resultado (0-1).
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Club Sando vs Broki</div>
+                                                <div class="liga-cell">CONCACAF Caribbean Club Championship</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 35'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad - Club Sando o Empate</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de Club Sando</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora porque el Club Sando se impuso por 2-1, cumpliendo la condición de victoria local de la Doble Oportunidad.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Tlaxcala vs Alebrijes de Oaxaca</div>
+                                                <div class="liga-cell">Liga de Expansión MX</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 47'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Evitar apuesta / No recomendada</strong>
+                                                <span>Confianza: 35% ❌</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Alebrijes de Oaxaca</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Alerta identificada con alto riesgo por la IA. Se recomendó EVITAR la operación. El resultado de control tradicional habría sido GREEN.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Leones Negros UDG vs Correcaminos Uat</div>
+                                                <div class="liga-cell">Liga de Expansión MX</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 20'</div>
+                                                <div class="liga-cell">Marcador: 1 - 2</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 4.5 Goles Totales</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    El underdog (Correcaminos Uat) mantuvo el resultado (1-3).
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">📋</span>
+                            REGLA 2: EL FAVORITO SUFRE
+                            <span class="count">3 alertas</span>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Partido / Liga</th>
+                                        <th>Min. / Marcador</th>
+                                        <th>Recomendación Gemini</th>
+                                        <th>Recomendación DeepSeek</th>
+                                        <th>Resultado Final / Auditoría</th>
+                                        <th>Veredicto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Viby vs ASA Aarhus</div>
+                                                <div class="liga-cell">DBU Pokalen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Evitar apuesta / No recomendada</strong>
+                                                <span>Confianza: 35% ❌</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>ASA Aarhus Gana el Partido</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 0-0. Empate en copa. Favorito falló en 90 min.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge yellow">APUESTA EVITADA</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Lech Poznan vs KI Klaksvik</div>
+                                                <div class="liga-cell">UEFA Europa League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Lech Poznan a Ganar</strong>
+                                                <span>Confianza: 70% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Lech Poznan</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La recomendación es ganadora porque Lech Poznan venció a KI Klaksvik con un marcador final de 1-0.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Ind. Juniors vs 22 de Julio</div>
+                                                <div class="liga-cell">Liga Pro Serie B</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Ind. Juniors</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Ind. Juniors</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora porque Ind. Juniors venció a 22 de Julio con un marcador final de 2-0.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">📋</span>
+                            REGLA 1: TARJETA ROJA ESTRATÉGICA
+                            <span class="count">8 alertas</span>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Partido / Liga</th>
+                                        <th>Min. / Marcador</th>
+                                        <th>Recomendación Gemini</th>
+                                        <th>Recomendación DeepSeek</th>
+                                        <th>Resultado Final / Auditoría</th>
+                                        <th>Veredicto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Sydkysten vs Ishøj</div>
+                                                <div class="liga-cell">DBU Pokalen</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 51'</div>
+                                                <div class="liga-cell">Marcador: 2 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria directa de Sydkysten</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Sydkysten</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Resultado no registrado en el chat
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge yellow">PENDIENTE</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Godoy Cruz Res. vs Racing Club Res.</div>
+                                                <div class="liga-cell">Reserve League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 27'</div>
+                                                <div class="liga-cell">Marcador: 1 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Godoy Cruz Res.</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Godoy Cruz Res.</strong>
+                                                <span>Confianza: 62% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 1-1. Empate tras roja.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Independiente Petrolero vs Aurora</div>
+                                                <div class="liga-cell">Primera División</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 55'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad: Empate o Aurora</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Siguiente Gol de Aurora</strong>
+                                                <span>Confianza: 65% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final: 1-1. Alerta aprovechada tras la expulsión.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Remo vs Santos</div>
+                                                <div class="liga-cell">Copa Do Brasil</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 31'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria Directa de Santos</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Santos</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final: 0-1. Alerta aprovechada tras la expulsión.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Monterrey vs Orlando City SC</div>
+                                                <div class="liga-cell">Leagues Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 52'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Orlando City</strong>
+                                                <span>Confianza: 90% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad Orlando City o Empate</strong>
+                                                <span>Confianza: 85% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 1-2. Gana visitante tras roja al local.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Once Caldas vs America de Cali</div>
+                                                <div class="liga-cell">Primera A</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>América de Cali - Apuesta sin empate</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>America de Cali o Empate</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final: 0-1. Alerta aprovechada tras la expulsión.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Stabæk U19 vs Fredrikstad FK U19</div>
+                                                <div class="liga-cell">Nasjonal U19 Champions League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 35'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble Oportunidad: Fredrikstad FK U19 o Empate</strong>
+                                                <span>Confianza: 82% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Fredrikstad FK U19</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora debido a que Fredrikstad FK U19 se llevó la victoria por 2-4, cumpliendo con la doble oportunidad (empate o victoria visitante).
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">FC Noah vs FC Sion</div>
+                                                <div class="liga-cell">UEFA Europa Conference League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 30'</div>
+                                                <div class="liga-cell">Marcador: 2 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de FC Noah</strong>
+                                                <span>Confianza: 80% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La recomendación resultó perdedora ya que el partido finalizó en empate 2-2 y se requería la victoria de FC Noah.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">📋</span>
+                            REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)
+                            <span class="count">7 alertas</span>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Partido / Liga</th>
+                                        <th>Min. / Marcador</th>
+                                        <th>Recomendación Gemini</th>
+                                        <th>Recomendación DeepSeek</th>
+                                        <th>Resultado Final / Auditoría</th>
+                                        <th>Veredicto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Union St. Gilloise vs Bodo/Glimt</div>
+                                                <div class="liga-cell">UEFA Champions League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 44'</div>
+                                                <div class="liga-cell">Marcador: 1 - 2</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Over 6.5 Tarjetas Totales en el partido</strong>
+                                                <span>Confianza: 82% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 3.5 goles en el partido</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    Marcador final 3-3. Hubo 7 tarjetas amarillas y 6 goles.
+                                                </div>
+                                                <span class="source-badge web">WEB</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Stabæk U19 vs Fredrikstad FK U19</div>
+                                                <div class="liga-cell">Nasjonal U19 Champions League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 35'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Fredrikstad FK U19 o Empate</strong>
+                                                <span>Confianza: 76% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Fredrikstad FK U19</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora ya que Fredrikstad FK U19 se impuso por 4-2 ante Stabæk U19, cumpliendo la condición de la Doble Oportunidad (X2).
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">FC Noah vs FC Sion</div>
+                                                <div class="liga-cell">UEFA Europa Conference League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 30'</div>
+                                                <div class="liga-cell">Marcador: 2 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de FC Noah</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 Goles</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta resultó perdedora ya que el partido finalizó en empate 2-2 y se requería la victoria del FC Noah.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Maccabi Tel Aviv vs CSKA Sofia</div>
+                                                <div class="liga-cell">UEFA Europa League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 0 - 2</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 4.5 Tarjetas Totales en el partido</strong>
+                                                <span>Confianza: 82% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de CSKA Sofia</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta resultó ganadora ya que se mostraron un total de 7 tarjetas amarillas en el partido, superando la línea de 4.5 tarjetas.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Hradec Králové vs Beşiktaş</div>
+                                                <div class="liga-cell">UEFA Europa League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 39'</div>
+                                                <div class="liga-cell">Marcador: 0 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 4.5 Tarjetas Totales en el Partido</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 tarjetas</strong>
+                                                <span>Confianza: 75% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora ya que se mostraron un total de 6 tarjetas en el partido (5 amarillas y 1 roja), superando la línea de 4.5 tarjetas.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">IFK Goteborg vs Gent</div>
+                                                <div class="liga-cell">UEFA Europa Conference League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 4.5 Tarjetas Totales en el partido</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Gent</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta resultó perdedora porque solo se mostraron 3 tarjetas en total durante el partido, quedando por debajo de las 4.5 requeridas.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Borac Banja Luka vs ML Vitebsk</div>
+                                                <div class="liga-cell">UEFA Europa Conference League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 38'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Total de Goles: Más de 2.5 goles</strong>
+                                                <span>Confianza: 80% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Victoria de Borac Banja Luka</strong>
+                                                <span>Confianza: 82% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta resulta perdedora ya que el partido finalizó con un total de 1 gol (1-0), quedando por debajo del umbral de más de 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">📋</span>
+                            REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)
+                            <span class="count">1 alertas</span>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Partido / Liga</th>
+                                        <th>Min. / Marcador</th>
+                                        <th>Recomendación Gemini</th>
+                                        <th>Recomendación DeepSeek</th>
+                                        <th>Resultado Final / Auditoría</th>
+                                        <th>Veredicto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Gintra-Universitetas W vs Hearts W</div>
+                                                <div class="liga-cell">UEFA Champions League Women</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 45'</div>
+                                                <div class="liga-cell">Marcador: 1 - 0</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Doble oportunidad - Hearts W o Empate</strong>
+                                                <span>Confianza: 70% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo gol de Hearts W</strong>
+                                                <span>Confianza: 70% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora debido a que Hearts W se llevó la victoria por 1-2, cumpliendo con el pronóstico de doble oportunidad a su favor o empate.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">📋</span>
+                            REGLA 4: ASEDIO INTENSO (HUELE A GOL)
+                            <span class="count">2 alertas</span>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Partido / Liga</th>
+                                        <th>Min. / Marcador</th>
+                                        <th>Recomendación Gemini</th>
+                                        <th>Recomendación DeepSeek</th>
+                                        <th>Resultado Final / Auditoría</th>
+                                        <th>Veredicto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Paide vs Rapid Vienna</div>
+                                                <div class="liga-cell">UEFA Europa Conference League</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 75'</div>
+                                                <div class="liga-cell">Marcador: 1 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 2.5 goles totales</strong>
+                                                <span>Confianza: 68% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Próximo Gol de Rapid Vienna</strong>
+                                                <span>Confianza: 72% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    La apuesta es ganadora ya que el partido finalizó con un total de 5 goles (1-4), superando la línea de más de 2.5 goles.
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge green">GREEN</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <div class="partido-cell">Bristol City vs Walsall</div>
+                                                <div class="liga-cell">League Cup</div>
+                                            </td>
+                                            <td>
+                                                <div>Min. 75'</div>
+                                                <div class="liga-cell">Marcador: 0 - 1</div>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Más de 1.5 Goles Totales</strong>
+                                                <span>Confianza: 78% ✅</span>
+                                            </td>
+                                            <td class="ia-pred-cell">
+                                                <strong>Bristol City o Empate</strong>
+                                                <span>Confianza: 85% ✅</span>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem; max-width: 250px;">
+                                                    No cayeron más goles tras la alerta (0-1).
+                                                </div>
+                                                <span class="source-badge ">HTML</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge red">RED</span>
+                                            </td>
+                                        </tr>
+                                        
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+        </div>
+
+    </div>
+
+    <script>
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
