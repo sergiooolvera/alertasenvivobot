@@ -490,21 +490,33 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
             continue;
         }
 
-        if (meta.aiRecommendation) {
-            console.log(`[rulesEngine] Evaluando recomendación de IA para fútbol: "${meta.aiRecommendation}"`);
-            const aiOutcome = await aiService.evaluatePredictionOutcome('football', meta.aiRecommendation, {
+        let geminiOutcome = null;
+        let deepseekOutcome = null;
+        const geminiRec = meta.geminiRecommendation || meta.aiRecommendation;
+        const deepseekRec = meta.deepseekRecommendation;
+
+        if (geminiRec) {
+            console.log(`[rulesEngine] Evaluando recomendación de Gemini para fútbol: "${geminiRec}"`);
+            geminiOutcome = await aiService.evaluatePredictionOutcome('football', geminiRec, {
                 fixture: finalFixture,
                 events: finalEvents,
                 stats: finalStats
             });
+        }
 
-            if (aiOutcome) {
-                isGreen = aiOutcome.isGreen;
-                explanation = aiOutcome.explanation;
-                evaluatedByAI = true;
-            } else {
-                console.warn(`[rulesEngine] Falló la evaluación de IA. Usando fallback estático.`);
-            }
+        if (deepseekRec) {
+            console.log(`[rulesEngine] Evaluando recomendación de DeepSeek para fútbol: "${deepseekRec}"`);
+            deepseekOutcome = await aiService.evaluatePredictionOutcome('football', deepseekRec, {
+                fixture: finalFixture,
+                events: finalEvents,
+                stats: finalStats
+            });
+        }
+
+        if (geminiOutcome) {
+            isGreen = geminiOutcome.isGreen;
+            explanation = geminiOutcome.explanation;
+            evaluatedByAI = true;
         }
 
         if (!evaluatedByAI) {
@@ -595,8 +607,27 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
         }
     }
 
-        const icon = isGreen ? '🟩 *GREEN*' : '🟥 *RED*';
-        const msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;
+        let msg = "";
+        if (deepseekRec && (geminiOutcome || deepseekOutcome)) {
+            const gIcon = geminiOutcome ? (geminiOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*') : '⚠️ *N/D*';
+            const dsIcon = deepseekOutcome ? (deepseekOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*') : '⚠️ *N/D*';
+
+            msg = `🏁 *VEREDICTO POST-PARTIDO - DUAL*\n\n` +
+                  `⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n` +
+                  `📋 *Regla:* ${meta.ruleName}\n` +
+                  `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                  `♊ *GOOGLE GEMINI: ${gIcon}*\n` +
+                  `🎯 *Apuesta:* *${geminiRec}*\n` +
+                  `💡 *Resultado:* ${geminiOutcome ? geminiOutcome.explanation : 'Evaluación no disponible'}\n` +
+                  `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                  `🐳 *DEEPSEEK: ${dsIcon}*\n` +
+                  `🎯 *Apuesta:* *${deepseekRec}*\n` +
+                  `💡 *Resultado:* ${deepseekOutcome ? deepseekOutcome.explanation : 'Evaluación no disponible'}`;
+        } else {
+            const icon = isGreen ? '🟩 *GREEN*' : '🟥 *RED*';
+            msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;
+        }
+
         results.push({ isGreen, msg, meta });
     }
 

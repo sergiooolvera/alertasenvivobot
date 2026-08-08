@@ -516,6 +516,7 @@ async function checkMatches() {
                         const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
                         const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
                         const confidence = confidenceMatch ? confidenceMatch[1] : '80';
+                        alert.metadata.geminiRecommendation = recommendation;
 
                         // Obtener predicción de DeepSeek para el bloque dual
                         let deepseekPrediction = null;
@@ -535,6 +536,9 @@ async function checkMatches() {
                             const dsAnalysis = dsAnalysisMatch ? dsAnalysisMatch[1].trim() : 'N/D';
                             const dsRecommendation = dsRecMatch ? dsRecMatch[1].replace(/\*/g, '').trim() : 'N/D';
                             const dsConfidence = dsConfidenceMatch ? dsConfidenceMatch[1] : '80';
+                            if (dsRecommendation && dsRecommendation !== 'N/D') {
+                                alert.metadata.deepseekRecommendation = dsRecommendation;
+                            }
 
                             formattedAiSection = 
                                 `🤖 *ANÁLISIS DE IA - DUAL*\n` +
