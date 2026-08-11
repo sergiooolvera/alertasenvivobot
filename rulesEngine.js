@@ -159,7 +159,7 @@ ${msgHeader}
     }
 
     // --- REGLA 3: Sorpresa Tempranera ---
-    if (underdog.odd > 3.50 && elapsed <= 41 && underdogWinning) {
+    if (underdog.odd > 3.50 && elapsed >= 30 && elapsed <= 41 && underdogWinning) {
         let isMasacrado = false;
         if (hasStats) {
             const favPoss = getStat(favorite.team, 'Ball Possession');
@@ -169,12 +169,12 @@ ${msgHeader}
         if (isMasacrado) return alerts; // Abortamos la regla 3 si el favorito está arrasando
         const ruleId = `${fixtureId}_rule3`;
         if (!alertedMatches.has(ruleId)) {
-            const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA*
+            const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA (30'+ STATS)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
-⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja.
+⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja. Se han acumulado 30+ min de datos estadísticos.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Underdog Doble Chance (X2 / 1X) o Hándicap Asiático a favor del Underdog (+1.5).
+🎯 *Recomendación:* Ambos Anotan (BTTS), Próximo Gol del Favorito o Doble Chance (si la confianza de la IA es ≥65%).
 🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
@@ -186,6 +186,7 @@ ${msgHeader}
                     homeTeam: fixture.teams.home.name,
                     awayTeam: fixture.teams.away.name,
                     underdogTeam: underdog.team,
+                    minConfidence: 65,
                     scoreAtAlert: { home: homeGoals, away: awayGoals },
                     odds
                 }
