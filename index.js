@@ -574,7 +574,8 @@ async function checkMatches() {
 
                         textToSend = `${header}\n\n${formattedAiSection}`;
 
-                        // Enviar prompts de IA a Telegram si el chat de logs está configurado
+                        // Envío de prompts de IA a Telegram desactivado por solicitud del usuario
+                        /*
                         if (process.env.TELEGRAM_PROMPTS_CHAT_ID) {
                             const promptChatId = process.env.TELEGRAM_PROMPTS_CHAT_ID;
                             const matchClean = `${matchData.homeTeam}_vs_${matchData.awayTeam}`.replace(/[^a-zA-Z0-9_]/g, '_').replace(/_+/g, '_');
@@ -603,6 +604,7 @@ async function checkMatches() {
                                 .catch(err => console.error(`[index.js] ❌ Error al enviar prompt DeepSeek a Telegram:`, err.message));
                             }
                         }
+                        */
 
                         // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                         const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
