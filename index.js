@@ -299,14 +299,25 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
             }
         }
         
-        // 4. Si no hay momios en vivo en la API, usar el estimador por tiempo transcurrido
-        if (currentOddValue === null) {
-            method = 'Estimador de tiempo';
-            const elapsedMinutesSinceIncident = elapsed - alert.minuteAtIncident;
-            if (elapsedMinutesSinceIncident >= alert.waitMinutes) {
-                oddTriggered = true;
-                currentOddValue = alert.targetOdd; // Valor estimado
+        // 4. Si transcurre el tiempo de espera máximo y no se ha alcanzado la cuota real, cancelar la alerta
+        const elapsedMinutesSinceIncident = elapsed - alert.minuteAtIncident;
+        if (elapsedMinutesSinceIncident >= alert.waitMinutes) {
+            const logMsg = `❌ *[SafeOdds]* Alerta cancelada para *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}) por expirar el tiempo de espera (${alert.waitMinutes} min) sin alcanzar el momio objetivo real de @${alert.targetOdd.toFixed(2)}.`;
+            console.log(`[SafeOdds] Tiempo de espera agotado sin alcanzar el momio objetivo. Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
+            logSafeOddsEvent(logMsg);
+            
+            if (typeof discardedAlertsLog !== 'undefined') {
+                discardedAlertsLog.push({
+                    fixtureId: alert.fixtureId,
+                    home: alert.homeTeam,
+                    away: alert.awayTeam,
+                    ruleName: alert.ruleName,
+                    reason: `Expiró tiempo de espera (${alert.waitMinutes}m) sin alcanzar cuota real @${alert.targetOdd.toFixed(2)}`
+                });
             }
+            
+            pendingAlertsQueue.splice(i, 1);
+            continue;
         }
         
         // 5. Si se activa el trigger, enviar la alerta
@@ -562,11 +573,25 @@ async function checkMatches() {
                                 `🔥 *Confianza Estimada:* *${confidence}%*`;
                         }
                         
-                        // --- FILTRO DE CONSENSO IA ---
-                        const isGeminiLowConfidence = parseInt(confidence) < 40;
+                        // --- FILTRO DE CONSENSO IA ROBUSTO ---
+                        const minRequiredConfidence = alert.metadata.minConfidence || 40;
+                        const isGeminiLowConfidence = parseInt(confidence) < minRequiredConfidence;
                         const isGeminiAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada');
-                        if (isGeminiLowConfidence || isGeminiAvoiding) {
-                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Gemini detectó alto riesgo (${confidence}% - ${recommendation}).`);
+                        
+                        // Descartar dobles oportunidades propuestas por Gemini debido a su bajo win rate histórico (47.8%)
+                        const isGeminiDoubleOpportunity = recommendation.toLowerCase().includes('doble oportunidad') || 
+                                                          recommendation.toLowerCase().includes('doble chance') || 
+                                                          recommendation.toLowerCase().includes('1x') || 
+                                                          recommendation.toLowerCase().includes('x2') ||
+                                                          recommendation.toLowerCase().includes('empate o');
+
+                        if (isGeminiLowConfidence || isGeminiAvoiding || isGeminiDoubleOpportunity) {
+                            let reason = "";
+                            if (isGeminiLowConfidence) reason = `baja confianza (${confidence}% < ${minRequiredConfidence}%)`;
+                            else if (isGeminiAvoiding) reason = `recomendó evitar (${recommendation})`;
+                            else if (isGeminiDoubleOpportunity) reason = `evitar mercado de Doble Oportunidad por bajo rendimiento histórico (${recommendation})`;
+
+                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Motivo: Gemini ${reason}.`);
                             alert.metadata.isSent = false;
                             alert.metadata.aiRecommendation = recommendation;
                             continue;

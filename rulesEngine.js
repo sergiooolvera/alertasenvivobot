@@ -174,7 +174,7 @@ ${msgHeader}
 ${msgHeader}
 ⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja. Se han acumulado 30+ min de datos estadísticos.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Ambos Anotan (BTTS), Próximo Gol del Favorito o Doble Chance (si la confianza de la IA es ≥65%).
+🎯 *Recomendación:* Ambos Anotan (BTTS), Próximo Gol del Favorito o Doble Chance (si la confianza de la IA es ≥75%).
 🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
@@ -186,7 +186,7 @@ ${msgHeader}
                     homeTeam: fixture.teams.home.name,
                     awayTeam: fixture.teams.away.name,
                     underdogTeam: underdog.team,
-                    minConfidence: 65,
+                    minConfidence: 75,
                     scoreAtAlert: { home: homeGoals, away: awayGoals },
                     odds
                 }

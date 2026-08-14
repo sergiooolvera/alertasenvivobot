@@ -1,5 +1,8 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+
+async function main() {
 
 const filePath = path.join(__dirname, '..', 'messages.html');
 const content = fs.readFileSync(filePath, 'utf8');
@@ -66,11 +69,16 @@ function normalizarRegla(regla) {
 }
 
 function normalizarPartido(partido) {
-    const clean = cleanMarkdownLinks(partido);
+    let clean = cleanMarkdownLinks(partido);
+    // 1. Quitar referencias a flashscore y decodificar URLs
+    clean = clean.replace(/flashscore/gi, '').replace(/%20/g, ' ');
+    // 2. Normalizar marcas diacríticas (acentos, tildes, eñes)
+    clean = clean.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // 3. Quitar todo lo que no sea alfanumérico o espacio
+    clean = clean.replace(/[^a-zA-Z0-9\s]/g, ' ');
+    // 4. Convertir a minúsculas y juntar
     return clean
         .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
         .replace(/\s+vs\s+/g, 'vs')
         .replace(/[^a-z0-9]/g, '');
 }
@@ -319,7 +327,18 @@ const resultadosWeb = {
     "banfieldvsbelgranocordoba_Regla 5: Partido Caliente": { veredicto: "GREEN", geminiVeredicto: "GREEN", deepseekVeredicto: "GREEN", detalle: "Marcador final 0-2. 7 tarjetas amarillas totales." }
 };
 
-// Inject web results for remaining alerts
+// Cargar caché local de resultados de búsqueda en internet
+const cachePath = path.join(__dirname, 'resultados_cache.json');
+let cacheResultados = {};
+if (fs.existsSync(cachePath)) {
+    try {
+        cacheResultados = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+    } catch (err) {
+        console.error("Error leyendo resultados_cache.json:", err);
+    }
+}
+
+// Inject web results for remaining alerts (1. Mapa estático local)
 processedAlerts.forEach(a => {
     if (!a.veredicto) {
         const key = `${a.partidoNorm}_${a.reglaNombre}`;
@@ -332,6 +351,58 @@ processedAlerts.forEach(a => {
         }
     }
 });
+
+// Inject web results for remaining alerts (2. Caché local de búsquedas previas)
+processedAlerts.forEach(a => {
+    if (!a.veredicto) {
+        const key = `${a.partidoNorm}_${a.reglaNombre}`;
+        const ext = cacheResultados[key];
+        if (ext) {
+            a.veredicto = ext.veredicto;
+            a.veredictoDetalle = ext.detalle;
+            a.geminiVeredicto = ext.geminiVeredicto;
+            a.deepseekVeredicto = ext.deepseekVeredicto;
+        }
+    }
+});
+
+// Resolver alertas que sigan pendientes buscando en internet mediante Gemini Grounding
+const aiService = require('../aiService');
+const pendientes = processedAlerts.filter(a => !a.veredicto);
+if (pendientes.length > 0) {
+    console.log(`[Reporte-Auditoria] Se encontraron ${pendientes.length} alertas pendientes de veredicto. Intentando resolver vía web...`);
+    for (let i = 0; i < pendientes.length; i++) {
+        const a = pendientes[i];
+        const key = `${a.partidoNorm}_${a.reglaNombre}`;
+        console.log(`[Reporte-Auditoria] [${i+1}/${pendientes.length}] Buscando en la web: ${a.partido} (${a.date})`);
+        
+        const recomendacion = a.geminiBet && a.geminiBet !== 'N/A' ? a.geminiBet : a.deepseekBet;
+        
+        const webResult = await aiService.resolveVerdictViaWeb('football', a.partido.split('vs')[0].trim(), a.partido.split('vs')[1].trim(), a.date, recomendacion);
+        
+        if (webResult && webResult.outcome) {
+            const veredicto = webResult.outcome === 'CANCELLED' ? 'APUESTA EVITADA' : webResult.outcome;
+            const cacheObj = {
+                veredicto: veredicto,
+                detalle: `${webResult.explanation} (Marcador: ${webResult.score})`,
+                geminiVeredicto: veredicto,
+                deepseekVeredicto: veredicto
+            };
+            
+            a.veredicto = veredicto;
+            a.veredictoDetalle = cacheObj.detalle;
+            a.geminiVeredicto = veredicto;
+            a.deepseekVeredicto = veredicto;
+            
+            cacheResultados[key] = cacheObj;
+            fs.writeFileSync(cachePath, JSON.stringify(cacheResultados, null, 2), 'utf8');
+            console.log(`[Reporte-Auditoria] ✅ Resuelto: ${veredicto} (${webResult.score})`);
+        } else {
+            console.log(`[Reporte-Auditoria] ⚠️ No se pudo resolver para: ${a.partido}`);
+        }
+        await new Promise(r => setTimeout(r, 1000));
+    }
+}
 
 const jsonDataStr = JSON.stringify(processedAlerts);
 
@@ -696,6 +767,7 @@ const htmlTemplate = `<!DOCTYPE html>
         <button class="tab-btn" onclick="switchTab('reglas')">🎯 Por Tipo de Regla</button>
         <button class="tab-btn" onclick="switchTab('efectividad')">⚡ Efectividad & Confianza</button>
         <button class="tab-btn" onclick="switchTab('bitacora')">📋 Bitácora Completa</button>
+        <button class="tab-btn" onclick="switchTab('fallos')">⚠️ Auditoría de Fallos</button>
     </div>
 
     <div class="metrics-grid">
@@ -974,6 +1046,33 @@ const htmlTemplate = `<!DOCTYPE html>
         </div>
     </div>
 
+    <!-- TAB 7: AUDITORIA DE FALLOS -->
+    <div id="tab-fallos" class="tab-content">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">⚠️ Listado Detallado de Fallos (Veredicto RED 🟥)</div>
+            </div>
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:16px;">
+                Estas apuestas resultaron en pérdida. Analiza la discrepancia entre el pronóstico de la IA y el resultado real para ajustar las reglas y sensibilidades.
+            </p>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Partido (Liga)</th>
+                            <th>Regla</th>
+                            <th>Gemini (Conf)</th>
+                            <th>DeepSeek (Conf)</th>
+                            <th>Detalle del Veredicto / Resultado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-fallos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- TAB 6: BITACORA COMPLETA -->
     <div id="tab-bitacora" class="tab-content">
         <div class="card">
@@ -1081,6 +1180,7 @@ const htmlTemplate = `<!DOCTYPE html>
             renderConfidenceTable();
             populateRuleFilterOptions();
             renderBitacoraTable();
+            renderFallosTable();
             renderConsensus();
             updateFinancialSim();
         }
@@ -1587,6 +1687,37 @@ const htmlTemplate = `<!DOCTYPE html>
             });
         }
 
+        function renderFallosTable() {
+            const tbody = document.getElementById('tbody-fallos');
+            tbody.innerHTML = '';
+            
+            const fallos = rawData.filter(item => item.veredicto === 'RED');
+            
+            if (fallos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted)">¡Increíble! No hay apuestas fallidas registradas.</td></tr>';
+                return;
+            }
+            
+            fallos.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = \`
+                    <td style="color:var(--text-muted)">\${item.date}<br><span style="font-size:12px">\${item.time || ''}</span></td>
+                    <td>
+                        <div style="font-weight:600">\${item.partido}</div>
+                        <div style="font-size:12px; color:var(--text-muted)">\${item.liga}</div>
+                    </td>
+                    <td><span style="font-size:13px; font-weight:600">\${item.reglaNombre}</span></td>
+                    <td><span class="badge badge-gemini" style="\${!item.geminiRecommend ? 'opacity: 0.5' : ''}">\${item.geminiBet} (\${item.geminiConf}%)</span></td>
+                    <td><span class="badge badge-deepseek" style="\${!item.deepseekRecommend ? 'opacity: 0.5' : ''}">\${item.deepseekBet} (\${item.deepseekConf}%)</span></td>
+                    <td style="font-size:13px; max-width: 300px; white-space: normal; word-break: break-word;">
+                        <div style="font-weight:600; color:var(--red); margin-bottom:4px;">\${item.marcador ? 'Marcador: ' + item.marcador : ''}</div>
+                        <div style="color:var(--text-muted)">\${item.veredictoDetalle || 'Sin detalles adicionales.'}</div>
+                    </td>
+                \`;
+                tbody.appendChild(tr);
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
@@ -1598,3 +1729,8 @@ const outputPathRoot = path.join(__dirname, '..', 'reporte_messages.html');
 fs.writeFileSync(outputPathRoot, htmlTemplate, 'utf8');
 
 console.log(`Report successfully updated with 100% resolved veredictos at: ${outputPathRoot}`);
+}
+
+main().catch(err => {
+    console.error("Error ejecutando el generador de reportes:", err);
+});

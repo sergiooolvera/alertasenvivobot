@@ -1,0 +1,98 @@
+{
+  "gintrauniversitetaswvsheartsw_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-2. Hearts W remontó con goles al 56' y 66'. Over 2.5 y Siguiente Gol de Hearts W acertados.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "gintrauniversitetaswvsheartsw_Regla 6: Remontada Improbable": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-2. Hearts W remontó y ganó. Doble Oportunidad (X2) y Próximo gol de Hearts W acertados.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "sknstpoltenvsaustriaviennaam_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "RED",
+    "detalle": "Marcador final 0-1. Victoria de Austria Vienna II. Over 2.5 y victoria de SKN St. Polten fallados.",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "levangervsstjordalsblink_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "RED",
+    "detalle": "Marcador final 1-2. Victoria de Stjørdals-Blink. Más de 3.5 goles y victoria de Levanger fallados.",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "energiecottbusvshannover96_Regla 1: Asedio Favorito": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 3-1. Victoria de Energie Cottbus. Over 2.5 goles de Gemini acertado (Hannover 96 falló).",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "RED"
+  },
+  "cskasofiaiivshebar1918_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 4-3. Gana local. Doble oportunidad local/empate de Gemini y DeepSeek acertado.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "capivarianou20vsaguasantau20_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-2. Gana visitante. Más de 2.5 goles de Gemini acertado (Doble Oportunidad de DeepSeek fallado).",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "RED"
+  },
+  "ibrachinau20vssantoandreu20_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "RED",
+    "detalle": "Marcador final 0-1. Gana visitante. Más de 2.5 goles y victoria local fallados.",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "celjevsararatarmenia_Regla 5: Partido Caliente": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 2-0. Hubo 8 tarjetas amarillas (excede 5.5). Victoria de Celje acertada.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "keltyheartsvsmotherwellu21_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 4-3. Gana local. Más de 3.5 goles y victoria de Kelty Hearts acertados.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "celjevsararatarmenia_Regla 6: Presión Córneres": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 2-0. Hubo 21 córneres en total (excede 12.5). Victoria de Celje acertada.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "bolivarvssaopaulo_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-1. Doble Oportunidad Bolívar/Empate y Próximo gol de Bolívar (1-1 tras ir 0-1) acertados.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "brannu19vsvalerengau19_Regla 6: Remontada Improbable": {
+    "veredicto": "RED",
+    "detalle": "Marcador final 0-1. Victoria de Vålerenga U19. Más de 2.5 goles y victoria local de Brann U19 fallados.",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "astrakhanvsmashukkmv_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-1 en tiempo reglamentario. Doble Oportunidad local/empate de DeepSeek acertada (Over 2.5 goles de Gemini fallado).",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "GREEN"
+  },
+  "alshababvsalqadisiyahfc_Regla 3: Sorpresa Tempranera": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-3. Más de 2.5 goles totales y próximo gol de Al-Qadisiyah (1-1 tras el 1-0) acertados.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "sanluisvsdeportestemuco_Regla 2: Roja Estratégica": {
+    "veredicto": "GREEN",
+    "detalle": "Marcador final 1-1. Menos de 2.5 goles de Gemini y Siguiente gol de Temuco (0-1 al 46' tras roja al 32') acertados.",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  }
+}
