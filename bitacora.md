@@ -155,3 +155,9 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Regla 3 al 75%**: Se elevó el umbral `minConfidence` de la Regla 3: Sorpresa Tempranera a `75` en `rulesEngine.js` para reducir ruido, reflejando el cambio de forma dinámica en la evaluación de IA y en los textos del mensaje enviado a Telegram.
   - **Pruebas de Integración**: Se corrieron exitosamente las simulaciones locales de `test.js` y `testAi.js` validando la robustez de los cambios y fallbacks ante contingencias de red.
 
+- **[2026-08-13]**: Detección y Alertas de Corrección VAR en Vivo (Versión 2.7.0).
+  - **Soporte para Goles Anulados**: Se implementó una lógica de comparación que detecta en tiempo real si el marcador en vivo retrocede con respecto al registrado al momento del envío de la alerta, notificando de inmediato una alerta de gol anulado.
+  - **Soporte para Tarjetas Rojas Anuladas**: Se adaptó el cliente API para adjuntar el estado de error (`isError`) a los eventos. Si se detecta que una tarjeta roja previamente alertada desaparece de los eventos activos del partido, se notifica la anulación de la expulsión.
+  - **Persistencia Antiduplicados**: Se implementó la función `updatePlayMetadata` en `financialTracker.js` para persistir las correcciones del VAR en el archivo local `financial_tracker.json`. Esto previene notificaciones duplicadas tras reinicios.
+  - **Pruebas de Integración**: Se ejecutó exitosamente el script `scratch/test_var_corrections.js` validando todos los escenarios de corrección, control de spam e inmunidad contra fallos de red.
+

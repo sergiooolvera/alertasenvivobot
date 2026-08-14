@@ -362,6 +362,125 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
     }
 }
 
+// Detecta correcciones de VAR (goles anulados y tarjetas rojas anuladas) para alertas enviadas
+async function checkForVarCorrections(match, events) {
+    const fixtureId = match.fixture.id;
+    const trackedInfo = trackedMatches.get(fixtureId);
+    if (!trackedInfo || !trackedInfo.alertsMetadata || trackedInfo.alertsMetadata.length === 0) {
+        return;
+    }
+
+    const currentHomeGoals = match.goals.home || 0;
+    const currentAwayGoals = match.goals.away || 0;
+
+    for (const meta of trackedInfo.alertsMetadata) {
+        // Solo vigilar alertas que ya fueron enviadas a los canales
+        if (meta.isSent !== true) {
+            continue;
+        }
+
+        // 1. Detección de GOL ANULADO por el VAR
+        if (meta.scoreAtAlert) {
+            const previousHomeGoals = meta.scoreAtAlert.home;
+            const previousAwayGoals = meta.scoreAtAlert.away;
+
+            if (currentHomeGoals < previousHomeGoals || currentAwayGoals < previousAwayGoals) {
+                console.log(`[VAR CORRECTION] Gol anulado detectado para ${match.teams.home.name} vs ${match.teams.away.name} (Fixture: ${fixtureId})`);
+                
+                const originalScoreStr = `${previousHomeGoals} - ${previousAwayGoals}`;
+                const correctedScoreStr = `${currentHomeGoals} - ${currentAwayGoals}`;
+
+                const varMessage = `🖥️ *CORRECCIÓN VAR: GOL ANULADO* ❌\n` +
+                                   `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                   `🏆 *Liga:* ${match.league ? match.league.name : 'Desconocida'}\n` +
+                                   `⚽ *${match.teams.home.name}* vs *${match.teams.away.name}*\n` +
+                                   `⏱️ *Minuto:* ${match.fixture.status.elapsed}'\n\n` +
+                                   `⚠️ *Incidente:* El VAR ha anulado un gol. El marcador retrocede de *${originalScoreStr}* a *${correctedScoreStr}*.\n` +
+                                   `📋 *Alerta Afectada:* ${meta.ruleName}\n` +
+                                   `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                   `🎯 *Nota:* Tenga en cuenta esta rectificación si realizó operaciones en este partido.`;
+
+                // Enviar mensaje
+                for (const chatId of subscribedChats) {
+                    try {
+                        await sendSafeMarkdownMessage(chatId, varMessage);
+                    } catch (e) {
+                        console.error(`Error enviando corrección VAR (gol) al chat ${chatId}:`, e.message);
+                    }
+                }
+
+                // Registrar en la auditoría
+                logSafeOddsEvent(`🖥️ *[VAR]* Gol anulado en *${match.teams.home.name} vs ${match.teams.away.name}* (Marcador anterior: ${originalScoreStr} ➔ Actual: ${correctedScoreStr}). Alerta: ${meta.ruleName}`);
+
+                // Actualizar metadatos en memoria para evitar repetir la notificación
+                meta.scoreAtAlert.home = currentHomeGoals;
+                meta.scoreAtAlert.away = currentAwayGoals;
+                if (typeof meta.totalGoalsAtAlert !== 'undefined') {
+                    meta.totalGoalsAtAlert = currentHomeGoals + currentAwayGoals;
+                }
+
+                // Guardar metadatos actualizados en disco
+                financialTracker.updatePlayMetadata(fixtureId, meta.ruleName, {
+                    scoreAtAlert: { home: currentHomeGoals, away: currentAwayGoals },
+                    totalGoalsAtAlert: typeof meta.totalGoalsAtAlert !== 'undefined' ? (currentHomeGoals + currentAwayGoals) : undefined
+                });
+            }
+        }
+
+        // 2. Detección de TARJETA ROJA ANULADA por el VAR
+        if (meta.ruleType === 1 && meta.teamWithRed) {
+            // Si ya corregimos esta roja, no la volvemos a evaluar
+            if (meta.redCardCorrected === true) {
+                continue;
+            }
+
+            if (events && !events.isError && Array.isArray(events)) {
+                const redCardsInEvents = events.filter(e => 
+                    e.type === 'Card' && 
+                    (e.detail === 'Red Card' || e.detail === 'Yellow 2nd') && 
+                    e.team && e.team.name === meta.teamWithRed
+                );
+
+                // Si al enviar la alerta había tarjeta roja, y ahora no hay ninguna tarjeta roja para ese equipo en los eventos en vivo,
+                // significa que la tarjeta roja fue anulada por el VAR.
+                if (redCardsInEvents.length === 0) {
+                    console.log(`[VAR CORRECTION] Tarjeta roja anulada detectada para ${meta.teamWithRed} en ${match.teams.home.name} vs ${match.teams.away.name} (Fixture: ${fixtureId})`);
+
+                    const varMessage = `🖥️ *CORRECCIÓN VAR: TARJETA ROJA ANULADA* ❌\n` +
+                                       `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                       `🏆 *Liga:* ${match.league ? match.league.name : 'Desconocida'}\n` +
+                                       `⚽ *${match.teams.home.name}* vs *${match.teams.away.name}*\n` +
+                                       `⏱️ *Minuto:* ${match.fixture.status.elapsed}'\n\n` +
+                                       `⚠️ *Incidente:* El VAR ha anulado la tarjeta roja para *${meta.teamWithRed}*. El equipo vuelve a tener 11 jugadores.\n` +
+                                       `📋 *Alerta Afectada:* ${meta.ruleName}\n` +
+                                       `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                       `🎯 *Nota:* La recomendación de *Tarjeta Roja Estratégica* queda sin efecto debido a esta rectificación.`;
+
+                    // Enviar mensaje
+                    for (const chatId of subscribedChats) {
+                        try {
+                            await sendSafeMarkdownMessage(chatId, varMessage);
+                        } catch (e) {
+                            console.error(`Error enviando corrección VAR (roja) al chat ${chatId}:`, e.message);
+                        }
+                    }
+
+                    // Registrar en la auditoría
+                    logSafeOddsEvent(`🖥️ *[VAR]* Tarjeta roja anulada para *${meta.teamWithRed}* en *${match.teams.home.name} vs ${match.teams.away.name}*. Alerta afectada: ${meta.ruleName}`);
+
+                    // Actualizar en memoria para no repetir
+                    meta.redCardCorrected = true;
+
+                    // Guardar en disco
+                    financialTracker.updatePlayMetadata(fixtureId, meta.ruleName, {
+                        redCardCorrected: true
+                    });
+                }
+            }
+        }
+    }
+}
+
 // ===================================================
 // MONITOREO DE FÚTBOL
 // ===================================================
@@ -413,7 +532,10 @@ async function checkMatches() {
         }
 
         let events = [];
-        if (needsEvents(match, matchOdds, isTop)) {
+        const trackedInfo = trackedMatches.get(fixtureId);
+        const hasSentRedCardAlert = trackedInfo && trackedInfo.alertsMetadata.some(meta => meta.isSent === true && meta.ruleType === 1 && !meta.redCardCorrected);
+
+        if (needsEvents(match, matchOdds, isTop) || hasSentRedCardAlert) {
             const now = Date.now();
             const lastFetch = lastEventsFetchTime.get(fixtureId) || 0;
             if (now - lastFetch >= THROTTLE_COOLDOWN_MS || !eventsCache.has(fixtureId)) {
@@ -438,6 +560,11 @@ async function checkMatches() {
             } else {
                 stats = statsCache.get(fixtureId) || [];
             }
+        }
+
+        // Evaluar posibles correcciones de VAR para alertas ya enviadas en este partido
+        if (trackedInfo && trackedInfo.alertsMetadata && trackedInfo.alertsMetadata.length > 0) {
+            await checkForVarCorrections(match, events);
         }
 
         const alerts = evaluateRules(match, matchOdds, events, stats, isTop);

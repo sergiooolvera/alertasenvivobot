@@ -43,13 +43,21 @@ async function getLiveMatches() {
 
 // Obtiene los eventos de un partido (tarjetas, goles)
 async function getMatchEvents(fixtureId) {
-  if (checkRateLimit()) return [];
+  if (checkRateLimit()) {
+    const res = [];
+    res.isError = true;
+    return res;
+  }
   try {
     const response = await apiClient.get('/fixtures/events', { params: { fixture: fixtureId } });
-    return response.data.response || [];
+    const res = response.data.response || [];
+    res.isError = false;
+    return res;
   } catch (error) {
     handleApiError(`events for ${fixtureId}`, error);
-    return [];
+    const res = [];
+    res.isError = true;
+    return res;
   }
 }
 

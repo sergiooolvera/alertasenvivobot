@@ -342,6 +342,23 @@ async function sendDailyReport(bot, subscribedChats) {
     console.log(`[FinancialTracker] Reporte financiero diario enviado con éxito.`);
 }
 
+// Actualiza los metadatos de una jugada pendiente (útil para guardar correcciones de VAR)
+function updatePlayMetadata(fixtureId, ruleName, updatedMetadata) {
+    try {
+        const data = loadData();
+        const play = data.plays.find(p => p.fixtureId === fixtureId && p.ruleName === ruleName);
+        if (play) {
+            play.metadata = { ...play.metadata, ...updatedMetadata };
+            saveData(data);
+            console.log(`[FinancialTracker] Metadatos actualizados en JSON para el fixture ${fixtureId} (${ruleName}).`);
+        } else {
+            console.warn(`[FinancialTracker] No se encontró jugada registrada para el fixture ${fixtureId} (${ruleName}) al actualizar metadatos.`);
+        }
+    } catch (e) {
+        console.error('[FinancialTracker] Error al actualizar metadatos de la jugada:', e.message);
+    }
+}
+
 // Obtiene todas las jugadas en estado PENDING
 function getPendingPlays() {
     try {
@@ -356,6 +373,7 @@ function getPendingPlays() {
 module.exports = {
     addPlay,
     updatePlayVerdict,
+    updatePlayMetadata,
     resolvePendingPlays,
     getReportData,
     sendDailyReport,
