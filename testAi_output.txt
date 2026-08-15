@@ -1,15 +1,8 @@
 === FÚTBOL ===
-🧠 Análisis de IA: En este duelo de liga regular por tres puntos clave, el Real Madrid ejerce un asedio total como local (18 tiros y 9 córners). Su notable racha goleadora reciente y la presión tardía frente a un Barcelona replegado justifican una alta probabilidad de ruptura defensiva en el tramo final.
-🎯 Recomendación Inteligente: Total de Goles - Más de 1.5 (Over 1.5)
-📈 Momio Sugerido: @1.85
-🔥 Confianza Estimada: 76%
+Error
 
 === BÉISBOL ===
-🧠 Análisis de IA: En la alta de la octava entrada, Boston (10 H) capitaliza el descontrol del relevo de Nueva York con bases llenas. La alta tasa de contacto visitante y la vulnerabilidad del bullpen local indican una elevada probabilidad de incrementar el marcador combinado en esta entrada crítica.
- 
-🎯 Recomendación Inteligente: **Total de Carreras: Más de 10.5**
-📈 Momio Sugerido: @1.80
-🔥 Confianza Estimada: 74%
+Error
 
 === CASO USUARIO ===
 Error
@@ -21,8 +14,12 @@ Error
 Error
 
 === VALIDACIÓN CONFIANZA ===
-Fútbol: 76%
-Béisbol: 74%
+Fútbol: Error
+Béisbol: Error
 
 === DEEPSEEK FÚTBOL ===
-No disponible / Sin saldo
+🧠 Análisis de IA: Real Madrid domina con asedio total (65% posesión, 18 tiros, 9 córners) pero pierde 0-1. La presión post-minuto 70 es intensa, el gol empate parece inminente ante un Barcelona replegado y con 3 amarillas.
+
+🎯 Recomendación Inteligente: Más de 2.5 Goles en el Partido
+📈 Momio Sugerido: @1.70
+🔥 Confianza Estimada: 78%

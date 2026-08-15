@@ -161,3 +161,13 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Persistencia Antiduplicados**: Se implementó la función `updatePlayMetadata` en `financialTracker.js` para persistir las correcciones del VAR en el archivo local `financial_tracker.json`. Esto previene notificaciones duplicadas tras reinicios.
   - **Pruebas de Integración**: Se ejecutó exitosamente el script `scratch/test_var_corrections.js` validando todos los escenarios de corrección, control de spam e inmunidad contra fallos de red.
 
+- **[2026-08-13]**: Optimización de Prompts y Regla de Valor en Línea de Goles en Vivo (Versión 2.7.1).
+  - **Evitar Apuestas de Bajo Valor**: Se introdujo una regla crítica de valor en líneas de goles en vivo (`REGLA DE VALOR EN LÍNEAS DE GOLES (CRÍTICA)`) en los prompts de fútbol de Google Gemini y DeepSeek en `aiService.js`.
+  - **Línea Dinámica vs Marcador**: Se prohíbe explícitamente sugerir una apuesta de goles "Más de (G + 0.5)" si el marcador en vivo ya cuenta con G goles (como sugerir "Más de 1.5" si va 1-0), ya que ofrece cuotas ínfimas en vivo (menores a @1.30). Se instruye a la IA a sugerir líneas con valor como "Más de (G + 1.5)" (Over 2.5 en este caso), "Más de (G + 0.5) en Primer Tiempo" u otros mercados válidos con momio mínimo de @1.60+.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.1`.
+
+- **[2026-08-15]**: Optimización de Ligas Menores y Fallback de DeepSeek por Descarte de Gemini DO (Versión 2.7.2).
+  - **Ligas Menores**: Se eliminó la validación obligatoria de momios en vivo para partidos de ligas menores (`!isTop`). Ahora, estas alertas se envían de inmediato y se les añade un aviso aclaratorio en el mensaje de Telegram (`⚠️ Nota: Este partido pertenece a una liga menor (se envía de inmediato sin validar cuotas en vivo)`), evitando que queden retenidas y expiren en la cola de SafeOdds debido a la falta de cobertura en vivo de la API.
+  - **Consenso Dual de IA**: Si Gemini recomienda una apuesta de Doble Oportunidad (DO), el bot descarta su recomendación de forma individual (tachándola y marcándola con un emoji en el mensaje unificado de Telegram), pero no aborta el partido completo. En su lugar, el bot activa la propuesta de DeepSeek (`deepseekRecommendation`) como la recomendación activa principal para el flujo de SafeOdds y el control financiero, permitiendo que la alerta continúe adelante con la recomendación de DeepSeek.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.2`.
+
