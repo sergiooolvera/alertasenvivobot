@@ -171,3 +171,12 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Consenso Dual de IA**: Si Gemini recomienda una apuesta de Doble Oportunidad (DO), el bot descarta su recomendación de forma individual (tachándola y marcándola con un emoji en el mensaje unificado de Telegram), pero no aborta el partido completo. En su lugar, el bot activa la propuesta de DeepSeek (`deepseekRecommendation`) como la recomendación activa principal para el flujo de SafeOdds y el control financiero, permitiendo que la alerta continúe adelante con la recomendación de DeepSeek.
   - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.2`.
 
+- **[2026-08-15]**: Corrección en el flujo de alertas y SafeOdds ante fallas de la IA (Versión 2.7.3).
+  - **Solución al silencio de alertas**: Se detectó en los logs de Railway que cuando las llamadas a la IA (Gemini/DeepSeek) fallaban por errores `503` (cuotas de API gratuita) o `404` (nombre de modelo no disponible), las alertas completas se perdían por completo. Esto se debía a que toda la lógica de SafeOdds, envío a Telegram y registro financiero estaba dentro del bloque `if (aiPrediction)`.
+  - **Fallback Estático y SafeOdds**: Se reestructuró la lógica en `index.js` para extraer el bloque de SafeOdds y el envío a Telegram fuera del bloque condicional de la IA. Si la IA falla, se activa un fallback estático que recupera la recomendación predeterminada escrita en el texto de la regla original mediante regex y procesa la alerta de manera normal (enviando el texto estático sin análisis de IA).
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.3`.
+
+- **[2026-08-15]**: Integración de DeepSeek como Fallback predictivo directo (Versión 2.7.4).
+  - **Uso prioritario de DeepSeek ante fallas de Gemini**: A solicitud del usuario, si la llamada a la API de Gemini falla o devuelve nulo, el bot ya no pasará de inmediato al fallback estático. En su lugar, intentará consultar a la API de DeepSeek para procesar la recomendación activa e integrarla a SafeOdds.
+  - **Consistencia de Fallbacks**: Si tanto Gemini como DeepSeek fallan (por problemas de red o saldo), el bot recurrirá al fallback estático de la regla original como última línea de defensa.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.4`.
