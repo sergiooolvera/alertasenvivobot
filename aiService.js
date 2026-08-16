@@ -33,7 +33,7 @@ function rotateApiKey() {
  * Realiza la llamada HTTP a la API de Gemini con reintentos y rotación de claves/modelos.
  */
 async function callGeminiWithRotation(prompt) {
-    const models = ['gemini-flash-latest', 'gemini-2.5-flash'];
+    const models = ['gemini-3.5-flash', 'gemini-flash-latest'];
     
     if (apiKeys.length === 0) {
         throw new Error("No hay API Keys de Gemini configuradas en las variables de entorno.");

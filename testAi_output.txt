@@ -1,25 +1,57 @@
 === FÚTBOL ===
-Error
+🧠 Análisis de IA: En esta jornada 32 de liga regular, el Real Madrid ejerce su localía bajo un asedio absoluto (18 tiros, 9 córneres) buscando remontar el 0-1. Su sólido rendimiento histórico y la presión ejercida sobre un Barcelona replegado justifican buscar valor en el tramo final del encuentro.
+
+🎯 Recomendación Inteligente: **Siguiente Gol: Real Madrid**
+
+📈 Momio Sugerido: @2.10
+
+🔥 Confianza Estimada: 72%
 
 === BÉISBOL ===
-Error
+🧠 Análisis de IA: **La inestabilidad del pitcheo de los Yankees, evidenciada por las bases llenas en la octava entrada, sumada a los diez imparables de Boston y un error defensivo local, genera un escenario de alta volatilidad en un duelo clave de temporada regular, comprometiendo la gestión de riesgo para inversiones directas.**
+🎯 Recomendación Inteligente: **Evitar apuesta / No recomendada**
+📈 Momio Sugerido: **No aplica**
+🔥 Confianza Estimada: **42%**
 
 === CASO USUARIO ===
-Error
+🧠 Análisis de IA: En fase de grupos regular, **Confiança** ejerce dominio territorial (58%) y genera volumen con cuatro saques de esquina, pero exhibe nula contundencia sin remates a puerta. Ante un **AO Itabaiana** replegado con ventaja temprana y la ausencia de métricas históricas concluyentes, el riesgo operativo es elevado.
+ 
+🎯 Recomendación Inteligente: Evitar apuesta / No recomendada
+ 
+📈 Momio Sugerido: No aplica
+ 
+🔥 Confianza Estimada: 35%
 
 === ELIMINATORIA CHAMPIONS LEAGUE VUELTA ===
-Error
+🧠 Análisis de IA: Tras el 2-1 de la ida, el empate 1-1 en vivo coloca el global 3-2 a favor del Bayern. Con la urgencia de forzar la prórroga, el Real Madrid asedia intensamente (62% posesión, 16 tiros, 8 córners), capitalizando el desgaste físico del Bayern (15 faltas) en el tramo final.
+ 
+🎯 Recomendación Inteligente: **Siguiente Gol (Gol 3): Real Madrid**
+ 
+📈 Momio Sugerido: @**2.10**
+ 
+🔥 Confianza Estimada: **75%**
 
 === PARLAY DEL DÍA ===
-Error
+🏆 PARLAY DEL DÍA DE LA IA 🏆
+
+📊 SELECCIONES:
+1. ⚽ FÚTBOL - Premier League Arsenal vs Chelsea -> Pronóstico: **Ganador Arsenal (1X2)** (Momio: @**1.45**)
+2. ⚽ FÚTBOL - Bundesliga Bayern Munich vs Werder Bremen -> Pronóstico: **Ganador Bayern Munich (1X2)** (Momio: @**1.22**)
+
+📈 MOMIO TOTAL ESTIMADO: @**1.77**
+🔥 CONFIANZA COMBINADA: **85**%
+
+🧠 JUSTIFICACIÓN TÉCNICA:
+• **Arsenal vs Chelsea**: El análisis de rendimiento reciente revela una marcada divergencia en la inercia competitiva de ambos equipos. Arsenal registra un desempeño sólido con dos victorias consecutivas (3-0 ante Everton y 1-2 frente a West Ham), consolidando una eficiencia ofensiva alta y un bloque defensivo estructurado. Por el contrario, Chelsea muestra un déficit de rendimiento tras empatar en casa contra el Leicester (1-1) y sufrir una derrota ante el Bournemouth (2-1), evidenciando vulnerabilidades en la transición defensiva y falta de consistencia táctica. La cuota de @1.45 para la victoria local representa una probabilidad implícita del 69%, la cual se alinea con la superioridad cuantitativa y cualitativa actual del Arsenal en su feudo.
+• **Bayern Munich vs Werder Bremen**: La disparidad en el potencial de plantilla y la tendencia de resultados justifican la selección del equipo local. El Bayern Munich ratificó su capacidad de definición con un contundente 4-2 ante el Stuttgart, demostrando que su promedio de anotación se mantiene en niveles de élite. En contraparte, Werder Bremen llega tras sufrir una derrota por 2-0 frente al Mainz, acusando serios problemas de volumen de juego ofensivo y solidez en su retaguardia. El momio inicial de @1.22 refleja una probabilidad teórica del 82% a favor de los bávaros, posicionando esta selección como un ancla de alta fiabilidad matemática para incrementar el rendimiento del parlay sin asumir un riesgo desproporcionado.
 
 === VALIDACIÓN CONFIANZA ===
-Fútbol: Error
-Béisbol: Error
+Fútbol: 72%
+Béisbol: No encontrada
 
 === DEEPSEEK FÚTBOL ===
-🧠 Análisis de IA: Real Madrid domina con asedio total (65% posesión, 18 tiros, 9 córners) pero pierde 0-1. La presión post-minuto 70 es intensa, el gol empate parece inminente ante un Barcelona replegado y con 3 amarillas.
+🧠 Análisis de IA: Favorito asediando pero sin concretar; dominio abrumador con 65% de posesión y 18 tiros. El gol azulgrana contrarresta el asedio y el tiempo juega en contra.
 
-🎯 Recomendación Inteligente: Más de 2.5 Goles en el Partido
-📈 Momio Sugerido: @1.70
-🔥 Confianza Estimada: 78%
+🎯 Recomendación Inteligente: Próximo Gol de Real Madrid
+📈 Momio Sugerido: @1.75
+🔥 Confianza Estimada: 68%

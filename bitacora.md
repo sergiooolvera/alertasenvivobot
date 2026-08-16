@@ -185,3 +185,8 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Validación de Eventos no Vacíos**: Se añadió una restricción para evitar la detección de anulación si el array de eventos retornado por la API está vacío (`events.length === 0`), lo cual suele deberse a caídas temporales de la API-Sports o retrasos de sincronización y no a una corrección real del VAR.
   - **Doble Verificación con Estadísticas**: Al detectar una posible anulación, se implementó una consulta asíncrona a las estadísticas en vivo del partido mediante `getMatchStatistics(fixtureId)`. Si las estadísticas confirman que el equipo afectado mantiene un número de tarjetas rojas mayor a 0, se descarta el aviso de anulación (falso positivo).
   - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.5`.
+
+- **[2026-08-16]**: Corrección de modelos de Gemini API por obsolescencia en Google Cloud (Versión 2.7.6).
+  - **Reemplazo de Modelos**: Se sustituyó el modelo deprecado `gemini-2.5-flash` (que devolvía error 404 continuo) por el modelo actual compatible `gemini-3.5-flash`.
+  - **Fallback Robusto**: Se reorganizó la lista de modelos prioritarios en `aiService.js` a `['gemini-3.5-flash', 'gemini-flash-latest']`, previniendo que los timeouts y límites de cuota (429) en los alias inhabiliten por completo el servicio de IA del bot.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.6`.
