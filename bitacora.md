@@ -190,3 +190,9 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Reemplazo de Modelos**: Se sustituyó el modelo deprecado `gemini-2.5-flash` (que devolvía error 404 continuo) por el modelo actual compatible `gemini-3.5-flash`.
   - **Fallback Robusto**: Se reorganizó la lista de modelos prioritarios en `aiService.js` a `['gemini-3.5-flash', 'gemini-flash-latest']`, previniendo que los timeouts y límites de cuota (429) en los alias inhabiliten por completo el servicio de IA del bot.
   - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.6`.
+
+- **[2026-08-16]**: Corrección y optimización del sistema de evaluación de veredictos post-partido (Versión 2.7.7).
+  - **Soporte robusto para Fallback de DeepSeek**: Se corrigió el flujo en `rulesEngine.js` para que si Gemini falla en la alerta original (`geminiRecommendation` es `'N/D'`) pero DeepSeek genera una predicción válida, el veredicto post-partido se evalúe correctamente utilizando el resultado de DeepSeek, activando la bandera `evaluatedByAI = true` y evitando falsos GREENs provocados por el descarte en el fallback tradicional.
+  - **Filtro de strings informativos 'N/D'**: Se previno que se envíen cadenas como `'N/D (Gemini falló)'` o `'no disponible'` a la API de Gemini para evaluar si resultaron ganadoras. Esto optimiza el consumo de la API en fútbol y béisbol (`baseballRulesEngine.js`).
+  - **Corrección de Regla 1 Tradicional Estática (Tarjeta Roja)**: Se implementó la lógica real en el switch tradicional estático para que el veredicto sea `RED` si el equipo perjudicado (el que recibió la tarjeta roja) mantiene la victoria al final del encuentro. Ahora solo marcará `GREEN` si el equipo perjudicado no ganó (el beneficiado empató o ganó). Se aplicó la misma validación al cálculo de control de omisiones.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.7`.

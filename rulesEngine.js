@@ -436,7 +436,11 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
             let traditionalGreen = false;
             switch (meta.ruleType) {
                 case 1: // Tarjeta roja
-                    traditionalGreen = true;
+                    {
+                        const isHomeRed = meta.teamWithRed === meta.homeTeam;
+                        const teamRedWon = isHomeRed ? (finalHome > finalAway) : (finalAway > finalHome);
+                        traditionalGreen = !teamRedWon;
+                    }
                     break;
                 case 2: // Favorito Sufre HT 0-0
                     traditionalGreen = (finalHome + finalAway) > 0;
@@ -493,39 +497,85 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
 
         let geminiOutcome = null;
         let deepseekOutcome = null;
-        const geminiRec = meta.geminiRecommendation || meta.aiRecommendation;
-        const deepseekRec = meta.deepseekRecommendation;
 
-        if (geminiRec) {
-            console.log(`[rulesEngine] Evaluando recomendación de Gemini para fútbol: "${geminiRec}"`);
-            geminiOutcome = await aiService.evaluatePredictionOutcome('football', geminiRec, {
+        // Determinar si hay recomendaciones de IA válidas (evitando evaluar strings informativos de error como 'N/D')
+        const isGeminiValid = meta.geminiRecommendation && 
+                              !meta.geminiRecommendation.includes('N/D') && 
+                              !meta.geminiRecommendation.toLowerCase().includes('no disponible');
+                              
+        const isDeepseekValid = meta.deepseekRecommendation && 
+                                !meta.deepseekRecommendation.includes('N/D') && 
+                                !meta.deepseekRecommendation.toLowerCase().includes('no disponible');
+
+        if (isGeminiValid) {
+            console.log(`[rulesEngine] Evaluando recomendación de Gemini para fútbol: "${meta.geminiRecommendation}"`);
+            geminiOutcome = await aiService.evaluatePredictionOutcome('football', meta.geminiRecommendation, {
                 fixture: finalFixture,
                 events: finalEvents,
                 stats: finalStats
             });
         }
 
-        if (deepseekRec) {
-            console.log(`[rulesEngine] Evaluando recomendación de DeepSeek para fútbol: "${deepseekRec}"`);
-            deepseekOutcome = await aiService.evaluatePredictionOutcome('football', deepseekRec, {
+        if (isDeepseekValid) {
+            console.log(`[rulesEngine] Evaluando recomendación de DeepSeek para fútbol: "${meta.deepseekRecommendation}"`);
+            deepseekOutcome = await aiService.evaluatePredictionOutcome('football', meta.deepseekRecommendation, {
                 fixture: finalFixture,
                 events: finalEvents,
                 stats: finalStats
             });
         }
 
-        if (geminiOutcome) {
+        // Definir el veredicto general (isGreen y explanation) según la IA activa
+        let activeOutcome = null;
+        const isActiveValid = meta.aiRecommendation && 
+                              !meta.aiRecommendation.includes('N/D') && 
+                              !meta.aiRecommendation.toLowerCase().includes('no disponible') &&
+                              !meta.aiFallbackUsed;
+
+        if (isActiveValid) {
+            if (geminiOutcome && meta.aiRecommendation === meta.geminiRecommendation) {
+                activeOutcome = geminiOutcome;
+            } else if (deepseekOutcome && meta.aiRecommendation === meta.deepseekRecommendation) {
+                activeOutcome = deepseekOutcome;
+            } else {
+                console.log(`[rulesEngine] Evaluando recomendación activa para fútbol: "${meta.aiRecommendation}"`);
+                activeOutcome = await aiService.evaluatePredictionOutcome('football', meta.aiRecommendation, {
+                    fixture: finalFixture,
+                    events: finalEvents,
+                    stats: finalStats
+                });
+            }
+        }
+
+        if (activeOutcome) {
+            isGreen = activeOutcome.isGreen;
+            explanation = activeOutcome.explanation;
+            evaluatedByAI = true;
+        } else if (geminiOutcome) {
             isGreen = geminiOutcome.isGreen;
             explanation = geminiOutcome.explanation;
+            evaluatedByAI = true;
+        } else if (deepseekOutcome) {
+            isGreen = deepseekOutcome.isGreen;
+            explanation = deepseekOutcome.explanation;
             evaluatedByAI = true;
         }
 
         if (!evaluatedByAI) {
             switch (meta.ruleType) {
             case 1: // Tarjeta roja estratégica
-                // GREEN si el equipo perjudicado no ganó (el beneficiado o el favorito remontó/empató/ganó)
-                isGreen = true;
-                explanation = `Marcador final: ${finalHome}-${finalAway}. Alerta aprovechada tras la expulsión.`;
+                // GREEN si el equipo perjudicado (teamWithRed) no ganó
+                {
+                    const isHomeRed = meta.teamWithRed === meta.homeTeam;
+                    const teamRedWon = isHomeRed ? (finalHome > finalAway) : (finalAway > finalHome);
+                    if (teamRedWon) {
+                        isGreen = false;
+                        explanation = `Marcador final: ${finalHome}-${finalAway}. El equipo con tarjeta roja (${meta.teamWithRed}) ganó el partido.`;
+                    } else {
+                        isGreen = true;
+                        explanation = `Marcador final: ${finalHome}-${finalAway}. Alerta aprovechada tras la expulsión (el equipo perjudicado no ganó).`;
+                    }
+                }
                 break;
 
             case 2: // Favorito Sufre HT 0-0
@@ -609,7 +659,8 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
     }
 
         let msg = "";
-        if (deepseekRec && (geminiOutcome || deepseekOutcome)) {
+        // Si ambos modelos de IA tuvieron recomendaciones válidas y al menos uno de ellos pudo evaluarse
+        if (isGeminiValid && isDeepseekValid && (geminiOutcome || deepseekOutcome)) {
             const gIcon = geminiOutcome ? (geminiOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*') : '⚠️ *N/D*';
             const dsIcon = deepseekOutcome ? (deepseekOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*') : '⚠️ *N/D*';
 
@@ -618,11 +669,11 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                   `📋 *Regla:* ${meta.ruleName}\n` +
                   `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
                   `♊ *GOOGLE GEMINI: ${gIcon}*\n` +
-                  `🎯 *Apuesta:* *${geminiRec}*\n` +
+                  `🎯 *Apuesta:* *${meta.geminiRecommendation}*\n` +
                   `💡 *Resultado:* ${geminiOutcome ? geminiOutcome.explanation : 'Evaluación no disponible'}\n` +
                   `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
                   `🐳 *DEEPSEEK: ${dsIcon}*\n` +
-                  `🎯 *Apuesta:* *${deepseekRec}*\n` +
+                  `🎯 *Apuesta:* *${meta.deepseekRecommendation}*\n` +
                   `💡 *Resultado:* ${deepseekOutcome ? deepseekOutcome.explanation : 'Evaluación no disponible'}`;
         } else {
             const icon = isGreen ? '🟩 *GREEN*' : '🟥 *RED*';

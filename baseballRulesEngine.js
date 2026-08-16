@@ -192,7 +192,12 @@ async function evaluateBaseballAlertResults(alertMetadatas, finalGame) {
             continue;
         }
 
-        if (meta.aiRecommendation) {
+        const isAiRecValid = meta.aiRecommendation && 
+                             !meta.aiRecommendation.includes('N/D') && 
+                             !meta.aiRecommendation.toLowerCase().includes('no disponible') &&
+                             !meta.aiFallbackUsed;
+
+        if (isAiRecValid) {
             console.log(`[baseballRulesEngine] Evaluando recomendación de IA para béisbol: "${meta.aiRecommendation}"`);
             const aiOutcome = await aiService.evaluatePredictionOutcome('baseball', meta.aiRecommendation, finalGame);
 
