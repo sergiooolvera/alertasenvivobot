@@ -435,6 +435,11 @@ async function checkForVarCorrections(match, events) {
             }
 
             if (events && !events.isError && Array.isArray(events)) {
+                // EVITAR FALSOS POSITIVOS: Si la lista de eventos está vacía, no asumimos anulación (error temporal de la API)
+                if (events.length === 0) {
+                    continue;
+                }
+
                 const redCardsInEvents = events.filter(e => 
                     e.type === 'Card' && 
                     (e.detail === 'Red Card' || e.detail === 'Yellow 2nd') && 
@@ -442,9 +447,36 @@ async function checkForVarCorrections(match, events) {
                 );
 
                 // Si al enviar la alerta había tarjeta roja, y ahora no hay ninguna tarjeta roja para ese equipo en los eventos en vivo,
-                // significa que la tarjeta roja fue anulada por el VAR.
+                // podría significar que la tarjeta roja fue anulada por el VAR.
                 if (redCardsInEvents.length === 0) {
-                    console.log(`[VAR CORRECTION] Tarjeta roja anulada detectada para ${meta.teamWithRed} en ${match.teams.home.name} vs ${match.teams.away.name} (Fixture: ${fixtureId})`);
+                    // Doble verificación: Consultamos las estadísticas en vivo del partido para estar 100% seguros
+                    console.log(`[VAR CORRECTION] Posible tarjeta roja anulada para ${meta.teamWithRed} en ${match.teams.home.name} vs ${match.teams.away.name} (Fixture: ${fixtureId}). Verificando estadísticas...`);
+                    
+                    let redCardsCount = null;
+                    try {
+                        const stats = await getMatchStatistics(fixtureId);
+                        if (stats && Array.isArray(stats) && stats.length > 0) {
+                            const teamStats = stats.find(s => s.team && s.team.name === meta.teamWithRed);
+                            if (teamStats && teamStats.statistics) {
+                                const redCardStat = teamStats.statistics.find(s => s.type === 'Red Cards');
+                                if (redCardStat) {
+                                    redCardsCount = redCardStat.value === null ? 0 : parseInt(redCardStat.value);
+                                    console.log(`[VAR CORRECTION] Estadísticas obtenidas: Red Cards para ${meta.teamWithRed} = ${redCardsCount}`);
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error(`[VAR CORRECTION] Error al verificar estadísticas para fixture ${fixtureId}:`, err.message);
+                    }
+
+                    // Si las estadísticas confirman que el equipo aún tiene tarjetas rojas en juego,
+                    // descartamos la anulación (era un falso positivo de los eventos).
+                    if (redCardsCount !== null && redCardsCount > 0) {
+                        console.log(`[VAR CORRECTION] Falso positivo evitado: Las estadísticas muestran que ${meta.teamWithRed} todavía tiene ${redCardsCount} roja(s).`);
+                        continue;
+                    }
+
+                    console.log(`[VAR CORRECTION] Tarjeta roja anulada confirmada para ${meta.teamWithRed} en ${match.teams.home.name} vs ${match.teams.away.name} (Fixture: ${fixtureId})`);
 
                     const varMessage = `🖥️ *CORRECCIÓN VAR: TARJETA ROJA ANULADA* ❌\n` +
                                        `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +

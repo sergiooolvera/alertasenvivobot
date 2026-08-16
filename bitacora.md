@@ -180,3 +180,8 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Uso prioritario de DeepSeek ante fallas de Gemini**: A solicitud del usuario, si la llamada a la API de Gemini falla o devuelve nulo, el bot ya no pasará de inmediato al fallback estático. En su lugar, intentará consultar a la API de DeepSeek para procesar la recomendación activa e integrarla a SafeOdds.
   - **Consistencia de Fallbacks**: Si tanto Gemini como DeepSeek fallan (por problemas de red o saldo), el bot recurrirá al fallback estático de la regla original como última línea de defensa.
   - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.4`.
+
+- **[2026-08-15]**: Corrección de falsos positivos en tarjeta roja anulada por el VAR (Versión 2.7.5).
+  - **Validación de Eventos no Vacíos**: Se añadió una restricción para evitar la detección de anulación si el array de eventos retornado por la API está vacío (`events.length === 0`), lo cual suele deberse a caídas temporales de la API-Sports o retrasos de sincronización y no a una corrección real del VAR.
+  - **Doble Verificación con Estadísticas**: Al detectar una posible anulación, se implementó una consulta asíncrona a las estadísticas en vivo del partido mediante `getMatchStatistics(fixtureId)`. Si las estadísticas confirman que el equipo afectado mantiene un número de tarjetas rojas mayor a 0, se descarta el aviso de anulación (falso positivo).
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.5`.
