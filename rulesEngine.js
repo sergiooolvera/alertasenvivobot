@@ -158,7 +158,10 @@ ${msgHeader}
         }
     }
 
+    /*
     // --- REGLA 3: Sorpresa Tempranera ---
+    // DESACTIVADA [2026-08-18]: Esta regla tiene un Win Rate histórico del 59.6% según la auditoría de messages.html.
+    // Su eliminación eleva la efectividad proyectada del bot al 81.68%.
     if (underdog.odd > 3.50 && elapsed >= 30 && elapsed <= 41 && underdogWinning) {
         let isMasacrado = false;
         if (hasStats) {
@@ -170,12 +173,12 @@ ${msgHeader}
         const ruleId = `${fixtureId}_rule3`;
         if (!alertedMatches.has(ruleId)) {
             const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA (30'+ STATS)*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-${msgHeader}
-⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja. Se han acumulado 30+ min de datos estadísticos.
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Ambos Anotan (BTTS), Próximo Gol del Favorito o Doble Chance (si la confianza de la IA es ≥75%).
-🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━
+ ${msgHeader}
+ ⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja. Se han acumulado 30+ min de datos estadísticos.
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━
+ 🎯 *Recomendación:* Ambos Anotan (BTTS), Próximo Gol del Favorito o Doble Chance (si la confianza de la IA es ≥75%).
+ 🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
             alerts.push({
                 text,
                 metadata: {
@@ -194,6 +197,7 @@ ${msgHeader}
             alertedMatches.add(ruleId);
         }
     }
+    */
 
     // --- REGLA 4: Asedio (Late Goal) ---
     if (elapsed >= 75 && elapsed <= 83 && favorite.odd < 1.50 && favorite.goals <= underdog.goals && stats && stats.length > 0) {

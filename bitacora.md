@@ -196,3 +196,12 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Filtro de strings informativos 'N/D'**: Se previno que se envíen cadenas como `'N/D (Gemini falló)'` o `'no disponible'` a la API de Gemini para evaluar si resultaron ganadoras. Esto optimiza el consumo de la API en fútbol y béisbol (`baseballRulesEngine.js`).
   - **Corrección de Regla 1 Tradicional Estática (Tarjeta Roja)**: Se implementó la lógica real en el switch tradicional estático para que el veredicto sea `RED` si el equipo perjudicado (el que recibió la tarjeta roja) mantiene la victoria al final del encuentro. Ahora solo marcará `GREEN` si el equipo perjudicado no ganó (el beneficiado empató o ganó). Se aplicó la misma validación al cálculo de control de omisiones.
   - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.7`.
+
+- **[2026-08-17]**: Auditoría completa y actualización de rendimiento sobre el nuevo archivo `messages.html`. Se ejecutó el script `scratch/generar_reporte_messages.js` para extraer y consolidar las alertas del bot. Se procesaron un total de 241 alertas y se resolvieron 227 veredictos, quedando 14 pendientes debido a límites de cuota (429/404) en las consultas de Gemini Search Grounding. El reporte interactivo `reporte_messages.html` y el caché local `resultados_cache.json` fueron actualizados exitosamente, reportando un Win Rate Global de **72.44%** (163 GREEN / 62 RED / 2 Evitadas).
+
+- **[2026-08-18]**: Desactivación Definitiva de la Regla 3: Sorpresa Tempranera (Versión 2.8.0).
+  - **Desactivación de Alertas**: Se comentó la lógica de evaluación y encolado de alertas de la Regla 3 en la función `evaluateRules` de [`rulesEngine.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/rulesEngine.js). Esto previene que el bot genere alertas en vivo de esta regla y evita el desgaste de capital debido a su bajo rendimiento histórico (59.6% Win Rate).
+  - **Retrocompatibilidad**: Se mantuvo intacto el bloque del switch `case 3` en `evaluateAlertResults` para permitir la resolución automática de veredictos y omisiones de partidos históricos.
+  - **Pruebas de Integración**: Se ejecutó exitosamente `test.js` para garantizar la estabilidad de las reglas activas.
+  - **Control de Versión**: Se actualizó la versión en `package.json` a la versión `2.8.0` por remoción de funcionalidad (SemVer).
+
