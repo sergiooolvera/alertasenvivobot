@@ -681,7 +681,7 @@ async function evaluatePredictionOutcome(sport, aiRecommendation, finalData) {
             : formatFootballFinalData(finalData);
 
         const prompt = `Actúa como un validador oficial y objetivo de apuestas deportivas en español.
-Determina si la siguiente recomendación de apuesta resultó ganadora (GREEN) o perdedora (RED) basándote en los datos finales del partido.
+Determina si la siguiente recomendación de apuesta resultó ganadora (GREEN), perdedora (RED) o nula/reembolsada (VOID) basándote en los datos finales del partido.
 
 Deporte: ${sport === 'baseball' ? 'Béisbol' : 'Fútbol'}
 Recomendación de apuesta realizada: "${aiRecommendation}"
@@ -692,8 +692,8 @@ ${formattedData}
 Instrucciones obligatorias:
 1. Responde ÚNICAMENTE en formato JSON válido con la siguiente estructura exacta:
 {
-  "isGreen": true o false,
-  "explanation": "Una breve explicación de una sola frase (en español) de por qué la recomendación se ganó o se perdió basándote en el marcador o eventos finales."
+  "outcome": "GREEN", "RED" o "VOID",
+  "explanation": "Una breve explicación de una sola frase (en español) de por qué la recomendación se ganó, se perdió o se anuló basándote en el marcador o eventos finales."
 }
 2. No incluyas nada más en tu respuesta. No uses bloques de código con markdown (como \`\`\`json). Solo el texto plano del objeto JSON.`;
 
@@ -703,7 +703,9 @@ Instrucciones obligatorias:
             const cleanJsonText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
             const resultObj = JSON.parse(cleanJsonText);
             return {
-                isGreen: !!resultObj.isGreen,
+                outcome: resultObj.outcome,
+                isGreen: resultObj.outcome === 'GREEN',
+                isVoid: resultObj.outcome === 'VOID',
                 explanation: resultObj.explanation || 'Evaluación completada por IA.'
             };
         }
@@ -778,6 +780,8 @@ Instrucciones obligatorias:
                         return {
                             score: resultObj.score || 'N/D',
                             outcome: resultObj.outcome || 'RED',
+                            isGreen: resultObj.outcome === 'GREEN',
+                            isVoid: resultObj.outcome === 'CANCELLED' || resultObj.outcome === 'VOID',
                             explanation: resultObj.explanation || 'Evaluación completada por búsqueda web.'
                         };
                     }

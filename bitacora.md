@@ -205,3 +205,4 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Pruebas de Integración**: Se ejecutó exitosamente `test.js` para garantizar la estabilidad de las reglas activas.
   - **Control de Versión**: Se actualizó la versión en `package.json` a la versión `2.8.0` por remoción de funcionalidad (SemVer).
 
+- **[2026-08-19]**: Actualizaci�n del sistema de evaluaci�n de apuestas para soportar marcadores nulos/reembolsados. Se modific� \evaluatePredictionOutcome\ y \esolveVerdictViaWeb\ en \iService.js\ para poder retornar \VOID\ mediante \isVoid\ en lugar de forzar a GREEN o RED. En \ulesEngine.js\, se adapt� el veredicto final dual de Gemini y DeepSeek, mostrando ? BLACK cuando el resultado de la apuesta es anulado (VOID o CANCELLED) en lugar de un veredicto RED incorrecto.

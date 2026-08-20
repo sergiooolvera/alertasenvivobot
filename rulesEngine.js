@@ -419,6 +419,7 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
 
     for (const meta of alertMetadatas) {
         let isGreen = false;
+        let isVoid = false;
         let explanation = '';
         let evaluatedByAI = false;
         let isOmitted = false;
@@ -553,14 +554,17 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
 
         if (activeOutcome) {
             isGreen = activeOutcome.isGreen;
+            isVoid = activeOutcome.isVoid;
             explanation = activeOutcome.explanation;
             evaluatedByAI = true;
         } else if (geminiOutcome) {
             isGreen = geminiOutcome.isGreen;
+            isVoid = geminiOutcome.isVoid;
             explanation = geminiOutcome.explanation;
             evaluatedByAI = true;
         } else if (deepseekOutcome) {
             isGreen = deepseekOutcome.isGreen;
+            isVoid = deepseekOutcome.isVoid;
             explanation = deepseekOutcome.explanation;
             evaluatedByAI = true;
         }
@@ -665,8 +669,8 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
         let msg = "";
         // Si ambos modelos de IA tuvieron recomendaciones válidas y al menos uno de ellos pudo evaluarse
         if (isGeminiValid && isDeepseekValid && (geminiOutcome || deepseekOutcome)) {
-            const gIcon = geminiOutcome ? (geminiOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*') : '⚠️ *N/D*';
-            const dsIcon = deepseekOutcome ? (deepseekOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*') : '⚠️ *N/D*';
+            const gIcon = geminiOutcome ? (geminiOutcome.isVoid ? '⬛ *BLACK*' : (geminiOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*')) : '⚠️ *N/D*';
+            const dsIcon = deepseekOutcome ? (deepseekOutcome.isVoid ? '⬛ *BLACK*' : (deepseekOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*')) : '⚠️ *N/D*';
 
             msg = `🏁 *VEREDICTO POST-PARTIDO - DUAL*\n\n` +
                   `⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n` +
@@ -680,7 +684,7 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                   `🎯 *Apuesta:* *${meta.deepseekRecommendation}*\n` +
                   `💡 *Resultado:* ${deepseekOutcome ? deepseekOutcome.explanation : 'Evaluación no disponible'}`;
         } else {
-            const icon = isGreen ? '🟩 *GREEN*' : '🟥 *RED*';
+            const icon = isVoid ? '⬛ *BLACK*' : (isGreen ? '🟩 *GREEN*' : '🟥 *RED*');
             msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;
         }
 

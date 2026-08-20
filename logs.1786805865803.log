@@ -1,0 +1,745 @@
+2026-08-15T14:17:06.300437266Z [inf]  Starting Container
+2026-08-15T14:17:06.732566597Z [inf]  [Inicio] No hay jugadas pendientes en financial_tracker.json.
+2026-08-15T14:17:06.732575219Z [inf]  🟢 Bot de Monitoreo de Fútbol en vivo en marcha. Horario activo: 7:00 AM - 9:00 PM (America/Mexico_City).
+2026-08-15T14:17:06.732579690Z [inf]  [2:17:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:17:06.732583478Z [inf]  [Telegram] Bot conectado en producción: @Alertasenvivobot (Alertas en vivo)
+2026-08-15T14:17:06.732608891Z [inf]  ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+2026-08-15T14:17:06.732614400Z [inf]  ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+2026-08-15T14:17:06.732617787Z [inf]  ✅ Bot de Telegram conectado exitosamente.
+2026-08-15T14:17:06.732622298Z [inf]  [Config] 📂 Auditoría de prompts ACTIVA. Canal/Chat destino: @promptsgolesytarjetas
+2026-08-15T14:17:06.732626035Z [inf]  [Inicio] Chat principal 890184744 auto-suscrito por defecto.
+2026-08-15T14:17:07.323965492Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:17:07.757171343Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:17:07.875981730Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:17:07.875988173Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:17:07.877955164Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:17:07.884969756Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:17:07.884972981Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:17:07.884975579Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:17:07.884978632Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:17:07.886775150Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:17:07.888596609Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:17:07.917490939Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:17:07.934295984Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:17:07.984265405Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:17:07.986383315Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:17:07.986388759Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:17:07.993299244Z [err]  ⚠️ [API-Sports Football] Límite de peticiones alcanzado (429). Pausando peticiones por 60s.
+2026-08-15T14:17:07.993303240Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:17:07.993306293Z [err]  ⚠️ [API-Sports Football] Límite de peticiones alcanzado (429). Pausando peticiones por 60s.
+2026-08-15T14:17:07.993309083Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:17:07.993311707Z [err]  ⚠️ [API-Sports Football] Límite de peticiones alcanzado (429). Pausando peticiones por 60s.
+2026-08-15T14:17:07.993314503Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:17:08.039228773Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:17:08.046102046Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:17:08.047962601Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:17:08.047966756Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:17:08.055272697Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:17:08.055276969Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:17:08.070104545Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:17:08.084483037Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:17:08.084488340Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:17:08.130859859Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:17:10.325089514Z [err]  (node:1) [node-telegram-bot-api] DeprecationWarning: deleteWebHook(...) is deprecated; use deleteWebhook(...) instead.
+2026-08-15T14:17:10.325092813Z [err]  (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-15T14:17:14.064002841Z [err]  2026-08-15T14:17:14.053Z error: [polling_error] {"code":"ETELEGRAM","message":"ETELEGRAM: 409 Conflict: terminated by other getUpdates request; make sure that only one bot instance is running"}
+2026-08-15T14:17:34.064233311Z [inf]  Usuario principal conectado: 890184744
+2026-08-15T14:17:35.977772502Z [inf]  [2:17:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:17:35.977777877Z [inf]  [SafeOdds] Descargados momios en vivo para 0 partidos.
+2026-08-15T14:18:15.650538252Z [inf]  [2:18:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:18:15.650541293Z [inf]  [SafeOdds] Descargados momios en vivo para 0 partidos.
+2026-08-15T14:18:45.663561770Z [inf]  [2:18:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:18:45.663565145Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:18:45.663567944Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:18:45.663570896Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:18:45.663574426Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:18:45.663577914Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:18:45.663580962Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:18:45.663583834Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:18:45.663586651Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:18:45.663589457Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:18:45.663592417Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:18:45.663597272Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:18:45.663600103Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:18:45.663604260Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:18:45.663607069Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:18:45.663609922Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:18:45.665040425Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:18:45.665047518Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:18:45.665052616Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:18:45.665056664Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:18:45.665060543Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:18:45.665065429Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:18:45.665068632Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:18:45.665072199Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:18:45.665075219Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:18:45.665089384Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:18:45.665106378Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:18:45.665111896Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:18:45.665117241Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:18:45.665121283Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:19:15.670808134Z [inf]  [2:19:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:19:15.670818965Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:19:45.670334912Z [inf]  [2:19:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:19:45.670339596Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:20:15.731270020Z [inf]  [2:20:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:20:15.731273953Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:20:45.402303326Z [inf]  [2:20:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:20:45.402308943Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:21:15.415375630Z [inf]  [2:21:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:21:15.415381305Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:21:45.398829277Z [inf]  [2:21:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:21:45.398831826Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:22:15.404189539Z [inf]  [2:22:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:22:15.404192499Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:22:45.433253073Z [inf]  [2:22:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:22:45.433256657Z [inf]  [SafeOdds] Descargados momios en vivo para 158 partidos.
+2026-08-15T14:23:15.119194551Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:23:15.119201724Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:23:15.119206313Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:23:15.119210084Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:23:15.119213807Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:23:15.119218256Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:23:15.119223059Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:23:15.119224681Z [inf]  [2:23:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:23:15.119232589Z [inf]  [SafeOdds] Descargados momios en vivo para 157 partidos.
+2026-08-15T14:23:15.119236910Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:23:15.119245344Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:23:15.119253273Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:23:15.119257785Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:23:15.119276538Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:23:15.119280320Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:23:15.119283565Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:23:15.121029545Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:23:15.121036711Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:23:15.121041069Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:23:15.121044816Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:23:15.121048023Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:23:15.121051262Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:23:15.121054058Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:23:15.121058234Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:23:15.121061677Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:23:15.121065332Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:23:15.121069003Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:23:15.121072595Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:23:15.121075390Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:23:15.121078416Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:23:45.095449139Z [inf]  [2:23:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:23:45.095454271Z [inf]  [SafeOdds] Descargados momios en vivo para 157 partidos.
+2026-08-15T14:24:15.082026042Z [inf]  [2:24:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:24:15.082032575Z [inf]  [SafeOdds] Descargados momios en vivo para 156 partidos.
+2026-08-15T14:24:45.065894895Z [inf]  [2:24:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:24:45.065898450Z [inf]  [SafeOdds] Descargados momios en vivo para 156 partidos.
+2026-08-15T14:25:15.112494861Z [inf]  [2:25:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:25:15.112500824Z [inf]  [SafeOdds] Descargados momios en vivo para 2 partidos.
+2026-08-15T14:25:44.789050681Z [inf]  [2:25:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:25:44.789056911Z [inf]  [SafeOdds] Descargados momios en vivo para 2 partidos.
+2026-08-15T14:26:14.787292905Z [inf]  [2:26:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:26:14.787295860Z [inf]  [SafeOdds] Descargados momios en vivo para 20 partidos.
+2026-08-15T14:26:44.788364648Z [inf]  [2:26:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:26:44.788368307Z [inf]  [SafeOdds] Descargados momios en vivo para 74 partidos.
+2026-08-15T14:27:14.825211073Z [inf]  [SafeOdds] Descargados momios en vivo para 67 partidos.
+2026-08-15T14:27:14.825227834Z [inf]  [2:27:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:27:44.479981794Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:27:44.479982464Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:27:44.479987574Z [inf]  [2:27:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:27:44.479988621Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:27:44.479992614Z [inf]  [SafeOdds] Descargados momios en vivo para 69 partidos.
+2026-08-15T14:27:44.479995546Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:27:44.479996358Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:27:44.480000420Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:27:44.480006683Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:27:44.480007064Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:27:44.480008526Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:27:44.480010002Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:27:44.480015038Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:27:44.480015266Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:27:44.480021680Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:27:44.480021789Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:27:44.481977412Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:27:44.481981917Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:27:44.481985821Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:27:44.481989082Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:27:44.481992816Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:27:44.481996919Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:27:44.482000559Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:27:44.482005379Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:27:44.482009954Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:27:44.482013719Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:27:44.482017306Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:27:44.482020920Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:27:44.482024239Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:27:44.482027683Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:27:44.482031389Z [inf]  [index.js] Alerta de fútbol detectada para Maardu vs FC Tallinn. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:27:44.483970531Z [inf]  [index.js] Solicitando predicción de IA para partido: Maardu vs FC Tallinn
+2026-08-15T14:27:44.483975242Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:27:44.483978766Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:27:44.483984968Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:27:44.483988180Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:27:44.483992298Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:27:44.483995476Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:27:44.483998868Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:27:44.484002078Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:27:44.484005671Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:27:44.484009988Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:27:44.484013856Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:27:44.484017070Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:27:44.484020883Z [err]  [AI-Service] Error crítico generando recomendación con IA: Todas las claves API de Gemini y modelos de fallback fallaron.. Utilizando fallback estático.
+2026-08-15T14:28:14.477307682Z [inf]  [2:28:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:28:14.477314691Z [inf]  [SafeOdds] Descargados momios en vivo para 73 partidos.
+2026-08-15T14:28:14.477318748Z [inf]  [index.js] Alerta de fútbol detectada para IFK Skövde vs Herrestads. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:28:14.477321582Z [inf]  [index.js] Solicitando predicción de IA para partido: IFK Skövde vs Herrestads
+2026-08-15T14:28:14.477325222Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:28:14.477328073Z [inf]  [AI-Service] Intentando generar contenido con DeepSeek usando modelo 'deepseek-chat'
+2026-08-15T14:28:14.477330900Z [inf]  [Consensus Filter] ⚠️ Gemini descartado por Doble Oportunidad (Doble Oportunidad: IFK Skövde o Empate (1X)) para IFK Skövde vs Herrestads. Usando fallback de DeepSeek: Siguiente Gol de IFK Skövde.
+2026-08-15T14:28:14.477333587Z [inf]  [Consensus Filter] ⛔ Alerta abortada para IFK Skövde vs Herrestads (Regla: Sorpresa Tempranera). Motivo: Gemini baja confianza (74% < 75%).
+2026-08-15T14:28:44.478057648Z [inf]  [2:28:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:28:44.478063418Z [inf]  [SafeOdds] Descargados momios en vivo para 66 partidos.
+2026-08-15T14:29:14.472452093Z [inf]  [2:29:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:29:14.472455124Z [inf]  [SafeOdds] Descargados momios en vivo para 88 partidos.
+2026-08-15T14:29:44.609369148Z [inf]  [2:29:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:29:44.609373520Z [inf]  [SafeOdds] Descargados momios en vivo para 79 partidos.
+2026-08-15T14:29:44.609377806Z [inf]  [index.js] Alerta de fútbol detectada para Häcken II W vs Linköping W. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:29:44.609385276Z [inf]  [index.js] Solicitando predicción de IA para partido: Häcken II W vs Linköping W
+2026-08-15T14:29:44.609389672Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:29:44.609395373Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:29:44.609399498Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:29:44.609403704Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:29:44.759631987Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:29:44.759639766Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:29:44.759643697Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:29:44.862381937Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:29:44.862390573Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:29:44.862394577Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:29:44.954878278Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:29:44.954882596Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:29:44.954885804Z [err]  [AI-Service] Error crítico generando recomendación con IA: Todas las claves API de Gemini y modelos de fallback fallaron.. Utilizando fallback estático.
+2026-08-15T14:30:04.964764750Z [inf]  [2:30:00 PM] Ejecutando Parlay del Día (8:30 AM)...
+2026-08-15T14:30:04.964769210Z [inf]  [Parlay 8:30 AM] Encontrados 50 partidos futuros. Procesando momios y estadísticas...
+2026-08-15T14:30:05.997887749Z [inf]  [2:30:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:30:07.744568990Z [inf]  [SafeOdds] Descargados momios en vivo para 29 partidos.
+2026-08-15T14:30:27.464280285Z [err]  [Parlay 8:30 AM] La IA no pudo generar el mensaje del parlay.
+2026-08-15T14:30:27.464292795Z [inf]  [Parlay 8:30 AM] Enviando 6 partidos elegibles a Gemini para armar el Parlay...
+2026-08-15T14:30:27.464297617Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:30:27.464301644Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:30:27.464304735Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:30:27.464307860Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:30:27.464311082Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:30:27.464314297Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:30:27.464317513Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:30:27.464320476Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:30:27.464323507Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:30:27.464326926Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:30:27.464330210Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:30:27.464333020Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:30:27.464335971Z [err]  [AI-Service] Error crítico generando parlay con IA: Todas las claves API de Gemini y modelos de fallback fallaron.
+2026-08-15T14:30:35.995957473Z [inf]  [2:30:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:30:36.375955109Z [inf]  [SafeOdds] Descargados momios en vivo para 30 partidos.
+2026-08-15T14:31:06.382681610Z [inf]  [2:31:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:31:06.422663849Z [inf]  [SafeOdds] Descargados momios en vivo para 49 partidos.
+2026-08-15T14:31:07.049035752Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:31:07.049039675Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:31:07.049176200Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:31:07.049181306Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:31:36.778851812Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:31:36.778861384Z [inf]  [2:31:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:31:36.778865721Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:31:36.778870795Z [inf]  [SafeOdds] Descargados momios en vivo para 62 partidos.
+2026-08-15T14:31:36.778876620Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:31:36.778883376Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:31:36.778889807Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:31:36.778894754Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:31:36.778902004Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:31:36.778906145Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:31:36.778913074Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:31:36.778917228Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:31:36.778922478Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:31:36.778926839Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:31:36.778930959Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:31:36.778934514Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:31:36.782885014Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:31:36.782890511Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:31:36.782893766Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:31:36.782900178Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:31:36.782901105Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:31:36.782906980Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:31:36.782909017Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:31:36.782912722Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:31:36.782917311Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:31:36.782919910Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:31:36.782928972Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:31:36.782928994Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:31:36.782935433Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:31:36.782940145Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:32:06.785416232Z [inf]  [2:32:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:32:06.785419388Z [inf]  [SafeOdds] Descargados momios en vivo para 88 partidos.
+2026-08-15T14:32:06.785422232Z [inf]  [index.js] Alerta de fútbol detectada para Sevastopol vs Astrakhan. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:32:06.785424912Z [inf]  [index.js] Solicitando predicción de IA para partido: Sevastopol vs Astrakhan
+2026-08-15T14:32:06.785429146Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:32:06.838286089Z [inf]  [API-Sports] Consultando eventos en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:32:07.367108290Z [inf]  [API-Sports] Consultando estadísticas en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:32:09.985454213Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:32:09.985457007Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:32:09.985460362Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:32:12.377452156Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:32:12.377456298Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:32:12.377459720Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:32:12.508560075Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:32:12.508562980Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:32:12.508565716Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:32:12.645830544Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:32:12.645841110Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:32:12.645847231Z [err]  [AI-Service] Error crítico generando recomendación con IA: Todas las claves API de Gemini y modelos de fallback fallaron.. Utilizando fallback estático.
+2026-08-15T14:32:42.645252902Z [inf]  [2:32:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:32:42.645257132Z [inf]  [SafeOdds] Descargados momios en vivo para 84 partidos.
+2026-08-15T14:32:42.645261330Z [inf]  [API-Sports] Consultando eventos en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:32:42.645266412Z [inf]  [API-Sports] Consultando estadísticas en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:33:12.720968780Z [inf]  [2:33:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:33:12.720974570Z [inf]  [SafeOdds] Descargados momios en vivo para 138 partidos.
+2026-08-15T14:33:12.720979040Z [inf]  [API-Sports] Consultando eventos en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:33:12.720983501Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:33:12.720986503Z [inf]  [API-Sports] Consultando eventos en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:33:12.720990708Z [inf]  [API-Sports] Consultando estadísticas en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:33:12.720992565Z [inf]  [API-Sports] Consultando estadísticas en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:33:12.720996480Z [inf]  [API-Sports] Consultando eventos en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:33:42.432879255Z [inf]  [2:33:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:33:42.432882029Z [inf]  [SafeOdds] Descargados momios en vivo para 115 partidos.
+2026-08-15T14:33:42.432884757Z [inf]  [API-Sports] Consultando eventos en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:33:42.432888332Z [inf]  [API-Sports] Consultando eventos en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:33:42.432890974Z [inf]  [API-Sports] Consultando eventos en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:33:42.432893696Z [inf]  [API-Sports] Consultando estadísticas en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:33:42.432896527Z [inf]  [API-Sports] Consultando estadísticas en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:33:42.432899050Z [inf]  [API-Sports] Consultando estadísticas en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:34:12.432986259Z [inf]  [2:34:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:34:12.432991891Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:34:12.432996654Z [inf]  [API-Sports] Consultando eventos en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:34:12.432999830Z [inf]  [API-Sports] Consultando estadísticas en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:34:42.420491182Z [inf]  [2:34:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:34:42.420497299Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:35:12.421963675Z [inf]  [2:35:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:35:12.421967512Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:35:42.439072109Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:35:42.439075850Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:35:42.439076224Z [inf]  [2:35:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:35:42.439085561Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:35:42.439085660Z [inf]  [SafeOdds] Descargados momios en vivo para 170 partidos.
+2026-08-15T14:35:42.439091838Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:35:42.439093018Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:35:42.439095035Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:35:42.439102841Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:35:42.439108168Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:35:42.439108677Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:35:42.439118334Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:35:42.439121474Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:35:42.439125891Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:35:42.439129568Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:35:42.439133480Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:35:42.440271675Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:35:42.440275390Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:35:42.440279067Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:35:42.440284719Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:35:42.440289218Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:35:42.440292964Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:35:42.440296590Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:35:42.440300248Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:35:42.440303972Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:35:42.440307890Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:35:42.440311964Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:35:42.440315622Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:35:42.440319415Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:35:42.440323142Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:35:42.440326844Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:35:42.441878347Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:35:42.441883304Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:35:42.441887419Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:36:12.163261102Z [inf]  [2:36:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:36:12.163264512Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:36:12.163267376Z [inf]  [API-Sports] Consultando eventos en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:36:12.163270539Z [inf]  [API-Sports] Consultando estadísticas en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:36:42.155397656Z [inf]  [2:36:35 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:36:42.155401183Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:37:12.163040071Z [inf]  [2:37:05 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:37:12.163043969Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:37:12.163047665Z [inf]  [API-Sports] Consultando eventos en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:37:12.163051706Z [inf]  [API-Sports] Consultando estadísticas en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:37:42.167537316Z [inf]  [2:37:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:37:42.167540747Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:37:42.167543565Z [inf]  [API-Sports] Consultando eventos en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:37:42.167547044Z [inf]  [API-Sports] Consultando eventos en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:37:42.167550088Z [inf]  [API-Sports] Consultando eventos en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:37:42.167553390Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:37:42.167556318Z [inf]  [API-Sports] Consultando estadísticas en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:37:42.167559206Z [inf]  [API-Sports] Consultando estadísticas en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:38:11.863392149Z [inf]  [2:38:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:38:11.863396314Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:38:11.863399517Z [inf]  [API-Sports] Consultando eventos en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:38:11.863402444Z [inf]  [API-Sports] Consultando eventos en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:38:11.863405321Z [inf]  [API-Sports] Consultando eventos en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:38:11.863409389Z [inf]  [API-Sports] Consultando estadísticas en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:38:11.863412432Z [inf]  [API-Sports] Consultando estadísticas en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:38:11.863416448Z [inf]  [API-Sports] Consultando estadísticas en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:38:11.863419308Z [inf]  [API-Sports] Consultando eventos en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:38:11.863422407Z [inf]  [API-Sports] Consultando estadísticas en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:38:41.904809420Z [inf]  [2:38:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:38:41.904812287Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:38:41.904816195Z [inf]  [API-Sports] Consultando eventos en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:38:41.904819768Z [inf]  [API-Sports] Consultando estadísticas en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:39:11.897227986Z [inf]  [2:39:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:39:11.897234008Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:39:41.929460343Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:39:41.929465647Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:39:41.929470508Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:39:41.929475146Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:39:41.929479830Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:39:41.929484581Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:39:41.929488132Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:39:41.929491187Z [inf]  [2:39:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:39:41.929494542Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:39:41.929497572Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:39:41.929500730Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:39:41.929503661Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:39:41.929506551Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:39:41.929509416Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:39:41.929513273Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:39:41.929516313Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:39:41.931280777Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:39:41.931284840Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:39:41.931293484Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:39:41.931295437Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:39:41.931298618Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:39:41.931305831Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:39:41.931305868Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:39:41.931309082Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:39:41.931309274Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:39:41.931312923Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:39:41.931317924Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:39:41.931318729Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:39:41.931323304Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:39:41.931324055Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:39:41.931332609Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:39:41.932665368Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:39:41.932668708Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:39:41.932672199Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:40:12.069608379Z [inf]  [2:40:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:40:12.069616696Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:40:41.787446544Z [inf]  [2:40:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:40:41.787450235Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:40:41.787453324Z [inf]  [API-Sports] Consultando eventos en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:40:41.787455893Z [inf]  [API-Sports] Consultando estadísticas en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:41:11.789143092Z [inf]  [2:41:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:41:11.789147992Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:41:11.789151525Z [inf]  [API-Sports] Consultando eventos en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:41:41.800867165Z [inf]  [2:41:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:41:41.800873917Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:41:41.800878947Z [inf]  [API-Sports] Consultando eventos en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:41:41.800884918Z [inf]  [API-Sports] Consultando eventos en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:41:41.800888417Z [inf]  [API-Sports] Consultando eventos en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:41:41.800892402Z [inf]  [API-Sports] Consultando estadísticas en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:41:41.800895975Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:41:41.800898999Z [inf]  [API-Sports] Consultando estadísticas en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:41:41.800902450Z [inf]  [API-Sports] Consultando estadísticas en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:42:11.800526706Z [inf]  [2:42:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:42:11.800530401Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:42:11.800533385Z [inf]  [API-Sports] Consultando eventos en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:42:11.800537365Z [inf]  [API-Sports] Consultando eventos en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:42:11.800540576Z [inf]  [API-Sports] Consultando eventos en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:42:11.800544882Z [inf]  [API-Sports] Consultando estadísticas en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:42:11.800547856Z [inf]  [API-Sports] Consultando estadísticas en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:42:11.800550857Z [inf]  [API-Sports] Consultando estadísticas en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:42:41.807871803Z [inf]  [2:42:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:42:41.807874813Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:42:41.807877487Z [inf]  [API-Sports] Consultando eventos en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:42:41.807880000Z [inf]  [API-Sports] Consultando eventos en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:42:41.807882621Z [inf]  [API-Sports] Consultando estadísticas en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:42:41.807885573Z [inf]  [API-Sports] Consultando estadísticas en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:43:11.820151197Z [inf]  [2:43:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:43:11.820164288Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:43:41.533830218Z [inf]  [2:43:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:43:41.533834672Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:43:41.533837745Z [inf]  [index.js] Alerta de fútbol detectada para Pakhtakor II vs Lochin. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:43:41.533840711Z [inf]  [index.js] Solicitando predicción de IA para partido: Pakhtakor II vs Lochin
+2026-08-15T14:43:41.533843597Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:43:41.533846431Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:43:41.533849244Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:43:41.533851901Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:43:42.620269420Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:43:42.620272264Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:43:42.620274866Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:43:42.718838344Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:43:42.718842871Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:43:42.718846368Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:43:43.115969559Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:43:43.115973059Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:43:43.115976080Z [err]  [AI-Service] Error crítico generando recomendación con IA: Todas las claves API de Gemini y modelos de fallback fallaron.. Utilizando fallback estático.
+2026-08-15T14:44:12.866555774Z [inf]  [2:44:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:44:12.866558984Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:44:12.866561853Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:44:12.866564594Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:44:12.866568630Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:44:12.866571370Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:44:12.866574402Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:44:12.866577150Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:44:12.866580016Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:44:12.866582565Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:44:12.866585728Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:44:12.866588466Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:44:12.866591162Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:44:12.866593791Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:44:12.866596375Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:44:12.866599094Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:44:12.868765785Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:44:12.868771036Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:44:12.868774360Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:44:12.868781097Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:44:12.868785532Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:44:12.868788866Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:44:12.868792298Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:44:12.868795801Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:44:12.868799093Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:44:12.868802068Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:44:12.868805170Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:44:12.868808794Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:44:12.868811813Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:44:12.868814975Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:44:12.868818123Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:44:12.870551319Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:44:12.870559033Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:44:12.870562179Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:44:42.864326336Z [inf]  [2:44:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:44:42.864332127Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:45:12.861627183Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:45:12.861644219Z [inf]  [2:45:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:45:12.861647347Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:45:12.861651542Z [inf]  [API-Sports] Consultando eventos en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:45:12.861656138Z [inf]  [API-Sports] Consultando eventos en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:45:12.861658842Z [inf]  [index.js] Alerta de fútbol detectada para Häcken II W vs Linköping W. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:45:12.861661806Z [inf]  [API-Sports] Consultando estadísticas en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:45:12.861665869Z [inf]  [index.js] Solicitando predicción de IA para partido: Häcken II W vs Linköping W
+2026-08-15T14:45:12.861668850Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:45:12.861671601Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:45:12.861674404Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:45:16.969891130Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:45:16.969894168Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:45:16.969897106Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:45:17.052087651Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:45:17.052092529Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:45:17.052098383Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:45:17.164593546Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:45:17.164596748Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:45:17.164599776Z [err]  [AI-Service] Error crítico generando recomendación con IA: Todas las claves API de Gemini y modelos de fallback fallaron.. Utilizando fallback estático.
+2026-08-15T14:45:37.163179255Z [inf]  [2:45:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:45:37.163183666Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:46:07.168766690Z [inf]  [2:46:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:46:07.168774346Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:46:07.168777902Z [inf]  [API-Sports] Consultando eventos en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:46:07.168780761Z [inf]  [API-Sports] Consultando eventos en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:46:07.168784748Z [inf]  [API-Sports] Consultando eventos en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:46:07.168788169Z [inf]  [API-Sports] Consultando estadísticas en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:46:07.168792966Z [inf]  [API-Sports] Consultando estadísticas en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:46:07.168796680Z [inf]  [API-Sports] Consultando estadísticas en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:46:07.168799836Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:46:37.152316390Z [inf]  [2:46:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:46:37.152319650Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:46:37.152324215Z [inf]  [API-Sports] Consultando eventos en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:46:37.152327451Z [inf]  [API-Sports] Consultando eventos en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:46:37.152330524Z [inf]  [API-Sports] Consultando eventos en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:46:37.258254578Z [inf]  [API-Sports] Consultando estadísticas en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:46:37.267275264Z [inf]  [API-Sports] Consultando estadísticas en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:46:37.285450223Z [inf]  [API-Sports] Consultando estadísticas en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:47:07.287170056Z [inf]  [2:47:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:47:07.287174335Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:47:07.287177254Z [inf]  [API-Sports] Consultando eventos en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:47:07.287180646Z [inf]  [API-Sports] Consultando eventos en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:47:07.287183524Z [inf]  [index.js] Alerta de fútbol detectada para Sevastopol vs Astrakhan. Consultando datos adicionales en paralelo para la IA...
+2026-08-15T14:47:07.287186101Z [inf]  [API-Sports] Consultando estadísticas en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:47:07.287188694Z [inf]  [API-Sports] Consultando estadísticas en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:47:07.287191244Z [inf]  [index.js] Solicitando predicción de IA para partido: Sevastopol vs Astrakhan
+2026-08-15T14:47:07.287193828Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 0
+2026-08-15T14:47:09.513053271Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:47:09.513057222Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-flash-latest' usando clave de índice 1
+2026-08-15T14:47:09.513061248Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 0: Request failed with status code 503
+2026-08-15T14:47:14.688278440Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:47:14.688284251Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 0
+2026-08-15T14:47:14.688288363Z [err]  [AI-Service] Intento fallido con modelo 'gemini-flash-latest' e índice de clave 1: Request failed with status code 503
+2026-08-15T14:47:14.799271036Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 1
+2026-08-15T14:47:14.799275764Z [inf]  [AI-Service] Intentando generar contenido con modelo 'gemini-2.5-flash' usando clave de índice 1
+2026-08-15T14:47:14.799279209Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 0: Request failed with status code 404
+2026-08-15T14:47:15.303255299Z [inf]  [AI-Service] Rotando clave API de Gemini al índice: 0
+2026-08-15T14:47:15.303260850Z [err]  [AI-Service] Intento fallido con modelo 'gemini-2.5-flash' e índice de clave 1: Request failed with status code 404
+2026-08-15T14:47:15.303265001Z [err]  [AI-Service] Error crítico generando recomendación con IA: Todas las claves API de Gemini y modelos de fallback fallaron.. Utilizando fallback estático.
+2026-08-15T14:47:44.991496291Z [inf]  [2:47:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:47:44.991502669Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:48:15.008669252Z [inf]  [SafeOdds] Descargados momios en vivo para 171 partidos.
+2026-08-15T14:48:15.008736891Z [inf]  [2:48:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:48:45.091825456Z [inf]  [2:48:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:48:45.091882554Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:48:45.091885375Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:48:45.091886874Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:48:45.091891517Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:48:45.091900091Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:48:45.091902797Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:48:45.091907273Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:48:45.091916233Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:48:45.091918546Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:48:45.091927584Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:48:45.091931730Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:48:45.091934379Z [inf]  [SafeOdds] Descargados momios en vivo para 54 partidos.
+2026-08-15T14:48:45.091937852Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:48:45.091944239Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:48:45.091944324Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:48:45.093167859Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:48:45.093173797Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:48:45.093179145Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:48:45.093185010Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:48:45.093190072Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:48:45.093195263Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:48:45.093198976Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:48:45.093265520Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:48:45.093269386Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:48:45.093273510Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:48:45.093277831Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:48:45.093282170Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:48:45.093286428Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:48:45.093295176Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:48:45.093299905Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:48:45.094863129Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:48:45.094870236Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:48:45.094873716Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:49:14.740738860Z [inf]  [2:49:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:49:14.740742550Z [inf]  [SafeOdds] Descargados momios en vivo para 41 partidos.
+2026-08-15T14:49:44.746173530Z [inf]  [2:49:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:49:44.746177435Z [inf]  [SafeOdds] Descargados momios en vivo para 74 partidos.
+2026-08-15T14:49:44.746180268Z [inf]  [API-Sports] Consultando eventos en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:49:44.746183006Z [inf]  [API-Sports] Consultando eventos en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:49:44.746185900Z [inf]  [API-Sports] Consultando estadísticas en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:50:14.757034670Z [inf]  [2:50:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:50:14.757040791Z [inf]  [SafeOdds] Descargados momios en vivo para 45 partidos.
+2026-08-15T14:50:14.757045410Z [inf]  [API-Sports] Consultando eventos en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:50:14.757049588Z [inf]  [API-Sports] Consultando eventos en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:50:14.757053376Z [inf]  [API-Sports] Consultando eventos en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:50:14.757057544Z [inf]  [API-Sports] Consultando estadísticas en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:50:14.757060740Z [inf]  [API-Sports] Consultando estadísticas en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:50:14.757064095Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:50:14.757067152Z [inf]  [API-Sports] Consultando estadísticas en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:50:44.910293608Z [inf]  [2:50:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:50:44.910296538Z [inf]  [SafeOdds] Descargados momios en vivo para 85 partidos.
+2026-08-15T14:51:14.585581579Z [inf]  [2:51:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:51:14.585587950Z [inf]  [SafeOdds] Descargados momios en vivo para 109 partidos.
+2026-08-15T14:51:14.585591803Z [inf]  [API-Sports] Consultando eventos en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:51:14.585595550Z [inf]  [API-Sports] Consultando eventos en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:51:14.585599476Z [inf]  [API-Sports] Consultando eventos en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:51:14.585603572Z [inf]  [API-Sports] Consultando eventos en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:51:14.585607327Z [inf]  [API-Sports] Consultando eventos en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:51:14.585611002Z [inf]  [API-Sports] Consultando estadísticas en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:51:14.585614665Z [inf]  [API-Sports] Consultando estadísticas en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:51:14.585618571Z [inf]  [API-Sports] Consultando estadísticas en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:51:14.585622493Z [inf]  [API-Sports] Consultando estadísticas en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:51:14.585626117Z [inf]  [API-Sports] Consultando estadísticas en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:51:44.611616371Z [inf]  [2:51:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:51:44.611621192Z [inf]  [SafeOdds] Descargados momios en vivo para 112 partidos.
+2026-08-15T14:52:15.957555294Z [inf]  [2:52:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:52:15.957558478Z [inf]  [SafeOdds] Descargados momios en vivo para 150 partidos.
+2026-08-15T14:52:44.706299186Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:52:44.706418330Z [inf]  [2:52:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:52:44.706420960Z [inf]  [SafeOdds] Descargados momios en vivo para 128 partidos.
+2026-08-15T14:52:44.706423838Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:52:44.706426886Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:52:44.706430413Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:52:44.706434970Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:52:44.706438003Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:52:44.706440746Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:52:44.706443634Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:52:44.706446608Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:52:44.706449636Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:52:44.706452682Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:52:44.706455445Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:52:44.706459003Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:52:44.706462004Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:52:44.706859705Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:52:44.706862940Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:52:44.706865754Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:52:44.706868408Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:52:44.706870992Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:52:44.706873517Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:52:44.706876420Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:52:44.706879127Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:52:44.706882483Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:52:44.706885928Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:52:44.706888500Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:52:44.706891024Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:52:44.706893512Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:52:44.706896026Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:52:44.706898644Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:52:44.708212197Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:52:44.708216030Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:52:44.708218928Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:53:14.407062716Z [inf]  [2:53:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:53:14.407072787Z [inf]  [SafeOdds] Descargados momios en vivo para 140 partidos.
+2026-08-15T14:53:44.406992876Z [inf]  [2:53:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:53:44.406997180Z [inf]  [SafeOdds] Descargados momios en vivo para 122 partidos.
+2026-08-15T14:53:44.407001054Z [inf]  [API-Sports] Consultando eventos en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:53:44.407005093Z [inf]  [API-Sports] Consultando eventos en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:53:44.407008438Z [inf]  [API-Sports] Consultando estadísticas en vivo para Unie Hlubina vs Sigma Olomouc II (fixture: 1577888)
+2026-08-15T14:54:14.410606559Z [inf]  [2:54:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:54:14.410609822Z [inf]  [SafeOdds] Descargados momios en vivo para 153 partidos.
+2026-08-15T14:54:44.491657839Z [inf]  [2:54:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:54:44.491667226Z [inf]  [SafeOdds] Descargados momios en vivo para 129 partidos.
+2026-08-15T14:54:44.491671705Z [inf]  [API-Sports] Consultando eventos en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:54:44.491722431Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:54:44.491727657Z [inf]  [API-Sports] Consultando estadísticas en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:54:44.491739123Z [inf]  [API-Sports] Consultando eventos en vivo para Alverca vs Estrela (fixture: 1575456)
+2026-08-15T14:54:44.491742443Z [inf]  [API-Sports] Consultando estadísticas en vivo para Araz vs Imisli FK (fixture: 1600291)
+2026-08-15T14:54:44.491747044Z [inf]  [API-Sports] Consultando estadísticas en vivo para Willem II vs NEC Nijmegen (fixture: 1552127)
+2026-08-15T14:54:44.491750338Z [inf]  [API-Sports] Consultando eventos en vivo para Vrchovina vs Zlín II (fixture: 1577892)
+2026-08-15T14:55:14.152086991Z [inf]  [2:55:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:55:14.152103493Z [inf]  [SafeOdds] Descargados momios en vivo para 148 partidos.
+2026-08-15T14:55:44.154678088Z [inf]  [2:55:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:55:44.154682628Z [inf]  [SafeOdds] Descargados momios en vivo para 148 partidos.
+2026-08-15T14:55:44.154685705Z [inf]  [API-Sports] Consultando eventos en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:55:44.154690057Z [inf]  [API-Sports] Consultando eventos en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:55:44.154693483Z [inf]  [API-Sports] Consultando eventos en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:55:44.154699319Z [inf]  [API-Sports] Consultando eventos en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:55:44.154702534Z [inf]  [API-Sports] Consultando eventos en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:55:44.154706656Z [inf]  [API-Sports] Consultando estadísticas en vivo para Drenica Skënderaj vs Dukagjini (fixture: 1606520)
+2026-08-15T14:55:44.154710335Z [inf]  [API-Sports] Consultando estadísticas en vivo para Frýdek-Místek vs Vsetín (fixture: 1577890)
+2026-08-15T14:55:44.154713354Z [inf]  [API-Sports] Consultando estadísticas en vivo para FC Volendam vs FC OSS (fixture: 1551753)
+2026-08-15T14:55:44.154717450Z [inf]  [API-Sports] Consultando estadísticas en vivo para Uherský Brod vs Hranice (fixture: 1577895)
+2026-08-15T14:55:44.154721538Z [inf]  [API-Sports] Consultando estadísticas en vivo para Tikveš vs Shkëndija Haraçinë (fixture: 1551439)
+2026-08-15T14:56:14.160472583Z [inf]  [2:56:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:56:14.160478254Z [inf]  [SafeOdds] Descargados momios en vivo para 151 partidos.
+2026-08-15T14:56:44.222137755Z [inf]  [API-Sports] Consultando eventos en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:56:44.222149133Z [inf]  [API-Sports] Consultando eventos en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:56:44.222154112Z [inf]  [API-Sports] Consultando eventos en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:56:44.222158915Z [inf]  [API-Sports] Consultando eventos en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:56:44.222163669Z [inf]  [API-Sports] Consultando eventos en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:56:44.222169273Z [inf]  [API-Sports] Consultando eventos en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
+2026-08-15T14:56:44.222173844Z [inf]  [API-Sports] Consultando eventos en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:56:44.222178413Z [inf]  [API-Sports] Consultando eventos en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:56:44.222343552Z [inf]  [2:56:36 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:56:44.222346288Z [inf]  [SafeOdds] Descargados momios en vivo para 150 partidos.
+2026-08-15T14:56:44.222349228Z [inf]  [API-Sports] Consultando eventos en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:56:44.222352281Z [inf]  [API-Sports] Consultando eventos en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:56:44.222355425Z [inf]  [API-Sports] Consultando eventos en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:56:44.222358350Z [inf]  [API-Sports] Consultando eventos en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:56:44.222361120Z [inf]  [API-Sports] Consultando eventos en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:56:44.222364452Z [inf]  [API-Sports] Consultando eventos en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:56:44.223070998Z [inf]  [API-Sports] Consultando estadísticas en vivo para Selfoss vs Fjolnir (fixture: 1543455)
+2026-08-15T14:56:44.223078109Z [inf]  [API-Sports] Consultando estadísticas en vivo para Kolkheti Poti vs Telavi (fixture: 1507196)
+2026-08-15T14:56:44.223083118Z [inf]  [API-Sports] Consultando estadísticas en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:56:44.223087029Z [inf]  [API-Sports] Consultando estadísticas en vivo para Pakhtakor II vs Lochin (fixture: 1531081)
+2026-08-15T14:56:44.223092845Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sporting CP B vs Chaves (fixture: 1576456)
+2026-08-15T14:56:44.223093835Z [inf]  [API-Sports] Consultando eventos en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:56:44.223097126Z [inf]  [API-Sports] Consultando estadísticas en vivo para Vushtrria vs Malisheva (fixture: 1606524)
+2026-08-15T14:56:44.223100334Z [inf]  [API-Sports] Consultando eventos en vivo para Leyton Orient vs Sheffield Wednesday (fixture: 1564244)
+2026-08-15T14:56:44.223102998Z [inf]  [API-Sports] Consultando estadísticas en vivo para Laholm vs Jonkopings Sodra (fixture: 1504502)
+2026-08-15T14:56:44.223107709Z [inf]  [API-Sports] Consultando estadísticas en vivo para KFUM Oslo vs Lillestrom (fixture: 1494736)
+2026-08-15T14:56:44.223108638Z [inf]  [API-Sports] Consultando estadísticas en vivo para Mārupe vs Super Nova 2 (fixture: 1529615)
+2026-08-15T14:56:44.223113505Z [inf]  [API-Sports] Consultando estadísticas en vivo para Häcken II W vs Linköping W (fixture: 1501446)
+2026-08-15T14:56:44.223117535Z [inf]  [API-Sports] Consultando estadísticas en vivo para Jaro 2 vs Huima / Urho (fixture: 1541755)
+2026-08-15T14:56:44.223122394Z [inf]  [API-Sports] Consultando estadísticas en vivo para Sevastopol vs Astrakhan (fixture: 1536019)
+2026-08-15T14:56:44.223126667Z [inf]  [API-Sports] Consultando estadísticas en vivo para Maardu vs FC Tallinn (fixture: 1519612)
+2026-08-15T14:56:44.225375184Z [inf]  [API-Sports] Consultando estadísticas en vivo para Hamilton Academical vs Airdrie United (fixture: 1557018)
+2026-08-15T14:56:44.225381336Z [inf]  [API-Sports] Consultando estadísticas en vivo para IFK Skövde vs Herrestads (fixture: 1510635)
+2026-08-15T14:57:13.933363711Z [inf]  [2:57:06 PM] Revisando partidos de fútbol en vivo...
+2026-08-15T14:57:13.933366539Z [inf]  [SafeOdds] Descargados momios en vivo para 148 partidos.
+2026-08-15T14:57:13.933369325Z [inf]  [API-Sports] Consultando estadísticas en vivo para Rubin Yalta vs Izberbash (fixture: 1536254)
