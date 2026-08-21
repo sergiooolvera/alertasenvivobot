@@ -206,3 +206,13 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Control de Versión**: Se actualizó la versión en `package.json` a la versión `2.8.0` por remoción de funcionalidad (SemVer).
 
 - **[2026-08-19]**: Actualizaci�n del sistema de evaluaci�n de apuestas para soportar marcadores nulos/reembolsados. Se modific� \evaluatePredictionOutcome\ y \esolveVerdictViaWeb\ en \iService.js\ para poder retornar \VOID\ mediante \isVoid\ en lugar de forzar a GREEN o RED. En \ulesEngine.js\, se adapt� el veredicto final dual de Gemini y DeepSeek, mostrando ? BLACK cuando el resultado de la apuesta es anulado (VOID o CANCELLED) en lugar de un veredicto RED incorrecto.
+
+### 20 de Agosto 2026
+- Se recibió actualización de `messages.html`.
+- Se generó un script de extracción en Python para recopilar datos de rentabilidad y resultados de inteligencia artificial.
+- Se produjo el reporte web `reporte_actualizado.html` estructurado con comparaciones Gemini vs DeepSeek y despliegue por cada regla operativa.
+
+
+- **[2026-08-21]**: Desactivacion del monitoreo de ligas menores (Version 2.8.2).
+  - **Filtro de Ligas Menores**: Se anadio un descarte temprano en la funcion checkMatches() en [index.js](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) para omitir el monitoreo de partidos pertenecientes a ligas menores (!isMajorLeague(match.league)). Esto evita el desperdicio de peticiones API y tiempo de procesamiento en partidos con escasa cobertura estadistica y sin cuotas en vivo.
+  - **Control de Version**: Se actualizo package.json a la version 2.8.2.
