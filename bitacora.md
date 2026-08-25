@@ -216,3 +216,10 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
 - **[2026-08-21]**: Desactivacion del monitoreo de ligas menores (Version 2.8.2).
   - **Filtro de Ligas Menores**: Se anadio un descarte temprano en la funcion checkMatches() en [index.js](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) para omitir el monitoreo de partidos pertenecientes a ligas menores (!isMajorLeague(match.league)). Esto evita el desperdicio de peticiones API y tiempo de procesamiento en partidos con escasa cobertura estadistica y sin cuotas en vivo.
   - **Control de Version**: Se actualizo package.json a la version 2.8.2.
+
+- **[2026-08-24]**: Auditoría manual de resultados de inteligencia artificial (Gemini vs DeepSeek).
+  - **Análisis Real**: Se evaluó una muestra representativa de predicciones de IA descartando los resultados locales de Telegram en `messages.html` y comparándolos con los marcadores reales extraídos de internet. DeepSeek demostró un mayor porcentaje de efectividad (aprox. 66%) frente a Gemini, gracias a su enfoque pragmático en el mercado de goles (ej. 'Siguiente gol' y 'Más de 2.5') en contraste con la aproximación agresiva y dependiente de mercados secundarios (tarjetas/córners) de Gemini.
+  - **Generación de Reporte**: Se guardó la evaluación detallada en el archivo `reporte_auditoria_messages.html` para revisión del usuario.
+  - **Pivote Estratégico**: Con base en estos hallazgos, el usuario determinó enfocarse exclusivamente en DeepSeek como el motor de IA principal para futuras predicciones.
+  - **Mejora del Motor DeepSeek**: Se actualizó el arreglo de modelos de fallback en `aiService.js` para priorizar `deepseek-reasoner`. Esto eleva las capacidades lógicas del bot al forzar cadena de pensamiento (Chain of Thought) antes de emitir un pronóstico, minimizando alucinaciones y subiendo la precisión en apuestas en vivo. `deepseek-chat` queda como primer fallback.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.8.3` por mejora en el motor lógico.

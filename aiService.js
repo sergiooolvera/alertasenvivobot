@@ -91,7 +91,7 @@ async function callDeepSeekWithRotation(prompt) {
         throw new Error("No hay API Key de DeepSeek configurada en las variables de entorno.");
     }
 
-    const models = ['deepseek-chat', 'deepseek-v4-flash'];
+    const models = ['deepseek-reasoner', 'deepseek-chat', 'deepseek-v4-flash'];
     let attempts = 0;
 
     while (attempts < models.length) {
