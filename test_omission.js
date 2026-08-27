@@ -1,5 +1,4 @@
 const { evaluateAlertResults } = require('./rulesEngine');
-const { evaluateBaseballAlertResults } = require('./baseballRulesEngine');
 
 async function testOmission() {
     console.log('=== INICIANDO PRUEBA DE OMISIÓN/DESCARTE DE APUESTAS ===\n');
@@ -52,35 +51,6 @@ async function testOmission() {
     const resultsFootballGreen = await evaluateAlertResults([alertMetaFootballGreen], finalFixtureFootballGreen, [], []);
     console.log('Veredicto Fútbol GREEN:');
     console.log(resultsFootballGreen[0].msg);
-    console.log('-'.repeat(60) + '\n');
-
-
-    // 3. Simulación Béisbol MLB (Alerta Evitada - Control tradicional RED)
-    const alertMetaBaseball = {
-        ruleId: 'test_999_rule1',
-        ruleType: 1, // Favorito en Apuros MLB
-        ruleName: 'Favorito en Apuros MLB',
-        homeTeam: 'New York Yankees',
-        awayTeam: 'Boston Red Sox',
-        favoriteTeam: 'New York Yankees',
-        favoriteSide: 'home',
-        aiRecommendation: 'Evitar apuesta debido a picheo inestable'
-    };
-
-    // Simulamos partido finalizado donde el favorito perdió (tradicionalmente RED)
-    const finalGameBaseball = {
-        scores: {
-            home: { total: 3 }, // Yankees
-            away: { total: 7 }  // Boston
-        }
-    };
-
-    console.log('Evaluando Béisbol MLB (Caso RED tradicional)...');
-    const resultsBaseball = await evaluateBaseballAlertResults([alertMetaBaseball], finalGameBaseball);
-    console.log('Veredicto Béisbol MLB:');
-    console.log(resultsBaseball[0].msg);
-    console.log('isOmitted:', resultsBaseball[0].isOmitted);
-    console.log('isGreen:', resultsBaseball[0].isGreen);
     console.log('\n=== PRUEBA DE OMISIÓN COMPLETADA ===');
 }
 

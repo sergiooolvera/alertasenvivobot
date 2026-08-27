@@ -11,7 +11,7 @@ function needsStats(fixture, odds, isTopLeague = false) {
         return false;
     }
     const elapsed = fixture.fixture.status.elapsed;
-    return (elapsed > 0 && elapsed <= 60) || (elapsed >= 70 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
+    return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
 
 /**
@@ -20,7 +20,7 @@ function needsStats(fixture, odds, isTopLeague = false) {
 function needsEvents(fixture, odds, isTopLeague = false) {
     if (!odds || odds === 'NO_ODDS') return false;
     const elapsed = fixture.fixture.status.elapsed;
-    return (elapsed > 0 && elapsed <= 60) || (elapsed >= 70 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
+    return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
 
 /**
@@ -73,7 +73,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
     // ==========================================
 
     // --- REGLA 1: Tarjeta Roja ---
-    if (elapsed < 60 && (isDraw || underdogWinning)) {
+    if (elapsed >= 35 && elapsed <= 72 && (isDraw || underdogWinning)) {
         const redCards = events.filter(e => e.type === 'Card' && (e.detail === 'Red Card' || e.detail === 'Yellow 2nd'));
         if (redCards.length > 0) {
             const teamWithRed = redCards[0].team.name;
@@ -500,69 +500,24 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
             continue;
         }
 
-        let geminiOutcome = null;
         let deepseekOutcome = null;
 
-        // Determinar si hay recomendaciones de IA válidas (evitando evaluar strings informativos de error como 'N/D')
-        const isGeminiValid = meta.geminiRecommendation && 
-                              !meta.geminiRecommendation.includes('N/D') && 
-                              !meta.geminiRecommendation.toLowerCase().includes('no disponible');
-                              
-        const isDeepseekValid = meta.deepseekRecommendation && 
-                                !meta.deepseekRecommendation.includes('N/D') && 
-                                !meta.deepseekRecommendation.toLowerCase().includes('no disponible');
+        // Determinar si hay recomendación de IA válida (evitando evaluar strings informativos de error como 'N/D')
+        const isAiValid = meta.aiRecommendation && 
+                          !meta.aiRecommendation.includes('N/D') && 
+                          !meta.aiRecommendation.toLowerCase().includes('no disponible') &&
+                          !meta.aiFallbackUsed;
 
-        if (isGeminiValid) {
-            console.log(`[rulesEngine] Evaluando recomendación de Gemini para fútbol: "${meta.geminiRecommendation}"`);
-            geminiOutcome = await aiService.evaluatePredictionOutcome('football', meta.geminiRecommendation, {
+        if (isAiValid) {
+            console.log(`[rulesEngine] Evaluando recomendación de DeepSeek para fútbol: "${meta.aiRecommendation}"`);
+            deepseekOutcome = await aiService.evaluatePredictionOutcome('football', meta.aiRecommendation, {
                 fixture: finalFixture,
                 events: finalEvents,
                 stats: finalStats
             });
         }
 
-        if (isDeepseekValid) {
-            console.log(`[rulesEngine] Evaluando recomendación de DeepSeek para fútbol: "${meta.deepseekRecommendation}"`);
-            deepseekOutcome = await aiService.evaluatePredictionOutcome('football', meta.deepseekRecommendation, {
-                fixture: finalFixture,
-                events: finalEvents,
-                stats: finalStats
-            });
-        }
-
-        // Definir el veredicto general (isGreen y explanation) según la IA activa
-        let activeOutcome = null;
-        const isActiveValid = meta.aiRecommendation && 
-                              !meta.aiRecommendation.includes('N/D') && 
-                              !meta.aiRecommendation.toLowerCase().includes('no disponible') &&
-                              !meta.aiFallbackUsed;
-
-        if (isActiveValid) {
-            if (geminiOutcome && meta.aiRecommendation === meta.geminiRecommendation) {
-                activeOutcome = geminiOutcome;
-            } else if (deepseekOutcome && meta.aiRecommendation === meta.deepseekRecommendation) {
-                activeOutcome = deepseekOutcome;
-            } else {
-                console.log(`[rulesEngine] Evaluando recomendación activa para fútbol: "${meta.aiRecommendation}"`);
-                activeOutcome = await aiService.evaluatePredictionOutcome('football', meta.aiRecommendation, {
-                    fixture: finalFixture,
-                    events: finalEvents,
-                    stats: finalStats
-                });
-            }
-        }
-
-        if (activeOutcome) {
-            isGreen = activeOutcome.isGreen;
-            isVoid = activeOutcome.isVoid;
-            explanation = activeOutcome.explanation;
-            evaluatedByAI = true;
-        } else if (geminiOutcome) {
-            isGreen = geminiOutcome.isGreen;
-            isVoid = geminiOutcome.isVoid;
-            explanation = geminiOutcome.explanation;
-            evaluatedByAI = true;
-        } else if (deepseekOutcome) {
+        if (deepseekOutcome) {
             isGreen = deepseekOutcome.isGreen;
             isVoid = deepseekOutcome.isVoid;
             explanation = deepseekOutcome.explanation;
@@ -667,24 +622,17 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
     }
 
         let msg = "";
-        // Si ambos modelos de IA tuvieron recomendaciones válidas y al menos uno de ellos pudo evaluarse
-        if (isGeminiValid && isDeepseekValid && (geminiOutcome || deepseekOutcome)) {
-            const gIcon = geminiOutcome ? (geminiOutcome.isVoid ? '⬛ *BLACK*' : (geminiOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*')) : '⚠️ *N/D*';
-            const dsIcon = deepseekOutcome ? (deepseekOutcome.isVoid ? '⬛ *BLACK*' : (deepseekOutcome.isGreen ? '🟩 *GREEN*' : '🟥 *RED*')) : '⚠️ *N/D*';
+        const icon = isVoid ? '⬛ *BLACK*' : (isGreen ? '🟩 *GREEN*' : '🟥 *RED*');
 
-            msg = `🏁 *VEREDICTO POST-PARTIDO - DUAL*\n\n` +
+        if (evaluatedByAI && meta.aiRecommendation) {
+            msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n` +
                   `⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n` +
                   `📋 *Regla:* ${meta.ruleName}\n` +
                   `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                  `♊ *GOOGLE GEMINI: ${gIcon}*\n` +
-                  `🎯 *Apuesta:* *${meta.geminiRecommendation}*\n` +
-                  `💡 *Resultado:* ${geminiOutcome ? geminiOutcome.explanation : 'Evaluación no disponible'}\n` +
-                  `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                  `🐳 *DEEPSEEK: ${dsIcon}*\n` +
-                  `🎯 *Apuesta:* *${meta.deepseekRecommendation}*\n` +
-                  `💡 *Resultado:* ${deepseekOutcome ? deepseekOutcome.explanation : 'Evaluación no disponible'}`;
+                  `🐳 *DEEPSEEK: ${icon}*\n` +
+                  `🎯 *Apuesta:* *${meta.aiRecommendation}*\n` +
+                  `💡 *Resultado:* ${explanation}`;
         } else {
-            const icon = isVoid ? '⬛ *BLACK*' : (isGreen ? '🟩 *GREEN*' : '🟥 *RED*');
             msg = `🏁 *VEREDICTO POST-PARTIDO: ${icon}*\n\n⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n📋 *Regla:* ${meta.ruleName}\n💡 *Resultado:* ${explanation}`;
         }
 

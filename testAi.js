@@ -116,43 +116,6 @@ async function testFootball() {
     console.log(prediction || "⚠️ ERROR: No se obtuvo respuesta de la IA.");
 }
 
-async function testBaseball() {
-    console.log("\n--- Probando IA con Alerta de Béisbol (MLB) ---");
-    const mockMatchData = {
-        homeTeam: "New York Yankees",
-        awayTeam: "Boston Red Sox",
-        leagueName: "MLB",
-        leagueRound: "Regular Season",
-        inning: "Inning 8 (Alta)",
-        score: { home: 4, away: 5 },
-        odds: { home: 1.65, away: 2.25 },
-        ruleName: "Cierre Apretado / Tensión",
-        ruleDetails: "El partido entra a las entradas finales (inning 7-9) con una diferencia de apenas 1 carrera y bases llenas para el equipo visitante.",
-        stats: {
-            home: {
-                total: 4,
-                hits: 8,
-                errors: 1,
-                innings: {
-                    "1": 1, "2": 0, "3": 2, "4": 0, "5": 0, "6": 0, "7": 1, "8": 0
-                }
-            },
-            away: {
-                total: 5,
-                hits: 10,
-                errors: 0,
-                innings: {
-                    "1": 0, "2": 2, "3": 0, "4": 1, "5": 1, "6": 0, "7": 0, "8": 1
-                }
-            }
-        }
-    };
-
-    const prediction = await aiService.generatePrediction(mockMatchData, 'baseball');
-    console.log("Resultado de Béisbol:");
-    console.log(prediction || "⚠️ ERROR: No se obtuvo respuesta de la IA.");
-}
-
 async function run() {
     const fs = require('fs');
     try {
@@ -269,39 +232,6 @@ async function run() {
         };
         const predFootball = await aiService.generatePrediction(mockMatchDataFootball, 'football');
         outputText += `=== FÚTBOL ===\n${predFootball || 'Error'}\n\n`;
-
-        console.log("\n--- Probando IA con Alerta de Béisbol (MLB) ---");
-        const mockMatchDataBaseball = {
-            homeTeam: "New York Yankees",
-            awayTeam: "Boston Red Sox",
-            leagueName: "MLB",
-            leagueRound: "Regular Season",
-            inning: "Inning 8 (Alta)",
-            score: { home: 4, away: 5 },
-            odds: { home: 1.65, away: 2.25 },
-            ruleName: "Cierre Apretado / Tensión",
-            ruleDetails: "El partido entra a las entradas finales (inning 7-9) con una diferencia de apenas 1 carrera y bases llenas para el equipo visitante.",
-            stats: {
-                home: {
-                    total: 4,
-                    hits: 8,
-                    errors: 1,
-                    innings: {
-                        "1": 1, "2": 0, "3": 2, "4": 0, "5": 0, "6": 0, "7": 1, "8": 0
-                    }
-                },
-                away: {
-                    total: 5,
-                    hits: 10,
-                    errors: 0,
-                    innings: {
-                        "1": 0, "2": 2, "3": 0, "4": 1, "5": 1, "6": 0, "7": 0, "8": 1
-                    }
-                }
-            }
-        };
-        const predBaseball = await aiService.generatePrediction(mockMatchDataBaseball, 'baseball');
-        outputText += `=== BÉISBOL ===\n${predBaseball || 'Error'}\n\n`;
 
         // --- Probando Caso del Usuario (Sorpresa Tempranera con Underdog Ganando) ---
         console.log("\n--- Probando Caso del Usuario (Sorpresa Tempranera con Underdog Ganando) ---");
@@ -485,13 +415,11 @@ async function run() {
 
         // Validar extracción de confianza de los resultados anteriores
         const confFootball = predFootball ? (predFootball.match(/🔥 Confianza Estimada:\s*(\d+)%/i) ? predFootball.match(/🔥 Confianza Estimada:\s*(\d+)%/i)[1] + "%" : "No encontrada") : "Error";
-        const confBaseball = predBaseball ? (predBaseball.match(/🔥 Confianza Estimada:\s*(\d+)%/i) ? predBaseball.match(/🔥 Confianza Estimada:\s*(\d+)%/i)[1] + "%" : "No encontrada") : "Error";
         
         console.log(`\nValidación de confianza en vivo:`);
         console.log(`- Confianza Fútbol: ${confFootball}`);
-        console.log(`- Confianza Béisbol: ${confBaseball}`);
 
-        outputText += `=== VALIDACIÓN CONFIANZA ===\nFútbol: ${confFootball}\nBéisbol: ${confBaseball}\n`;
+        outputText += `=== VALIDACIÓN CONFIANZA ===\nFútbol: ${confFootball}\n`;
 
         console.log("\n--- Probando IA con DeepSeek (Fútbol) ---");
         try {

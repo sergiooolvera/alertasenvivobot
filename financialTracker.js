@@ -210,10 +210,10 @@ async function resolvePendingPlays() {
             console.error(`[FinancialTracker] Falló resolución vía API para ${play.fixtureId}:`, apiError.message);
         }
 
-        // 2. Si la API falló o no tiene datos de finalización, buscar en la web con Gemini Grounding
+        // 2. Si la API falló o no tiene datos de finalización, resolver veredicto vía DeepSeek
         if (!resolved) {
             try {
-                console.log(`[FinancialTracker] API sin datos finales para ${play.fixtureId}. Intentando búsqueda web vía Gemini...`);
+                console.log(`[FinancialTracker] API sin datos finales para ${play.fixtureId}. Intentando resolución vía DeepSeek...`);
                 const webResult = await aiService.resolveVerdictViaWeb(
                     'football',
                     play.home,

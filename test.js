@@ -73,9 +73,54 @@ let r7Alert = alerts3.find(a => a.metadata.ruleType === 7);
 console.log(r7Alert ? `✅ Éxito Regla 7 activada:\n${r7Alert.text}` : "❌ Falló Regla 7");
 
 // ============================================
-// Prueba 4: Verificación GREEN/RED Post-Partido
+// Prueba 4: Regla 1 (Tarjeta Roja Estratégica - Minuto 35 a 72)
 // ============================================
-console.log("\nPrueba 4: Evaluación de Resultado Post-Partido (HT Comeback Remontado)");
+let test4Match = JSON.parse(JSON.stringify(matchTemplate));
+test4Match.fixture.id = 1004;
+test4Match.goals.home = 1;
+test4Match.goals.away = 1; // Empate
+let eventsRed = [
+    { type: 'Card', detail: 'Red Card', team: { name: 'Bournemouth' } }
+];
+let statsRed = [
+    { team: { name: 'Manchester City' }, statistics: [{ type: 'Ball Possession', value: '60%' }] }
+];
+
+// Sub-prueba 4.1: Minuto 30 (Fuera de rango < 35) -> NO debe activar
+test4Match.fixture.status.elapsed = 30;
+let alertsR1Early = evaluateRules(test4Match, oddsTemplate, eventsRed, statsRed, isMajorLeague(test4Match.league));
+let r1Early = alertsR1Early.find(a => a.metadata.ruleType === 1);
+console.log("\nPrueba 4.1: Regla 1 al min 30 (fuera de rango)");
+console.log(!r1Early ? "✅ Éxito: Regla 1 no activa en min 30 (< 35)." : "❌ Falló: Regla 1 activó antes del min 35");
+
+// Sub-prueba 4.2: Minuto 50 (Dentro de rango 35-72) -> DEBE activar
+test4Match.fixture.id = 1005;
+test4Match.fixture.status.elapsed = 50;
+let alertsR1Mid = evaluateRules(test4Match, oddsTemplate, eventsRed, statsRed, isMajorLeague(test4Match.league));
+let r1Mid = alertsR1Mid.find(a => a.metadata.ruleType === 1);
+console.log("\nPrueba 4.2: Regla 1 al min 50 (dentro de rango 35-72)");
+console.log(r1Mid ? `✅ Éxito Regla 1 activada al min 50:\n${r1Mid.text}` : "❌ Falló Regla 1 en min 50");
+
+// Sub-prueba 4.3: Minuto 72 (Límite superior 72) -> DEBE activar
+test4Match.fixture.id = 1006;
+test4Match.fixture.status.elapsed = 72;
+let alertsR1Upper = evaluateRules(test4Match, oddsTemplate, eventsRed, statsRed, isMajorLeague(test4Match.league));
+let r1Upper = alertsR1Upper.find(a => a.metadata.ruleType === 1);
+console.log("\nPrueba 4.3: Regla 1 al min 72 (límite exacto 72)");
+console.log(r1Upper ? `✅ Éxito Regla 1 activada al min 72.` : "❌ Falló Regla 1 en min 72");
+
+// Sub-prueba 4.4: Minuto 75 (Fuera de rango > 72) -> NO debe activar
+test4Match.fixture.id = 1007;
+test4Match.fixture.status.elapsed = 75;
+let alertsR1Late = evaluateRules(test4Match, oddsTemplate, eventsRed, statsRed, isMajorLeague(test4Match.league));
+let r1Late = alertsR1Late.find(a => a.metadata.ruleType === 1);
+console.log("\nPrueba 4.4: Regla 1 al min 75 (fuera de rango > 72)");
+console.log(!r1Late ? "✅ Éxito: Regla 1 no activa en min 75 (> 72)." : "❌ Falló: Regla 1 activó después del min 72");
+
+// ============================================
+// Prueba 5: Verificación GREEN/RED Post-Partido
+// ============================================
+console.log("\nPrueba 5: Evaluación de Resultado Post-Partido (HT Comeback Remontado)");
 let alertMeta = r5Alert.metadata; // Metadata de la Regla 5 enviada en HT (0-1)
 let finalMatch = {
     fixture: { id: 1001, status: { short: 'FT' } },
@@ -86,5 +131,5 @@ evaluateAlertResults([alertMeta], finalMatch, [], []).then(veredicto => {
     console.log(`✅ Veredicto Generado:\n${veredicto[0].msg}`);
     console.log("\n--- Pruebas finalizadas con éxito ---");
 }).catch(err => {
-    console.error("❌ Error en Prueba 4:", err);
+    console.error("❌ Error en Prueba 5:", err);
 });

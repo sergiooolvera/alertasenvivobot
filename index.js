@@ -12,10 +12,6 @@ const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, get
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
-// Módulos de Béisbol (MLB) - Deshabilitados para canal separado
-// const { getLiveBaseballGames, getPreGameBaseballOdds, getBaseballGameById } = require('./baseballApiClient');
-// const { evaluateBaseballRules, evaluateBaseballAlertResults } = require('./baseballRulesEngine');
-
 // Servicio de IA
 const aiService = require('./aiService');
 
@@ -124,9 +120,8 @@ const lastStatsFetchTime = new Map();
 
 const THROTTLE_COOLDOWN_MS = 4 * 60 * 1000; // 4 minutos de cooldown
 
-// Set de partidos/juegos actualmente en vivo para evitar polling a partidos en progreso
+// Set de partidos actualmente en vivo para evitar polling a partidos en progreso
 let currentLiveFootballIds = new Set();
-let currentLiveBaseballIds = new Set();
 
 // Cola de alertas pendientes del sistema SafeOdds por cuota objetivo
 const pendingAlertsQueue = [];
@@ -673,18 +668,13 @@ async function checkMatches() {
                         lastMatchesAway: lastMatchesAway,
                         h2hMatches: h2hMatches
                     };
-                    console.log(`[index.js] Solicitando predicción de IA para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
-                    const contextGemini = {};
-                    const aiPrediction = await aiService.generatePrediction(matchData, 'football', contextGemini);
+
+                    console.log(`[index.js] Solicitando predicción de IA con DeepSeek para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);
+                    const contextDeepSeek = {};
+                    const aiPrediction = await aiService.generatePrediction(matchData, 'football', contextDeepSeek);
                     
                     if (aiPrediction) {
                         const recMatch = aiPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                        if (recMatch) {
-                            alert.metadata.aiRecommendation = recMatch[1].replace(/\*/g, '').trim();
-                        }
-                        const splitIndex = alert.text.indexOf('🎯');
-                        const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
-                        
                         const analysisMatch = aiPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
                         const oddMatch = aiPrediction.match(/📈\s*\*?\*?Momio Sugerido\*?\*?:?\s*\*?\*?\s*@?\s*([^\n]+)/i);
                         const confidenceMatch = aiPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
@@ -693,105 +683,34 @@ async function checkMatches() {
                         const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
                         const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
                         const confidence = confidenceMatch ? confidenceMatch[1] : '80';
-                        alert.metadata.geminiRecommendation = recommendation;
 
-                        // Obtener predicción de DeepSeek para el bloque dual
-                        let deepseekPrediction = null;
-                        const contextDeepSeek = {};
-                        try {
-                            deepseekPrediction = await aiService.generatePredictionDeepSeek(matchData, 'football', contextDeepSeek);
-                        } catch (err) {
-                            console.error("[index.js] Error al obtener recomendación de DeepSeek:", err.message);
-                        }
-
-                        let dsAnalysis = 'N/D';
-                        let dsRecommendation = 'N/D';
-                        let dsConfidence = '80';
-                        if (deepseekPrediction) {
-                            const dsAnalysisMatch = deepseekPrediction.match(/🧠\s*\*?\?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                            const dsRecMatch = deepseekPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                            const dsConfidenceMatch = deepseekPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
-
-                            dsAnalysis = dsAnalysisMatch ? dsAnalysisMatch[1].trim() : 'N/D';
-                            dsRecommendation = dsRecMatch ? dsRecMatch[1].replace(/\*/g, '').trim() : 'N/D';
-                            dsConfidence = dsConfidenceMatch ? dsConfidenceMatch[1] : '80';
-                            if (dsRecommendation && dsRecommendation !== 'N/D') {
-                                alert.metadata.deepseekRecommendation = dsRecommendation;
-                            }
-                        }
-
-                        // --- FILTRO DE CONSENSO IA ROBUSTO ---
+                        // --- FILTRO DE CONSENSO / CALIDAD PARA DEEPSEEK ---
                         const minRequiredConfidence = alert.metadata.minConfidence || 40;
-                        const isGeminiLowConfidence = parseInt(confidence) < minRequiredConfidence;
-                        const isGeminiAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada');
-                        
-                        // Descartar dobles oportunidades propuestas por Gemini debido a su bajo win rate histórico (47.8%)
-                        const isGeminiDoubleOpportunity = recommendation.toLowerCase().includes('doble oportunidad') || 
-                                                          recommendation.toLowerCase().includes('doble chance') || 
-                                                          recommendation.toLowerCase().includes('1x') || 
-                                                          recommendation.toLowerCase().includes('x2') ||
-                                                          recommendation.toLowerCase().includes('empate o');
+                        const isLowConfidence = parseInt(confidence) < minRequiredConfidence;
+                        const isAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada');
 
-                        let geminiDORealDiscarded = false;
-
-                        // Si Gemini propone DO pero DeepSeek tiene una recomendación activa válida, no abortamos todo el partido
-                        if (isGeminiDoubleOpportunity && deepseekPrediction && dsRecommendation && dsRecommendation !== 'N/D') {
-                            geminiDORealDiscarded = true;
-                            // La recomendación activa para SafeOdds/FinancialTracker pasa a ser la de DeepSeek
-                            alert.metadata.aiRecommendation = dsRecommendation;
-                            console.log(`[Consensus Filter] ⚠️ Gemini descartado por Doble Oportunidad (${recommendation}) para ${matchData.homeTeam} vs ${matchData.awayTeam}. Usando fallback de DeepSeek: ${dsRecommendation}.`);
-                        }
-
-                        if (isGeminiLowConfidence || isGeminiAvoiding || (isGeminiDoubleOpportunity && !geminiDORealDiscarded)) {
-                            let reason = "";
-                            if (isGeminiLowConfidence) reason = `baja confianza (${confidence}% < ${minRequiredConfidence}%)`;
-                            else if (isGeminiAvoiding) reason = `recomendó evitar (${recommendation})`;
-                            else if (isGeminiDoubleOpportunity) reason = `evitar mercado de Doble Oportunidad por bajo rendimiento histórico y sin fallback de DeepSeek (${recommendation})`;
-
-                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Motivo: Gemini ${reason}.`);
+                        if (isLowConfidence || isAvoiding) {
+                            let reason = isLowConfidence ? `baja confianza (${confidence}% < ${minRequiredConfidence}%)` : `recomendó evitar (${recommendation})`;
+                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Motivo: DeepSeek ${reason}.`);
                             alert.metadata.isSent = false;
                             alert.metadata.aiRecommendation = recommendation;
                             continue;
                         }
 
-                        let formattedAiSection = "";
-                        if (deepseekPrediction) {
-                            if (geminiDORealDiscarded) {
-                                formattedAiSection = 
-                                    `🤖 *ANÁLISIS DE IA - DUAL*\n` +
-                                    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                    `♊ *GOOGLE GEMINI*\n` +
-                                    `🧠 *Análisis:* ${analysis}\n` +
-                                    `🎯 *Apuesta:* ~${recommendation}~ (⛔ *Descartada por Doble Oportunidad*)\n` +
-                                    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                    `🐳 *DEEPSEEK*\n` +
-                                    `🧠 *Análisis:* ${dsAnalysis}\n` +
-                                    `🎯 *Apuesta:* *${dsRecommendation}* (Confianza: *${dsConfidence}%*) ✅ *Activa*\n` +
-                                    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                    `📈 *Momio Sugerido de Entrada:* *@1.60*`;
-                            } else {
-                                formattedAiSection = 
-                                    `🤖 *ANÁLISIS DE IA - DUAL*\n` +
-                                    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                    `♊ *GOOGLE GEMINI*\n` +
-                                    `🧠 *Análisis:* ${analysis}\n` +
-                                    `🎯 *Apuesta:* *${recommendation}* (Confianza: *${confidence}%*)\n` +
-                                    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                    `🐳 *DEEPSEEK*\n` +
-                                    `🧠 *Análisis:* ${dsAnalysis}\n` +
-                                    `🎯 *Apuesta:* *${dsRecommendation}* (Confianza: *${dsConfidence}%*)\n` +
-                                    `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                    `📈 *Momio Sugerido de Entrada:* *@1.60*`;
-                            }
-                        } else {
-                            // Fallback al formato clásico si DeepSeek falla (ej. falta de saldo)
-                            formattedAiSection = 
-                                `🤖 *ANÁLISIS INTELIGENTE DE IA*\n` +
-                                 `🧠 ${analysis}\n\n` +
-                                 `🎯 *Recomendación:* *${recommendation}*\n` +
-                                 `📈 *Momio Sugerido:* *@${oddVal}*\n` +
-                                 `🔥 *Confianza Estimada:* *${confidence}%*`;
-                        }
+                        alert.metadata.aiRecommendation = recommendation;
+                        alert.metadata.deepseekRecommendation = recommendation;
+
+                        const splitIndex = alert.text.indexOf('🎯');
+                        const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
+
+                        const formattedAiSection = 
+                            `🤖 *ANÁLISIS DE IA - DEEPSEEK*\n` +
+                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                            `🐳 *DEEPSEEK*\n` +
+                            `🧠 *Análisis:* ${analysis}\n` +
+                            `🎯 *Apuesta:* *${recommendation}* (Confianza: *${confidence}%*)\n` +
+                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                            `📈 *Momio Sugerido de Entrada:* *@${oddVal}*`;
 
                         textToSend = `${header}\n\n${formattedAiSection}`;
 
@@ -799,75 +718,20 @@ async function checkMatches() {
                             textToSend += `\n\n⚠️ *Nota:* Este partido pertenece a una liga menor (se envía de inmediato sin validar cuotas en vivo).`;
                         }
 
-                        const suggestedOddMatch = aiPrediction.match(/📈 Momio Sugerido:\s*@?\s*([0-9.]+)/i);
-                        suggestedOdd = suggestedOddMatch ? parseFloat(suggestedOddMatch[1]) : 1.60;
+                        suggestedOdd = parseFloat(oddVal) || 1.60;
                     } else {
-                        // Gemini falló, intentamos usar solo DeepSeek
-                        console.log(`[index.js] ⚠️ Gemini falló o devolvió nulo. Intentando obtener predicción de DeepSeek para ${matchData.homeTeam} vs ${matchData.awayTeam}...`);
-                        let deepseekPrediction = null;
-                        const contextDeepSeek = {};
-                        try {
-                            deepseekPrediction = await aiService.generatePredictionDeepSeek(matchData, 'football', contextDeepSeek);
-                        } catch (err) {
-                            console.error("[index.js] Error al obtener recomendación de DeepSeek:", err.message);
-                        }
-
-                        if (deepseekPrediction) {
-                            const dsAnalysisMatch = deepseekPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                            const dsRecMatch = deepseekPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                            const dsConfidenceMatch = deepseekPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
-
-                            const dsAnalysis = dsAnalysisMatch ? dsAnalysisMatch[1].trim() : 'N/D';
-                            const dsRecommendation = dsRecMatch ? dsRecMatch[1].replace(/\*/g, '').trim() : 'N/D';
-                            const dsConfidence = dsConfidenceMatch ? dsConfidenceMatch[1] : '80';
-
-                            // --- FILTRO DE CONSENSO/CALIDAD BÁSICO PARA DEEPSEEK ---
-                            const minRequiredConfidence = alert.metadata.minConfidence || 40;
-                            const isDsLowConfidence = parseInt(dsConfidence) < minRequiredConfidence;
-                            const isDsAvoiding = dsRecommendation.toLowerCase().includes('evitar') || dsRecommendation.toLowerCase().includes('no recomendada');
-
-                            if (isDsLowConfidence || isDsAvoiding) {
-                                let reason = isDsLowConfidence ? `baja confianza (${dsConfidence}% < ${minRequiredConfidence}%)` : `recomendó evitar (${dsRecommendation})`;
-                                console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Motivo: DeepSeek ${reason}.`);
-                                alert.metadata.isSent = false;
-                                alert.metadata.aiRecommendation = dsRecommendation;
-                                continue;
-                            }
-
-                            const splitIndex = alert.text.indexOf('🎯');
-                            const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
-
-                            const formattedAiSection = 
-                                `🤖 *ANÁLISIS DE IA - DEEPSEEK (FALLBACK)*\n` +
-                                `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                `🐳 *DEEPSEEK*\n` +
-                                `🧠 *Análisis:* ${dsAnalysis}\n` +
-                                `🎯 *Apuesta:* *${dsRecommendation}* (Confianza: *${dsConfidence}%*)\n` +
-                                `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                `📈 *Momio Sugerido de Entrada:* *@1.60*`;
-
-                            textToSend = `${header}\n\n${formattedAiSection}`;
-
-                            if (isMinorLeague) {
-                                textToSend += `\n\n⚠️ *Nota:* Este partido pertenece a una liga menor (se envía de inmediato sin validar cuotas en vivo).`;
-                            }
-
-                            alert.metadata.aiRecommendation = dsRecommendation;
-                            alert.metadata.deepseekRecommendation = dsRecommendation;
-                            alert.metadata.geminiRecommendation = 'N/D (Gemini falló)';
-                            alert.metadata.aiFallbackUsed = false;
-                            suggestedOdd = 1.60;
-                        } else {
-                            // Fallback estático cuando AMBAS IAs fallan completamente
-                            console.log(`[index.js] ⚠️ Ambas IAs (Gemini y DeepSeek) fallaron. Usando fallback estático para ${matchData.homeTeam} vs ${matchData.awayTeam}.`);
-                            const defaultRecMatch = alert.text.match(/🎯\s*\*?Recomendación\*?:\s*([^\n]+)/i);
-                            const defaultRec = defaultRecMatch ? defaultRecMatch[1].replace(/\*/g, '').trim() : 'Recomendación por defecto';
-                            alert.metadata.aiRecommendation = defaultRec;
-                            alert.metadata.geminiRecommendation = defaultRec;
-                            alert.metadata.aiFallbackUsed = true;
-                            suggestedOdd = 1.60;
-                        }
+                        // DeepSeek falló o no devolvió predicción, usamos fallback estático
+                        console.log(`[index.js] ⚠️ DeepSeek no devolvió predicción. Usando fallback estático para ${matchData.homeTeam} vs ${matchData.awayTeam}.`);
+                        const defaultRecMatch = alert.text.match(/🎯\s*\*?Recomendación\*?:\s*([^\n]+)/i);
+                        const defaultRec = defaultRecMatch ? defaultRecMatch[1].replace(/\*/g, '').trim() : 'Recomendación por defecto';
+                        alert.metadata.aiRecommendation = defaultRec;
+                        alert.metadata.deepseekRecommendation = defaultRec;
+                        alert.metadata.aiFallbackUsed = true;
+                        suggestedOdd = 1.60;
                     }
+                } catch (e) {
+                    console.error("[index.js] Error al procesar alerta con IA:", e.message);
+                }
 
                     // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                     const targetOdd = 1.60;
@@ -1075,10 +939,6 @@ async function checkFinishedMatches() {
 }
 
 // ===================================================
-// MONITOREO DE BÉISBOL (MLB) - REMOVIDO PARA CANAL SEPARADO
-// ===================================================
-
-// ===================================================
 // SISTEMA DE PARLAYS DEL DÍA Y EN VIVO (IA)
 // ===================================================
 const liveAlertsQueue = [];
@@ -1132,7 +992,7 @@ async function handleLiveParlayQueue(fixtureId, sport, homeTeam, awayTeam, textT
             combinedOdd *= cleanOddVal;
             combinedConfidence *= (alert.confidence / 100);
 
-            const sportIcon = alert.sport === 'baseball' ? '⚾' : '⚽';
+            const sportIcon = '⚽';
             selections.push(`${idx + 1}. ${sportIcon} *${alert.homeTeam} vs ${alert.awayTeam}* -> Pronóstico: *${alert.recommendation}* (Momio: @${cleanOddVal.toFixed(2)})`);
         });
 
@@ -1219,7 +1079,7 @@ async function generateAndSendDailyParlay(timeString) {
             return;
         }
 
-        console.log(`[Parlay ${timeString}] Enviando ${eligibleMatches.length} partidos elegibles a Gemini para armar el Parlay...`);
+        console.log(`[Parlay ${timeString}] Enviando ${eligibleMatches.length} partidos elegibles a DeepSeek para armar el Parlay...`);
         const parlayMsg = await aiService.generateDailyParlay(eligibleMatches);
 
         if (parlayMsg) {

@@ -118,7 +118,9 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - Regla 8 (Nueva): Favorito Domina HT, reemplaza el viejo "Favorito Sufre" disparándose con cualquier empate al medio tiempo si el favorito registra > 60% posesión y alta generación ofensiva.
   - Regla 3 (Sorpresa): Acortada al minuto 41 y abortada si el favorito está masacrando al underdog.
   - Regla 4 (Asedio): Exigencia de tiros a puerta (>= 4) y ataques peligrosos.
--   * * [ 2 0 2 6 - 0 8 - 0 7 ] * * :   C o r r e c c i ó n   d e   e r r o r   d e   s i n t a x i s   e n   R e g l a   1   ( V e r s i ó n   2 . 2 . 1 ) .   S e   a r r e g l ó   u n   e r r o r   c r í t i c o   ( \ S y n t a x E r r o r :   U n e x p e c t e d   e n d   o f   i n p u t \ )   c a u s a d o   p o r   u n a   l l a v e   d e   c i e r r e   f a l t a n t e   e n   e l   b l o q u e   d e   l a   R e g l a   1   e n   \  u l e s E n g i n e . j s \ ,   e l   c u a l   p r o v o c a b a   e l   c o l a p s o   d e l   b o t   e n   d e s p l i e g u e .   S e   i n c r e m e n t ó   l a   v e r s i ó n   a   v 2 . 2 . 1   p a r a   r e f l e j a r   e l   h o t f i x .  
+-   * * [ 2 0 2 6 - 0 8 - 0 7 ] * * :   C o r r e c c i ó n   d e   e r r o r   d e   s i n t a x i s   e n   R e g l a   1   ( V e r s i ó n   2 . 2 . 1 ) .   S e   a r r e g l ó   u n   e r r o r   c r í t i c o   ( \ S y n t a x E r r o r :   U n e x p e c t e d   e n d   o f   i n p u t \ )   c a u s a d o   p o r   u n a   l l a v e   d e   c i e r r e   f a l t a n t e   e n   e l   b l o q u e   d e   l a   R e g l a   1   e n   \ 
+ u l e s E n g i n e . j s \ ,   e l   c u a l   p r o v o c a b a   e l   c o l a p s o   d e l   b o t   e n   d e s p l i e g u e .   S e   i n c r e m e n t ó   l a   v e r s i ó n   a   v 2 . 2 . 1   p a r a   r e f l e j a r   e l   h o t f i x . 
+ 
  
 - **[2026-08-08]**: Auditoría completa de rendimiento de `messages.html` del día 7 de agosto de 2026. Se desarrolló un script de procesamiento `scratch/analyze_yesterday.js` que parseó 22 alertas y 22 veredictos post-partido registrados en el chat. Se determinó un 50.0% de aciertos global (11 GREEN / 11 RED). En la comparativa de IAs, DeepSeek logró un 50.0% de aciertos (11 GREEN / 11 RED en 22 apuestas) mientras que Google Gemini logró un 47.6% (10 GREEN / 11 RED en 21 apuestas recomendadas, más 1 evitada). La Regla 1 (Tarjeta Roja Estratégica) mantuvo una efectividad impecable del 100% (3/3 GREEN), mientras que la Regla 3 (Sorpresa Tempranera) registró 8 GREEN y 10 RED. Se registraron 3 parlays del día.
 - **[2026-08-08]**: Generación de Dashboard Interactivo Premium `resumen_ayer.html`. Se construyó el script `scratch/generar_resumen_ayer.js` que compila los resultados de auditoría de la jornada del 7 de agosto de 2026 en una interfaz web responsiva en modo oscuro con diseño Glassmorphism, tipografía Google Fonts (Inter/Outfit) e iconos Lucide. El dashboard incluye tarjetas KPI de efectividad (50.0% GREEN / 50.0% RED), comparativa visual en barras de progreso entre Google Gemini (47.6%) y DeepSeek (50.0%), filtro dinámico por estado de veredicto (Todas, GREEN, RED, Parlays) y barra de búsqueda en tiempo real.
@@ -205,7 +207,9 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Pruebas de Integración**: Se ejecutó exitosamente `test.js` para garantizar la estabilidad de las reglas activas.
   - **Control de Versión**: Se actualizó la versión en `package.json` a la versión `2.8.0` por remoción de funcionalidad (SemVer).
 
-- **[2026-08-19]**: Actualizaci�n del sistema de evaluaci�n de apuestas para soportar marcadores nulos/reembolsados. Se modific� \evaluatePredictionOutcome\ y \esolveVerdictViaWeb\ en \iService.js\ para poder retornar \VOID\ mediante \isVoid\ en lugar de forzar a GREEN o RED. En \ulesEngine.js\, se adapt� el veredicto final dual de Gemini y DeepSeek, mostrando ? BLACK cuando el resultado de la apuesta es anulado (VOID o CANCELLED) en lugar de un veredicto RED incorrecto.
+- **[2026-08-19]**: Actualizacin del sistema de evaluacin de apuestas para soportar marcadores nulos/reembolsados. Se modific \evaluatePredictionOutcome\ y \
+esolveVerdictViaWeb\ en \iService.js\ para poder retornar \VOID\ mediante \isVoid\ en lugar de forzar a GREEN o RED. En \
+ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando ? BLACK cuando el resultado de la apuesta es anulado (VOID o CANCELLED) en lugar de un veredicto RED incorrecto.
 
 ### 20 de Agosto 2026
 - Se recibió actualización de `messages.html`.
@@ -223,3 +227,23 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
   - **Pivote Estratégico**: Con base en estos hallazgos, el usuario determinó enfocarse exclusivamente en DeepSeek como el motor de IA principal para futuras predicciones.
   - **Mejora del Motor DeepSeek**: Se actualizó el arreglo de modelos de fallback en `aiService.js` para priorizar `deepseek-reasoner`. Esto eleva las capacidades lógicas del bot al forzar cadena de pensamiento (Chain of Thought) antes de emitir un pronóstico, minimizando alucinaciones y subiendo la precisión en apuestas en vivo. `deepseek-chat` queda como primer fallback.
   - **Control de Versión**: Se actualizó `package.json` a la versión `2.8.3` por mejora en el motor lógico.
+
+- **[2026-08-27]**: Eliminacion Completa de Modulos y Referencias de Beisbol (Version 2.9.0).
+  - **Eliminacion de Archivos**: Se eliminaron los archivos `baseballApiClient.js`, `baseballRulesEngine.js` y `testBaseball.js`.
+  - **Refactorizacion de `aiService.js`**: Se eliminaron las funciones `formatBaseballStats`, `buildBaseballPrompt`, `buildBaseballPromptDeepSeek` y `formatBaseballFinalData`. Se simplificaron `generatePrediction`, `generatePredictionDeepSeek`, `buildDailyParlayPrompt`, `evaluatePredictionOutcome` y `resolveVerdictViaWeb` para procesar unica y exclusivamente datos de futbol.
+  - **Limpieza en `index.js` y Pruebas**: Se eliminaron importaciones residuales, la variable de cache `currentLiveBaseballIds`, comentarios huerfanos de MLB y la logica condicional de deportes en parlays. Se limpiaron `test_omission.js` y `testAi.js`.
+  - **Validacion**: Se ejecutaron exitosamente los tests unitarios (`node test.js` y `node test_omission.js`), comprobando el 100% de operatividad en las reglas de futbol y la verificacion GREEN/RED.
+  - **Control de Version**: Se incremento la version a `2.9.0` en `package.json` siguiendo el estandar SemVer.
+
+- **[2026-08-27]**: Ajuste de Intervalo de Minutos en Regla 1: Tarjeta Roja Estratégica (Versión 2.9.1).
+  - **Ajuste de Rango Temporal**: Se modificó la condición de activación de la Regla 1 en `rulesEngine.js` para que solo opere entre los minutos 35 y 72 (`elapsed >= 35 && elapsed <= 72`), sustituyendo el rango previo (`elapsed < 60`).
+  - **Optimización de Consulta de Estadísticas y Eventos**: Se ajustaron `needsStats` y `needsEvents` en `rulesEngine.js` para consultar datos hasta el minuto 85 continuo, cubriendo el nuevo rango sin vacíos entre los minutos 60 y 70.
+  - **Pruebas de Validación**: Se añadieron pruebas de límites de tiempo en `test.js` verificando que la alerta no salte al minuto 30 o 75, y que active correctamente en los minutos 50 y 72.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.9.1` (SemVer).
+
+- **[2026-08-27]**: Migracion Exclusiva a DeepSeek y Remocion Total de Google Gemini (Version 2.10.0).
+  - **Servicio de IA (`aiService.js`)**: Se elimino toda la infraestructura de Google Gemini (lectura de `GEMINI_API_KEYS`, rotacion de claves, modelos `gemini-3.5-flash`/`gemini-flash-latest`, prompt dual y llamadas Google Search Grounding). Se unificaron todas las operaciones (`generatePrediction`, `generateDailyParlay`, `evaluatePredictionOutcome` y `resolveVerdictViaWeb`) para operar de manera exclusiva y robusta con la API de DeepSeek (`deepseek-reasoner` y `deepseek-chat`).
+  - **Orquestador (`index.js`)**: Se eliminaron las consultas duales paralelas y el formato hibrido de Telegram. Ahora las alertas se analizan y presentan directamente bajo el bloque exclusivo de DeepSeek (DEEPSEEK), aplicando los filtros de confianza y calidad directamente sobre su salida.
+  - **Motor de Reglas y Veredictos (`rulesEngine.js`)**: Se simplifico la evaluacion post-partido para calificar directamente los pronosticos de DeepSeek y emitir un mensaje de veredicto limpio y unificado (DEEPSEEK: GREEN/RED/BLACK).
+  - **Configuracion**: Se elimino `GEMINI_API_KEYS` de `.env.example` y se actualizo `financialTracker.js`.
+  - **Control de Version**: Se incremento la version a `2.10.0` en `package.json` siguiendo el estandar SemVer.
