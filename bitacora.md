@@ -251,3 +251,7 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
 - **[2026-08-27]**: Expansion de Ligas Top y Copas Nacionales de Elite (Version 2.10.1).
   - **Ampliacion de Torneos Monitoreados**: Se agregaron a `config.js` las copas y ligas competitivas de primer nivel con cobertura estadistica completa y alta liquidez en casas de apuestas: Championship, FA Cup, EFL Carabao Cup, Copa del Rey, Coppa Italia, DFB-Pokal, Coupe de France, Leagues Cup, CONCACAF Champions Cup, Copa do Brasil, Copa Argentina, UEFA Super Cup, UEFA Nations League y FIFA Club World Cup.
   - **Control de Version**: Se actualizo `package.json` a la version `2.10.1` (SemVer).
+
+- **[2026-08-27]**: Integracion de la Liga Profesional Saudi y AFC Champions League (Version 2.10.2).
+  - **Inclusion de la Liga Saudita**: Se agregaron a `config.js` la Saudi Pro League (ID 307), la King Cup (ID 308) y la AFC Champions League (ID 17), reconociendo sus palabras clave (`saudi pro league`, `roshn saudi league`, etc.) para aprovechar su alta media de goles, cobertura de stats completa en vivo y mercados abiertos en casas de apuestas.
+  - **Control de Version**: Se actualizo `package.json` a la version `2.10.2` (SemVer).

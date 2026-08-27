@@ -28,6 +28,9 @@ const MAJOR_LEAGUE_IDS = new Set([
     253, // MLS (EEUU)
     807, // Leagues Cup
     16,  // CONCACAF Champions Cup
+    307, // Saudi Pro League (Arabia Saudita - Liga de CR7)
+    308, // King Cup (Arabia Saudita)
+    17,  // AFC Champions League (Champions de Asia)
     13,  // Copa Libertadores
     11,  // Copa Sudamericana
     1,   // World Cup
@@ -69,6 +72,11 @@ const MAJOR_LEAGUE_KEYWORDS = [
     'mls',
     'leagues cup',
     'concacaf champions',
+    'saudi pro league',
+    'saudi professional league',
+    'roshn saudi league',
+    'king cup',
+    'afc champions',
     'world cup',
     'club world cup',
     'euro'
