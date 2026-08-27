@@ -265,3 +265,10 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Correccion de Error de Sintaxis**: Se removio un bloque de cierre prematuro `catch (e)` residual en la seccion de IA de `index.js` que ocasionaba un error de arranque en Node.js (`SyntaxError: Unexpected token 'catch'`).
   - **Validacion de Sintaxis**: Se comprobo con `node --check` todos los archivos JavaScript del proyecto (`index.js`, `aiService.js`, `rulesEngine.js`, `config.js`, `financialTracker.js`).
   - **Control de Version**: Se incremento la version a `2.11.1` en `package.json` (SemVer).
+
+- **[2026-08-27]**: Reescritura de SafeOdds: Eliminación de Expiración por Tiempo y Limpieza de Ligas Menores (Versión 2.12.0).
+  - **Eliminación de Cancelación por Expiración**: Se eliminó por completo el descarte por tiempo límite (`waitMinutes`) en `processPendingAlerts()`. Ahora las alertas encoladas en `pendingAlertsQueue` permanecen activas esperando a que la cuota en vivo alcance o supere `@1.60` durante todo el tiempo que el partido continúe en juego y no haya cambio de marcador.
+  - **Limpieza de Referencias a Ligas Menores**: Dado que el bot opera exclusivamente sobre torneos y copas mayores de élite (`isMajorLeague`), se removieron todas las variables, condiciones y avisos residuales (`isMinorLeague`) en el flujo de despacho de alertas y SafeOdds en `index.js`.
+  - **Validación Automatizada**: Se crearon y ejecutaron pruebas de integración (`scratch/testSafeOddsRefactor.js`) y regresión (`test.js`), validando exitosamente la persistencia de alertas sin expiración temporal, activación por momio `@1.60+`, cancelación por gol y cancelación por partido finalizado.
+  - **Control de Versión**: Se incrementó la versión a `2.12.0` en `package.json` siguiendo el estándar SemVer.
+

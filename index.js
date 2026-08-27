@@ -294,28 +294,7 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
             }
         }
         
-        // 4. Si transcurre el tiempo de espera máximo y no se ha alcanzado la cuota real, cancelar la alerta
-        const elapsedMinutesSinceIncident = elapsed - alert.minuteAtIncident;
-        if (elapsedMinutesSinceIncident >= alert.waitMinutes) {
-            const logMsg = `❌ *[SafeOdds]* Alerta cancelada para *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}) por expirar el tiempo de espera (${alert.waitMinutes} min) sin alcanzar el momio objetivo real de @${alert.targetOdd.toFixed(2)}.`;
-            console.log(`[SafeOdds] Tiempo de espera agotado sin alcanzar el momio objetivo. Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
-            logSafeOddsEvent(logMsg);
-            
-            if (typeof discardedAlertsLog !== 'undefined') {
-                discardedAlertsLog.push({
-                    fixtureId: alert.fixtureId,
-                    home: alert.homeTeam,
-                    away: alert.awayTeam,
-                    ruleName: alert.ruleName,
-                    reason: `Expiró tiempo de espera (${alert.waitMinutes}m) sin alcanzar cuota real @${alert.targetOdd.toFixed(2)}`
-                });
-            }
-            
-            pendingAlertsQueue.splice(i, 1);
-            continue;
-        }
-        
-        // 5. Si se activa el trigger, enviar la alerta
+        // 4. Si se activa el trigger, enviar la alerta
         if (oddTriggered) {
             const logMsg = `✅ *[SafeOdds]* ¡Alerta ACTIVADA! *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}). Momio: *@${currentOddValue.toFixed(2)}* (${method}) en el minuto ${elapsed}'`;
             console.log(`[SafeOdds] ¡Alerta ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${currentOddValue.toFixed(2)} (${method}) en el minuto ${elapsed}'`);
@@ -352,7 +331,7 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
 
             pendingAlertsQueue.splice(i, 1);
         } else {
-            console.log(`[SafeOdds] Esperando. ${alert.homeTeam} vs ${alert.awayTeam}. Momio objetivo: @${alert.targetOdd.toFixed(2)}, Momio en vivo/est: @${currentOddValue ? currentOddValue.toFixed(2) : 'N/D'} (${method}). Minuto actual: ${elapsed}' (espera est restante: ${alert.waitMinutes - (elapsed - alert.minuteAtIncident)}m)`);
+            console.log(`[SafeOdds] Esperando. ${alert.homeTeam} vs ${alert.awayTeam}. Momio objetivo: @${alert.targetOdd.toFixed(2)}, Momio en vivo/est: @${currentOddValue ? currentOddValue.toFixed(2) : 'N/D'} (${method}). Minuto actual: ${elapsed}'`);
         }
     }
 }
@@ -645,7 +624,6 @@ async function checkMatches() {
 
                 let textToSend = alert.text;
                 let suggestedOdd = 1.60;
-                let isMinorLeague = false;
 
                 try {
                     const ruleThirdPart = alert.text.split('\n\n').slice(2).join('\n\n');
@@ -714,10 +692,6 @@ async function checkMatches() {
 
                         textToSend = `${header}\n\n${formattedAiSection}`;
 
-                        if (isMinorLeague) {
-                            textToSend += `\n\n⚠️ *Nota:* Este partido pertenece a una liga menor (se envía de inmediato sin validar cuotas en vivo).`;
-                        }
-
                         suggestedOdd = parseFloat(oddVal) || 1.60;
                     } else {
                         // DeepSeek falló o no devolvió predicción, usamos fallback estático
@@ -747,9 +721,8 @@ async function checkMatches() {
                     const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('córner') || recLower.includes('córneres') || recLower.includes('tiro de esquina') || recLower.includes('tiros de esquina');
                     const isUnsupportedMarket = isCards || isCorners;
 
-                    if (!oddsArray || isUnsupportedMarket || isMinorLeague) {
-                        const reason = !oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 
-                                       (isUnsupportedMarket ? 'mercado no monitorizable en vivo (tarjetas/córneres)' : 'partido de liga menor');
+                    if (!oddsArray || isUnsupportedMarket) {
+                        const reason = !oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 'mercado no monitorizable en vivo (tarjetas/córneres)';
                         console.log(`[SafeOdds] Enviando alerta de inmediato para ${match.teams.home.name} vs ${match.teams.away.name} por tratarse de un escenario ${reason}.`);
                         for (const chatId of subscribedChats) {
                             try {
@@ -836,17 +809,9 @@ async function checkMatches() {
                                 metadata: alert.metadata
                             });
                         } else {
-                            const timeRemaining = 90 - elapsed;
-                            let waitMinutes = 0;
                             const startOdd = liveOddVal !== null ? liveOddVal : estimatedStartOdd;
-                            if (startOdd < targetOdd && timeRemaining > 0) {
-                                const ratio = (startOdd - 1) / (targetOdd - 1);
-                                waitMinutes = timeRemaining * (1 - Math.pow(Math.max(0.01, ratio), 0.9));
-                                waitMinutes = Math.max(1, Math.min(8, Math.round(waitMinutes))); // Acotado a 8 minutos máximo
-                            }
-
-                            const logMsg = `⏳ *[SafeOdds]* Alerta encolada para *${match.teams.home.name} vs ${match.teams.away.name}* (Regla: ${alert.metadata.ruleName}). Cuota inicial: *@${startOdd.toFixed(2)}*, Objetivo: *@${targetOdd.toFixed(2)}*, Tiempo máx espera: *${waitMinutes} min*.`;
-                            console.log(`[SafeOdds] Encolando alerta pendiente para ${match.teams.home.name} vs ${match.teams.away.name}. Cuota inicial/en-vivo: @${startOdd.toFixed(2)}, Objetivo: @${targetOdd.toFixed(2)}, Espera: ${waitMinutes} min.`);
+                            const logMsg = `⏳ *[SafeOdds]* Alerta encolada para *${match.teams.home.name} vs ${match.teams.away.name}* (Regla: ${alert.metadata.ruleName}). Cuota inicial: *@${startOdd.toFixed(2)}*, Objetivo: *@${targetOdd.toFixed(2)}*.`;
+                            console.log(`[SafeOdds] Encolando alerta pendiente para ${match.teams.home.name} vs ${match.teams.away.name}. Cuota inicial/en-vivo: @${startOdd.toFixed(2)}, Objetivo: @${targetOdd.toFixed(2)}.`);
                             logSafeOddsEvent(logMsg);
 
                             pendingAlertsQueue.push({
@@ -864,7 +829,6 @@ async function checkMatches() {
                                 timestamp: Date.now(),
                                 minuteAtIncident: elapsed,
                                 estimatedStartOdd: startOdd,
-                                waitMinutes,
                                 sent: false,
                                 metadata: alert.metadata // Guardar metadatos completos para el tracker
                             });
