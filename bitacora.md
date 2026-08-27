@@ -247,3 +247,7 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Motor de Reglas y Veredictos (`rulesEngine.js`)**: Se simplifico la evaluacion post-partido para calificar directamente los pronosticos de DeepSeek y emitir un mensaje de veredicto limpio y unificado (DEEPSEEK: GREEN/RED/BLACK).
   - **Configuracion**: Se elimino `GEMINI_API_KEYS` de `.env.example` y se actualizo `financialTracker.js`.
   - **Control de Version**: Se incremento la version a `2.10.0` en `package.json` siguiendo el estandar SemVer.
+
+- **[2026-08-27]**: Expansion de Ligas Top y Copas Nacionales de Elite (Version 2.10.1).
+  - **Ampliacion de Torneos Monitoreados**: Se agregaron a `config.js` las copas y ligas competitivas de primer nivel con cobertura estadistica completa y alta liquidez en casas de apuestas: Championship, FA Cup, EFL Carabao Cup, Copa del Rey, Coppa Italia, DFB-Pokal, Coupe de France, Leagues Cup, CONCACAF Champions Cup, Copa do Brasil, Copa Argentina, UEFA Super Cup, UEFA Nations League y FIFA Club World Cup.
+  - **Control de Version**: Se actualizo `package.json` a la version `2.10.1` (SemVer).
