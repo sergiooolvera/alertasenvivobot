@@ -260,3 +260,8 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Limpieza de Regla de Bajo Rendimiento**: Se removieron por completo la definicion de la Regla 3 y su evaluacion post-partido (`case 3`) en `rulesEngine.js`. Esta decision responde a su bajo rendimiento historico (~59% Win Rate), eliminando ruido en las alertas y elevando la efectividad proyectada del bot globalmente.
   - **Actualizacion de Pruebas**: Se actualizo `test_omission.js` para emplear reglas activas (`ruleType: 5`) en las verificaciones de omisiones.
   - **Control de Version**: Se incremento la version a `2.11.0` en `package.json` (SemVer).
+
+- **[2026-08-27]**: Correccion de Sintaxis en Bloque Try/Catch de `index.js` (Version 2.11.1).
+  - **Correccion de Error de Sintaxis**: Se removio un bloque de cierre prematuro `catch (e)` residual en la seccion de IA de `index.js` que ocasionaba un error de arranque en Node.js (`SyntaxError: Unexpected token 'catch'`).
+  - **Validacion de Sintaxis**: Se comprobo con `node --check` todos los archivos JavaScript del proyecto (`index.js`, `aiService.js`, `rulesEngine.js`, `config.js`, `financialTracker.js`).
+  - **Control de Version**: Se incremento la version a `2.11.1` en `package.json` (SemVer).

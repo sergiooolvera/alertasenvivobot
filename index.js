@@ -729,9 +729,6 @@ async function checkMatches() {
                         alert.metadata.aiFallbackUsed = true;
                         suggestedOdd = 1.60;
                     }
-                } catch (e) {
-                    console.error("[index.js] Error al procesar alerta con IA:", e.message);
-                }
 
                     // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
                     const targetOdd = 1.60;
