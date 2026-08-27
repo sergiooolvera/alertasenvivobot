@@ -255,3 +255,8 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
 - **[2026-08-27]**: Integracion de la Liga Profesional Saudi y AFC Champions League (Version 2.10.2).
   - **Inclusion de la Liga Saudita**: Se agregaron a `config.js` la Saudi Pro League (ID 307), la King Cup (ID 308) y la AFC Champions League (ID 17), reconociendo sus palabras clave (`saudi pro league`, `roshn saudi league`, etc.) para aprovechar su alta media de goles, cobertura de stats completa en vivo y mercados abiertos en casas de apuestas.
   - **Control de Version**: Se actualizo `package.json` a la version `2.10.2` (SemVer).
+
+- **[2026-08-27]**: Eliminacion Definitiva de la Regla 3: Sorpresa Tempranera (Version 2.11.0).
+  - **Limpieza de Regla de Bajo Rendimiento**: Se removieron por completo la definicion de la Regla 3 y su evaluacion post-partido (`case 3`) en `rulesEngine.js`. Esta decision responde a su bajo rendimiento historico (~59% Win Rate), eliminando ruido en las alertas y elevando la efectividad proyectada del bot globalmente.
+  - **Actualizacion de Pruebas**: Se actualizo `test_omission.js` para emplear reglas activas (`ruleType: 5`) en las verificaciones de omisiones.
+  - **Control de Version**: Se incremento la version a `2.11.0` en `package.json` (SemVer).

@@ -158,46 +158,6 @@ ${msgHeader}
         }
     }
 
-    /*
-    // --- REGLA 3: Sorpresa Tempranera ---
-    // DESACTIVADA [2026-08-18]: Esta regla tiene un Win Rate histórico del 59.6% según la auditoría de messages.html.
-    // Su eliminación eleva la efectividad proyectada del bot al 81.68%.
-    if (underdog.odd > 3.50 && elapsed >= 30 && elapsed <= 41 && underdogWinning) {
-        let isMasacrado = false;
-        if (hasStats) {
-            const favPoss = getStat(favorite.team, 'Ball Possession');
-            const favShots = getStat(favorite.team, 'Total Shots');
-            isMasacrado = favPoss >= 70 && favShots >= 8;
-        }
-        if (isMasacrado) return alerts; // Abortamos la regla 3 si el favorito está arrasando
-        const ruleId = `${fixtureId}_rule3`;
-        if (!alertedMatches.has(ruleId)) {
-            const text = `🔥 *REGLA 3: SORPRESA TEMPRANERA (30'+ STATS)*
- ━━━━━━━━━━━━━━━━━━━━━━━━━━
- ${msgHeader}
- ⚠️ *Análisis:* El underdog (${underdog.team}) ha tomado la ventaja. Se han acumulado 30+ min de datos estadísticos.
- ━━━━━━━━━━━━━━━━━━━━━━━━━━
- 🎯 *Recomendación:* Ambos Anotan (BTTS), Próximo Gol del Favorito o Doble Chance (si la confianza de la IA es ≥75%).
- 🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-            alerts.push({
-                text,
-                metadata: {
-                    ruleId,
-                    ruleType: 3,
-                    ruleName: 'Sorpresa Tempranera',
-                    fixtureId,
-                    homeTeam: fixture.teams.home.name,
-                    awayTeam: fixture.teams.away.name,
-                    underdogTeam: underdog.team,
-                    minConfidence: 75,
-                    scoreAtAlert: { home: homeGoals, away: awayGoals },
-                    odds
-                }
-            });
-            alertedMatches.add(ruleId);
-        }
-    }
-    */
 
     // --- REGLA 4: Asedio (Late Goal) ---
     if (elapsed >= 75 && elapsed <= 83 && favorite.odd < 1.50 && favorite.goals <= underdog.goals && stats && stats.length > 0) {
@@ -549,22 +509,6 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                 } else {
                     isGreen = false;
                     explanation = `El partido terminó 0-0 sin goles.`;
-                }
-                break;
-
-            case 3: // Sorpresa tempranera
-                // GREEN si el underdog al menos empató o ganó el partido
-                {
-                    const isHomeUnderdog = meta.odds.home > meta.odds.away;
-                    const underdogGoals = isHomeUnderdog ? finalHome : finalAway;
-                    const favoriteGoals = isHomeUnderdog ? finalAway : finalHome;
-                    if (underdogGoals >= favoriteGoals) {
-                        isGreen = true;
-                        explanation = `El underdog (${meta.underdogTeam}) mantuvo el resultado (${finalHome}-${finalAway}).`;
-                    } else {
-                        isGreen = false;
-                        explanation = `El favorito remontó y el partido terminó ${finalHome}-${finalAway}.`;
-                    }
                 }
                 break;
 

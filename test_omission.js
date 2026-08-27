@@ -5,19 +5,20 @@ async function testOmission() {
 
     // 1. Simulación Fútbol (Alerta Evitada - Control tradicional RED)
     const alertMetaFootballRed = {
-        ruleId: 'test_123_rule3',
-        ruleType: 3, // Sorpresa Tempranera
-        ruleName: 'Sorpresa Tempranera',
+        ruleId: 'test_123_rule5',
+        ruleType: 5, // HT Comeback
+        ruleName: 'HT Comeback Favorito',
         homeTeam: 'Real Madrid',
         awayTeam: 'Barcelona',
-        underdogTeam: 'Barcelona',
+        favoriteTeam: 'Real Madrid',
+        favoriteSide: 'home',
         odds: { home: 1.50, draw: 3.80, away: 5.00 }, // Real Madrid favorito
         aiRecommendation: 'Evitar apuesta / No recomendada'
     };
 
-    // Simulamos partido finalizado donde el favorito ganó (lo que significa que el underdog perdió, tradicionalmente RED)
+    // Simulamos partido finalizado donde el favorito no remontó (perdió 1-2, tradicionalmente RED)
     const finalFixtureFootballRed = {
-        goals: { home: 3, away: 1 } // Real Madrid 3 - 1 Barcelona
+        goals: { home: 1, away: 2 } // Real Madrid 1 - 2 Barcelona
     };
 
     console.log('Evaluando Fútbol (Caso RED tradicional)...');
@@ -32,19 +33,20 @@ async function testOmission() {
 
     // 2. Simulación Fútbol (Alerta Evitada - Control tradicional GREEN)
     const alertMetaFootballGreen = {
-        ruleId: 'test_124_rule3',
-        ruleType: 3, // Sorpresa Tempranera
-        ruleName: 'Sorpresa Tempranera',
+        ruleId: 'test_124_rule5',
+        ruleType: 5, // HT Comeback
+        ruleName: 'HT Comeback Favorito',
         homeTeam: 'Bayern Munich',
         awayTeam: 'Stuttgart',
-        underdogTeam: 'Stuttgart',
+        favoriteTeam: 'Bayern Munich',
+        favoriteSide: 'home',
         odds: { home: 1.45, draw: 4.00, away: 6.00 }, // Bayern favorito
         aiRecommendation: 'Evitar apuesta / No recomendada'
     };
 
-    // Simulamos partido finalizado donde empataron (el underdog mantuvo resultado, tradicionalmente GREEN)
+    // Simulamos partido finalizado donde el favorito sí remontó (ganó 3-2, tradicionalmente GREEN)
     const finalFixtureFootballGreen = {
-        goals: { home: 2, away: 2 } // Bayern 2 - 2 Stuttgart
+        goals: { home: 3, away: 2 } // Bayern 3 - 2 Stuttgart
     };
 
     console.log('Evaluando Fútbol (Caso GREEN tradicional)...');
