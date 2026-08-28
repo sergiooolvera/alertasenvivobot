@@ -276,4 +276,11 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Envío Inmediato de Goles Tardíos**: Se excluyó la Regla 4 (`Asedio Intenso (Late Goal)`) del flujo de retención en la cola de SafeOdds en `index.js`. Al dispararse entre los minutos 75 y 83 con una ventana temporal crítica antes de finalizar el partido, las alertas de Asedio Intenso ahora se envían de forma inmediata al canal de Telegram sin quedar encoladas esperando momio.
   - **Control de Versión**: Se incrementó la versión a `2.12.1` en `package.json` (SemVer).
 
+- **[2026-08-27]**: Re-análisis Dinámico de Regla 1 (Tarjeta Roja) ante Gol del Rival con 10 Hombres (Versión 2.13.0).
+  - **Re-análisis Inteligente en SafeOdds**: Se implementó una lógica de gestión diferenciada de cambios de marcador en `processPendingAlerts()`. Cuando una alerta de Regla 1 (`Tarjeta Roja Estratégica`) está encolada y el equipo en inferioridad numérica anota un gol (ej. Osasuna se pone 0-2 contra Real Madrid), la alerta ya no se cancela. En su lugar, el sistema solicita un re-análisis en tiempo real a DeepSeek con el nuevo marcador, minuto y estadísticas actualizadas, formateando el mensaje con el distintivo `🔄 ACTUALIZACIÓN TRAS GOL EN CONTRA` y despachando de inmediato si la cuota alcanza `@1.60`.
+  - **Cancelación para Equipo Beneficiado**: Si el gol lo anota el equipo con superioridad numérica (ej. Real Madrid empata 1-1), la alerta en cola se cancela normalmente por reducción de cuota en el mercado.
+  - **Validación Automatizada**: Se crearon y ejecutaron pruebas de integración (`scratch/testRule1Reanalysis.js`) y regresión (`test.js`), validando al 100% todos los casos.
+  - **Control de Versión**: Se incrementó la versión a `2.13.0` en `package.json` siguiendo el estándar SemVer.
+
+
 

@@ -268,8 +268,133 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         const currentHomeGoals = match.goals.home || 0;
         const currentAwayGoals = match.goals.away || 0;
         
-        // 2. Si el marcador cambió, la alerta ya no sirve, eliminar de la cola
+        // 2. Si el marcador cambió
         if (currentHomeGoals !== alert.scoreAtTime.home || currentAwayGoals !== alert.scoreAtTime.away) {
+            const homeGoalsDiff = currentHomeGoals - alert.scoreAtTime.home;
+            const awayGoalsDiff = currentAwayGoals - alert.scoreAtTime.away;
+
+            const isHomeRed = alert.metadata && alert.metadata.teamWithRed === alert.homeTeam;
+            const isAwayRed = alert.metadata && alert.metadata.teamWithRed === alert.awayTeam;
+            const isRule1 = alert.metadata && alert.metadata.ruleType === 1;
+            const redTeamScored = isRule1 && ((isHomeRed && homeGoalsDiff > 0 && awayGoalsDiff === 0) || (isAwayRed && awayGoalsDiff > 0 && homeGoalsDiff === 0));
+
+            if (redTeamScored) {
+                const scoringTeam = alert.metadata.teamWithRed;
+                const logMsg = `🔄 *[SafeOdds]* Gol del equipo con roja (*${scoringTeam}*) en *${alert.homeTeam} vs ${alert.awayTeam}* (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} ➔ ${currentHomeGoals}-${currentAwayGoals}). Re-analizando con DeepSeek...`;
+                console.log(`[SafeOdds] Gol del equipo con roja (${scoringTeam}) en ${alert.homeTeam} vs ${alert.awayTeam} (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} -> ${currentHomeGoals}-${currentAwayGoals}). Re-analizando con DeepSeek...`);
+                logSafeOddsEvent(logMsg);
+
+                try {
+                    const tpl = alert.matchDataTemplate || {};
+                    const matchData = {
+                        homeTeam: alert.homeTeam,
+                        awayTeam: alert.awayTeam,
+                        leagueName: tpl.leagueName || (match.league && match.league.name ? match.league.name : 'Desconocida'),
+                        leagueRound: tpl.leagueRound || (match.league && match.league.round ? match.league.round : 'Ronda Desconocida'),
+                        elapsed: match.fixture.status.elapsed || elapsed,
+                        score: { home: currentHomeGoals, away: currentAwayGoals },
+                        odds: oddsCache.get(alert.fixtureId) || alert.metadata.odds || { home: 1.5, draw: 3.5, away: 5.0 },
+                        ruleName: alert.ruleName,
+                        ruleDetails: tpl.ruleDetails || `Tarjeta roja para ${scoringTeam}. Marcador actual tras nuevo gol: ${currentHomeGoals}-${currentAwayGoals}.`,
+                        stats: statsCache.get(alert.fixtureId) || [],
+                        events: eventsCache.get(alert.fixtureId) || [],
+                        lastMatchesHome: tpl.lastMatchesHome || [],
+                        lastMatchesAway: tpl.lastMatchesAway || [],
+                        h2hMatches: tpl.h2hMatches || []
+                    };
+
+                    console.log(`[SafeOdds] Solicitando nuevo pronóstico de IA (DeepSeek) tras gol de ${scoringTeam}...`);
+                    const contextDeepSeek = {};
+                    const aiPrediction = await aiService.generatePrediction(matchData, 'football', contextDeepSeek);
+
+                    if (aiPrediction) {
+                        const recMatch = aiPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+                        const analysisMatch = aiPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+                        const oddMatch = aiPrediction.match(/📈\s*\*?\*?Momio Sugerido\*?\*?:?\s*\*?\*?\s*@?\s*([^\n]+)/i);
+                        const confidenceMatch = aiPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
+
+                        const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
+                        const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
+                        const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
+                        const confidence = confidenceMatch ? confidenceMatch[1] : '80';
+
+                        alert.aiRecommendation = recommendation;
+                        alert.metadata.aiRecommendation = recommendation;
+                        alert.metadata.deepseekRecommendation = recommendation;
+                        alert.scoreAtTime = { home: currentHomeGoals, away: currentAwayGoals };
+                        alert.suggestedOdd = parseFloat(oddVal) || 1.60;
+
+                        const baseHeader = (alert.originalAlertText || alert.textToSend || '').split('🎯')[0].trim();
+                        const updatedHeader = baseHeader
+                            .replace(/⏱️\s*\*Minuto:\*\s*\d+'/i, `⏱️ *Minuto:* ${match.fixture.status.elapsed || elapsed}'`)
+                            .replace(/📊\s*\*Marcador:\*\s*\d+\s*-\s*\d+/i, `📊 *Marcador:* ${currentHomeGoals} - ${currentAwayGoals}`);
+
+                        const formattedAiSection = 
+                            `🔄 *ACTUALIZACIÓN TRAS GOL EN CONTRA (${currentHomeGoals}-${currentAwayGoals})*\n` +
+                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                            `🐳 *DEEPSEEK (RE-ANÁLISIS)*\n` +
+                            `🧠 *Análisis:* ${analysis}\n` +
+                            `🎯 *Apuesta:* *${recommendation}* (Confianza: *${confidence}%*)\n` +
+                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                            `📈 *Momio Sugerido de Entrada:* *@${oddVal}*`;
+
+                        alert.textToSend = `${updatedHeader}\n\n${formattedAiSection}`;
+
+                        const oddsArray = liveOddsMap.get(alert.fixtureId);
+                        let liveOddVal = null;
+                        if (oddsArray) {
+                            liveOddVal = getLiveOddForRecommendation(oddsArray, alert.aiRecommendation, alert.homeTeam, alert.awayTeam);
+                        }
+
+                        if (liveOddVal !== null && liveOddVal >= alert.targetOdd) {
+                            const triggerLogMsg = `✅ *[SafeOdds]* ¡Alerta de Re-análisis ACTIVADA! *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}). Momio: *@${liveOddVal.toFixed(2)}* en el minuto ${elapsed}'`;
+                            console.log(`[SafeOdds] ¡Alerta de Re-análisis ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${liveOddVal.toFixed(2)} en el minuto ${elapsed}'`);
+                            logSafeOddsEvent(triggerLogMsg);
+
+                            for (const chatId of subscribedChats) {
+                                try {
+                                    await sendSafeMarkdownMessage(chatId, alert.textToSend);
+                                } catch (e) {
+                                    console.error(`Error enviando alerta pendiente al chat ${chatId}:`, e.message);
+                                }
+                            }
+
+                            const tracked = trackedMatches.get(alert.fixtureId);
+                            if (tracked) {
+                                const meta = tracked.alertsMetadata.find(m => m.ruleName === alert.ruleName);
+                                if (meta) {
+                                    meta.isSent = true;
+                                    meta.scoreAtAlert = { home: currentHomeGoals, away: currentAwayGoals };
+                                    meta.aiRecommendation = recommendation;
+                                }
+                            }
+
+                            if (alert.textToSend) {
+                                await handleLiveParlayQueue(alert.fixtureId, 'football', alert.homeTeam, alert.awayTeam, alert.textToSend);
+                            }
+
+                            financialTracker.addPlay({
+                                fixtureId: alert.fixtureId,
+                                home: alert.homeTeam,
+                                away: alert.awayTeam,
+                                recommendation: alert.aiRecommendation,
+                                suggestedOdd: liveOddVal || alert.targetOdd || 1.60,
+                                ruleName: alert.ruleName,
+                                metadata: alert.metadata
+                            });
+
+                            pendingAlertsQueue.splice(i, 1);
+                            continue;
+                        } else {
+                            console.log(`[SafeOdds] Alerta actualizada en cola tras re-análisis para ${alert.homeTeam} vs ${alert.awayTeam}. Esperando cuota @${alert.targetOdd.toFixed(2)} (Actual: @${liveOddVal ? liveOddVal.toFixed(2) : 'N/D'}).`);
+                            continue;
+                        }
+                    }
+                } catch (reErr) {
+                    console.error(`[SafeOdds] Error al re-analizar alerta con IA:`, reErr.message);
+                }
+            }
+
             const logMsg = `❌ *[SafeOdds]* Alerta cancelada para *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}) por cambio de marcador (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} ➔ ${currentHomeGoals}-${currentAwayGoals}).`;
             console.log(`[SafeOdds] El marcador cambió (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} -> ${currentHomeGoals}-${currentAwayGoals}). Cancelando alerta pendiente para ${alert.homeTeam} vs ${alert.awayTeam}`);
             logSafeOddsEvent(logMsg);
@@ -834,7 +959,16 @@ async function checkMatches() {
                                 minuteAtIncident: elapsed,
                                 estimatedStartOdd: startOdd,
                                 sent: false,
-                                metadata: alert.metadata // Guardar metadatos completos para el tracker
+                                metadata: alert.metadata, // Guardar metadatos completos para el tracker
+                                matchDataTemplate: {
+                                    leagueName: match.league && match.league.name ? match.league.name : 'Desconocida',
+                                    leagueRound: match.league && match.league.round ? match.league.round : 'Ronda Desconocida',
+                                    ruleDetails: cleanRuleDetails,
+                                    lastMatchesHome,
+                                    lastMatchesAway,
+                                    h2hMatches
+                                },
+                                originalAlertText: alert.text
                             });
                         }
                     }
