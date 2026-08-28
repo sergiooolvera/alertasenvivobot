@@ -721,8 +721,12 @@ async function checkMatches() {
                     const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('córner') || recLower.includes('córneres') || recLower.includes('tiro de esquina') || recLower.includes('tiros de esquina');
                     const isUnsupportedMarket = isCards || isCorners;
 
-                    if (!oddsArray || isUnsupportedMarket) {
-                        const reason = !oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 'mercado no monitorizable en vivo (tarjetas/córneres)';
+                    // Asedio Intenso (Late Goal) ocurre en los minutos finales (75-83') y requiere envío inmediato por urgencia de tiempo
+                    const isLateGoal = alert.metadata.ruleType === 4 || (alert.metadata.ruleName && alert.metadata.ruleName.toLowerCase().includes('asedio'));
+
+                    if (!oddsArray || isUnsupportedMarket || isLateGoal) {
+                        const reason = isLateGoal ? 'regla de Asedio Intenso / Gol Tardío (envío inmediato por urgencia temporal)' :
+                                       (!oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 'mercado no monitorizable en vivo (tarjetas/córneres)');
                         console.log(`[SafeOdds] Enviando alerta de inmediato para ${match.teams.home.name} vs ${match.teams.away.name} por tratarse de un escenario ${reason}.`);
                         for (const chatId of subscribedChats) {
                             try {

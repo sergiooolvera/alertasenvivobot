@@ -272,3 +272,8 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Validación Automatizada**: Se crearon y ejecutaron pruebas de integración (`scratch/testSafeOddsRefactor.js`) y regresión (`test.js`), validando exitosamente la persistencia de alertas sin expiración temporal, activación por momio `@1.60+`, cancelación por gol y cancelación por partido finalizado.
   - **Control de Versión**: Se incrementó la versión a `2.12.0` en `package.json` siguiendo el estándar SemVer.
 
+- **[2026-08-27]**: Exclusión de Regla 4 (Asedio Intenso / Late Goal) de SafeOdds (Versión 2.12.1).
+  - **Envío Inmediato de Goles Tardíos**: Se excluyó la Regla 4 (`Asedio Intenso (Late Goal)`) del flujo de retención en la cola de SafeOdds en `index.js`. Al dispararse entre los minutos 75 y 83 con una ventana temporal crítica antes de finalizar el partido, las alertas de Asedio Intenso ahora se envían de forma inmediata al canal de Telegram sin quedar encoladas esperando momio.
+  - **Control de Versión**: Se incrementó la versión a `2.12.1` en `package.json` (SemVer).
+
+
