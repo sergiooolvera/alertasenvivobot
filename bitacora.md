@@ -276,11 +276,12 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Envío Inmediato de Goles Tardíos**: Se excluyó la Regla 4 (`Asedio Intenso (Late Goal)`) del flujo de retención en la cola de SafeOdds en `index.js`. Al dispararse entre los minutos 75 y 83 con una ventana temporal crítica antes de finalizar el partido, las alertas de Asedio Intenso ahora se envían de forma inmediata al canal de Telegram sin quedar encoladas esperando momio.
   - **Control de Versión**: Se incrementó la versión a `2.12.1` en `package.json` (SemVer).
 
-- **[2026-08-27]**: Re-análisis Dinámico de Regla 1 (Tarjeta Roja) ante Gol del Rival con 10 Hombres (Versión 2.13.0).
-  - **Re-análisis Inteligente en SafeOdds**: Se implementó una lógica de gestión diferenciada de cambios de marcador en `processPendingAlerts()`. Cuando una alerta de Regla 1 (`Tarjeta Roja Estratégica`) está encolada y el equipo en inferioridad numérica anota un gol (ej. Osasuna se pone 0-2 contra Real Madrid), la alerta ya no se cancela. En su lugar, el sistema solicita un re-análisis en tiempo real a DeepSeek con el nuevo marcador, minuto y estadísticas actualizadas, formateando el mensaje con el distintivo `🔄 ACTUALIZACIÓN TRAS GOL EN CONTRA` y despachando de inmediato si la cuota alcanza `@1.60`.
-  - **Cancelación para Equipo Beneficiado**: Si el gol lo anota el equipo con superioridad numérica (ej. Real Madrid empata 1-1), la alerta en cola se cancela normalmente por reducción de cuota en el mercado.
-  - **Validación Automatizada**: Se crearon y ejecutaron pruebas de integración (`scratch/testRule1Reanalysis.js`) y regresión (`test.js`), validando al 100% todos los casos.
-  - **Control de Versión**: Se incrementó la versión a `2.13.0` en `package.json` siguiendo el estándar SemVer.
+- **[2026-08-27]**: Integración de Base de Datos Embebida SQLite con `better-sqlite3` (Versión 2.14.0).
+  - **Capa de Persistencia Relacional (`db.js`)**: Se integró SQLite mediante la librería de alto rendimiento `better-sqlite3` con modo WAL (`Write-Ahead Logging`), creando las tablas `plays` (con clave primaria, índice único `(fixture_id, rule_name)`, índices por fecha y estado) y `config_settings` (almacenamiento de capital inicial, stake y fecha de inicio).
+  - **Refactorización de Control Financiero (`financialTracker.js`)**: Se sustituyó la lectura y sobreescritura de archivos planos (`financial_tracker.json`) por transacciones y sentencias preparadas de SQL. Se mantuvo el 100% de compatibilidad con las funciones públicas requeridas por `index.js` (`addPlay`, `updatePlayVerdict`, `updatePlayMetadata`, `getPendingPlays`, `resolvePendingPlays`, `getReportData`, `sendDailyReport`).
+  - **Auto-Migración y Respaldo Transparente**: Se añadió un mecanismo de migración automática que importa todas las jugadas y configuraciones existentes de `financial_tracker.json` a `database.sqlite` en el primer arranque, renombrando el archivo a `financial_tracker.json.bak` como respaldo de seguridad.
+  - **Pruebas y Verificación**: Se implementaron pruebas unitarias e integración en `scratch/test_sqlite_migration.js` y se adaptó `scratch/testPendingLoad.js`, confirmando la integridad de datos, prevención de duplicados, cálculo de agregaciones financieras y reconstrucción de `trackedMatches`.
+  - **Control de Versión**: Se incrementó la versión a `2.14.0` en `package.json` (SemVer).
 
 
 

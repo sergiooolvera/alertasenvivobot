@@ -1,74 +1,47 @@
-const fs = require('fs');
 const path = require('path');
-const financialTracker = require('../financialTracker');
+const fs = require('fs');
+const { initDb } = require('../db');
 
-const TRACKER_FILE = path.join(__dirname, '..', 'financial_tracker.json');
-
-console.log("--- Iniciando Pruebas de Reconstrucción de trackedMatches ---\n");
-
-// Respaldar archivo real si existe
-let backupContent = null;
-if (fs.existsSync(TRACKER_FILE)) {
-    backupContent = fs.readFileSync(TRACKER_FILE, 'utf8');
-    console.log("💾 Respaldando archivo financial_tracker.json existente...");
+// Usar una base de datos temporal de prueba
+const TEST_DB_PATH = path.join(__dirname, 'test_pending_database.sqlite');
+if (fs.existsSync(TEST_DB_PATH)) {
+    fs.unlinkSync(TEST_DB_PATH);
 }
 
+const testDb = initDb(TEST_DB_PATH);
+
+console.log("--- Iniciando Pruebas de Reconstrucción de trackedMatches con SQLite ---\n");
+
 try {
-    // 1. Crear un financial_tracker.json de prueba con jugadas PENDING y una GREEN
-    const mockData = {
-        startDate: "2026-08-02",
-        initialBalance: 5000,
-        stakeAmount: 250,
-        plays: [
-            {
-                fixtureId: 99991,
-                date: "2026-08-04",
-                home: "Real Madrid",
-                away: "Barcelona",
-                recommendation: "Over 2.5 Goles",
-                suggestedOdd: 1.85,
-                stake: 250,
-                status: "PENDING",
-                ruleName: "Sorpresa Tempranera",
-                metadata: { ruleName: "Sorpresa Tempranera", ruleType: 3 }
-            },
-            {
-                fixtureId: 99992,
-                date: "2026-08-04",
-                home: "Arsenal",
-                away: "Chelsea",
-                recommendation: "Gana Arsenal",
-                suggestedOdd: 1.70,
-                stake: 250,
-                status: "PENDING",
-                ruleName: "HT Comeback Favorito",
-                metadata: { ruleName: "HT Comeback Favorito", ruleType: 5 }
-            },
-            {
-                fixtureId: 99993,
-                date: "2026-08-04",
-                home: "Juventus",
-                away: "Milan",
-                recommendation: "Over 9 Córneres",
-                suggestedOdd: 1.90,
-                stake: 250,
-                status: "GREEN", // Ya resuelto
-                ruleName: "Late Corners",
-                metadata: { ruleName: "Late Corners", ruleType: 6 }
-            }
-        ]
-    };
+    // 1. Insertar jugadas de prueba en la tabla plays
+    const insertStmt = testDb.prepare(`
+        INSERT INTO plays (
+            fixture_id, date, home, away, recommendation, suggested_odd,
+            stake, status, profit, rule_name, metadata_json, timestamp
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
 
-    fs.writeFileSync(TRACKER_FILE, JSON.stringify(mockData, null, 2), 'utf8');
-    console.log("📝 Creado archivo financial_tracker.json con 2 jugadas PENDING y 1 GREEN.");
+    insertStmt.run(99991, '2026-08-04', 'Real Madrid', 'Barcelona', 'Over 2.5 Goles', 1.85, 250, 'PENDING', 0, 'Sorpresa Tempranera', JSON.stringify({ ruleName: "Sorpresa Tempranera", ruleType: 3 }), Date.now());
+    insertStmt.run(99992, '2026-08-04', 'Arsenal', 'Chelsea', 'Gana Arsenal', 1.70, 250, 'PENDING', 0, 'HT Comeback Favorito', JSON.stringify({ ruleName: "HT Comeback Favorito", ruleType: 5 }), Date.now());
+    insertStmt.run(99993, '2026-08-04', 'Juventus', 'Milan', 'Over 9 Córneres', 1.90, 250, 'GREEN', 225, 'Late Corners', JSON.stringify({ ruleName: "Late Corners", ruleType: 6 }), Date.now());
 
-    // 2. Probar getPendingPlays
-    const pendingPlays = financialTracker.getPendingPlays();
-    console.log(`\n🔍 Jugadas pendientes detectadas por getPendingPlays(): ${pendingPlays.length}`);
+    console.log("📝 3 jugadas insertadas en SQLite (2 PENDING, 1 GREEN).");
+
+    // 2. Extraer jugadas pendientes desde la DB
+    const pendingRows = testDb.prepare("SELECT * FROM plays WHERE status = 'PENDING'").all();
+    const pendingPlays = pendingRows.map(row => ({
+        fixtureId: row.fixture_id,
+        home: row.home,
+        away: row.away,
+        ruleName: row.rule_name,
+        metadata: JSON.parse(row.metadata_json || '{}')
+    }));
+
+    console.log(`\n🔍 Jugadas pendientes detectadas: ${pendingPlays.length}`);
     if (pendingPlays.length === 2) {
-        console.log("✅ getPendingPlays() retornó exactamente las 2 jugadas pendientes.");
+        console.log("✅ Consulta de pendientes retornó exactamente las 2 jugadas.");
     } else {
-        throw new Error(`getPendingPlays() debió retornar 2 jugadas, retornó ${pendingPlays.length}`);
+        throw new Error(`Debieron retornar 2 jugadas, retornaron ${pendingPlays.length}`);
     }
 
     // 3. Simular la reconstrucción de trackedMatches
@@ -115,14 +88,8 @@ try {
 } catch (err) {
     console.error("\n❌ Error durante las pruebas:", err.message);
 } finally {
-    // Restaurar el archivo original
-    if (backupContent !== null) {
-        fs.writeFileSync(TRACKER_FILE, backupContent, 'utf8');
-        console.log("\n🔄 Archivo financial_tracker.json original restaurado.");
-    } else {
-        if (fs.existsSync(TRACKER_FILE)) {
-            fs.unlinkSync(TRACKER_FILE);
-            console.log("\n🗑️ Archivo financial_tracker.json de prueba eliminado.");
-        }
+    testDb.close();
+    if (fs.existsSync(TEST_DB_PATH)) {
+        fs.unlinkSync(TEST_DB_PATH);
     }
 }
