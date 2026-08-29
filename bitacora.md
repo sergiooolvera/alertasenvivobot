@@ -278,10 +278,17 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
 
 - **[2026-08-27]**: Integración de Base de Datos Embebida SQLite con `better-sqlite3` (Versión 2.14.0).
   - **Capa de Persistencia Relacional (`db.js`)**: Se integró SQLite mediante la librería de alto rendimiento `better-sqlite3` con modo WAL (`Write-Ahead Logging`), creando las tablas `plays` (con clave primaria, índice único `(fixture_id, rule_name)`, índices por fecha y estado) y `config_settings` (almacenamiento de capital inicial, stake y fecha de inicio).
-  - **Refactorización de Control Financiero (`financialTracker.js`)**: Se sustituyó la lectura y sobreescritura de archivos planos (`financial_tracker.json`) por transacciones y sentencias preparadas de SQL. Se mantuvo el 100% de compatibilidad con las funciones públicas requeridas por `index.js` (`addPlay`, `updatePlayVerdict`, `updatePlayMetadata`, `getPendingPlays`, `resolvePendingPlays`, `getReportData`, `sendDailyReport`).
-  - **Auto-Migración y Respaldo Transparente**: Se añadió un mecanismo de migración automática que importa todas las jugadas y configuraciones existentes de `financial_tracker.json` a `database.sqlite` en el primer arranque, renombrando el archivo a `financial_tracker.json.bak` como respaldo de seguridad.
-  - **Pruebas y Verificación**: Se implementaron pruebas unitarias e integración en `scratch/test_sqlite_migration.js` y se adaptó `scratch/testPendingLoad.js`, confirmando la integridad de datos, prevención de duplicados, cálculo de agregaciones financieras y reconstrucción de `trackedMatches`.
-  - **Control de Versión**: Se incrementó la versión a `2.14.0` en `package.json` (SemVer).
+- **[2026-08-28]**: Habilitación de Monitoreo de Ligas Menores en Reglas Generales e Integración de la Liga de Chile (Versión 2.15.0).
+  - **Monitoreo Abierto para Ligas Menores**: Se removió el descarte temprano por liga (`if (!isTop) return;`) en el ciclo de escaneo en vivo de `index.js`.
+  - **Exclusividad de Reglas Avanzadas**: Las reglas avanzadas (Regla 5: HT Comeback, Regla 6: Late Corners y Regla 7: Partido Caliente) permanecen reservadas exclusivamente para torneos de élite (`isTopLeague = true`).
+  - **Integración de Torneos de Chile**: Se incorporaron a `config.js` (`MAJOR_LEAGUE_IDS` y `MAJOR_LEAGUE_KEYWORDS`) la **Primera División de Chile** (ID 265), la **Copa Chile** (ID 267) y la **Supercopa de Chile** (ID 527), dotándolas de cobertura total en las 7 reglas.
+  - **Control de Versión**: Se incrementó la versión a `2.15.0` en `package.json` (SemVer).
+
+- **[2026-08-28]**: Delimitación Estricta de Ligas Menores Exclusivamente a Reglas 1 y 4 (Versión 2.15.1).
+  - **Alcance Exclusivo para Ligas Menores**: Se ajustó `rulesEngine.js` para que los partidos de ligas menores (`!isTopLeague`) únicamente evalúen la **Regla 1 (Tarjeta Roja Estratégica)** y la **Regla 4 (Asedio Intenso / Late Goal)**.
+  - **Reubicación de Reglas 8 y 9**: La Regla 8 (Favorito Domina HT) y la Regla 9 (Gol Inminente Global) fueron trasladadas al bloque de ligas principales (`isTopLeague`), evitando falsos positivos por dominancia en ligas de baja liquidez.
+  - **Optimización de Consumo API (`needsStats` / `needsEvents`)**: En ligas menores solo se solicitan eventos en el rango de tarjeta roja (minutos 35-72) y estadísticas en las ventanas clave (min 35-72 y 75-83), reduciendo sustancialmente las peticiones innecesarias a la API.
+  - **Control de Versión**: Se incrementó la versión a `2.15.1` en `package.json` (SemVer).
 
 
 

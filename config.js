@@ -21,6 +21,9 @@ const MAJOR_LEAGUE_IDS = new Set([
     88,  // Eredivisie (Países Bajos)
     94,  // Primeira Liga (Portugal)
     262, // Liga MX (México)
+    265, // Primera División (Chile)
+    267, // Copa Chile
+    527, // Supercopa de Chile
     128, // Liga Profesional (Argentina)
     130, // Copa Argentina
     71,  // Brasileirão Serie A (Brasil)
@@ -64,6 +67,7 @@ const MAJOR_LEAGUE_KEYWORDS = [
     'eredivisie',
     'primeira liga',
     'liga mx',
+    'copa chile',
     'copa argentina',
     'copa do brasil',
     'copa libertadores',
@@ -89,7 +93,12 @@ function isMajorLeague(league) {
     }
     if (league.name) {
         const nameLower = league.name.toLowerCase();
-        return MAJOR_LEAGUE_KEYWORDS.some(kw => nameLower.includes(kw));
+        if (MAJOR_LEAGUE_KEYWORDS.some(kw => nameLower.includes(kw))) {
+            return true;
+        }
+        if (league.country && league.country.toLowerCase() === 'chile' && (nameLower.includes('primera') || nameLower.includes('copa'))) {
+            return true;
+        }
     }
     return false;
 }

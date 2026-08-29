@@ -650,9 +650,6 @@ async function checkMatches() {
         }
 
         const isTop = isMajorLeague(match.league);
-        if (!isTop) {
-            return; // ⛔ Omitir ligas menores (no se monitorean por falta de cobertura estadística/cuotas)
-        }
         
         if (!oddsCache.has(fixtureId)) {
             await new Promise(r => setTimeout(r, 100));

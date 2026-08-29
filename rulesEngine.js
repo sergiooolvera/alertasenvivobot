@@ -11,6 +11,10 @@ function needsStats(fixture, odds, isTopLeague = false) {
         return false;
     }
     const elapsed = fixture.fixture.status.elapsed;
+    if (!isTopLeague) {
+        // En ligas menores solo se requieren estadísticas para Regla 1 (posesión) o Regla 4 (asedio min 75-83)
+        return (elapsed >= 35 && elapsed <= 72) || (elapsed >= 75 && elapsed <= 83);
+    }
     return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
 
@@ -20,6 +24,10 @@ function needsStats(fixture, odds, isTopLeague = false) {
 function needsEvents(fixture, odds, isTopLeague = false) {
     if (!odds || odds === 'NO_ODDS') return false;
     const elapsed = fixture.fixture.status.elapsed;
+    if (!isTopLeague) {
+        // En ligas menores solo se requieren eventos para Regla 1 (tarjetas min 35-72)
+        return (elapsed >= 35 && elapsed <= 72);
+    }
     return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
 
@@ -68,9 +76,9 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
 💵 *Momios Iniciales:* 🏠 ${odds.home}  •  🤝 ${odds.draw}  •  🚀 ${odds.away}
 🔍 *Flashscore:* [Buscar Partido](${matchSearchUrl})`;
 
-    // ==========================================
-    // REGLAS GENERALES (APLICAN A TODAS LAS LIGAS)
-    // ==========================================
+    // =========================================================================
+    // REGLAS GENERALES: APLICAN A TODAS LAS LIGAS (MAYORES Y MENORES) [1 y 4]
+    // =========================================================================
 
     // --- REGLA 1: Tarjeta Roja ---
     if (elapsed >= 35 && elapsed <= 72 && (isDraw || underdogWinning)) {
@@ -114,50 +122,6 @@ ${msgHeader}
         }
     }
     }
-
-    // --- REGLA 8: Favorito Domina HT (Cualquier Empate) ---
-    if (favorite.odd < 1.40 && isDraw) {
-        if (fixture.fixture.status.short === 'HT' || elapsed === 45) {
-            let isDominating = false;
-            if (hasStats) {
-                const favPoss = getStat(favorite.team, 'Ball Possession');
-                const favShots = getStat(favorite.team, 'Shots on Goal');
-                const favCorners = getStat(favorite.team, 'Corner Kicks');
-                isDominating = favPoss >= 60 && (favShots >= 3 || favCorners >= 4);
-            } else {
-                isDominating = favorite.odd < 1.30; // Fallback: super favorito
-            }
-
-            if (isDominating) {
-                const ruleId = `${fixtureId}_rule8`;
-                if (!alertedMatches.has(ruleId)) {
-                    const text = `⏳ *REGLA 8: FAVORITO DOMINA HT*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-${msgHeader}
-⚠️ *Análisis:* El favorito (${favorite.team}) empata al medio tiempo pero domina estadísticamente.
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Gana Favorito 2da Mitad o Over Goles.
-🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-                    alerts.push({
-                        text,
-                        metadata: {
-                            ruleId,
-                            ruleType: 8,
-                            ruleName: 'Favorito Domina HT',
-                            fixtureId,
-                            homeTeam: fixture.teams.home.name,
-                            awayTeam: fixture.teams.away.name,
-                            favoriteTeam: favorite.team,
-                            scoreAtAlert: { home: homeGoals, away: awayGoals },
-                            odds
-                        }
-                    });
-                    alertedMatches.add(ruleId);
-                }
-            }
-        }
-    }
-
 
     // --- REGLA 4: Asedio (Late Goal) ---
     if (elapsed >= 75 && elapsed <= 83 && favorite.odd < 1.50 && favorite.goals <= underdog.goals && stats && stats.length > 0) {
@@ -206,48 +170,91 @@ ${msgHeader}
         }
     }
 
-    // --- REGLA 9: Gol Inminente Global ---
-    if (hasStats && elapsed > 0) {
-        const homeShotsOnGoal = getStat(fixture.teams.home.name, 'Shots on Goal');
-        const awayShotsOnGoal = getStat(fixture.teams.away.name, 'Shots on Goal');
-        const totalShotsOnGoal = homeShotsOnGoal + awayShotsOnGoal;
-        
-        // Dispara si el total de tiros a puerta supera 1 tiro cada 6 minutos (ej. 10 tiros al min 60)
-        // Se requiere un mínimo de 5 tiros a puerta para evitar alertas prematuras en los primeros minutos.
-        if (totalShotsOnGoal >= 5 && totalShotsOnGoal > (elapsed / 6)) {
-            const ruleId = `${fixtureId}_rule9`;
-            if (!alertedMatches.has(ruleId)) {
-                const text = `💥 *REGLA 9: GOL INMINENTE GLOBAL*
+    // =========================================================================
+    // REGLAS AVANZADAS (EXCLUSIVAS PARA LIGAS IMPORTANTES / TOP LEAGUES)
+    // =========================================================================
+    if (isTopLeague) {
+
+        // --- REGLA 8: Favorito Domina HT (Cualquier Empate) ---
+        if (favorite.odd < 1.40 && isDraw) {
+            if (fixture.fixture.status.short === 'HT' || elapsed === 45) {
+                let isDominating = false;
+                if (hasStats) {
+                    const favPoss = getStat(favorite.team, 'Ball Possession');
+                    const favShots = getStat(favorite.team, 'Shots on Goal');
+                    const favCorners = getStat(favorite.team, 'Corner Kicks');
+                    isDominating = favPoss >= 60 && (favShots >= 3 || favCorners >= 4);
+                } else {
+                    isDominating = favorite.odd < 1.30; // Fallback: super favorito
+                }
+
+                if (isDominating) {
+                    const ruleId = `${fixtureId}_rule8`;
+                    if (!alertedMatches.has(ruleId)) {
+                        const text = `⏳ *REGLA 8: FAVORITO DOMINA HT (TOP LEAGUE)*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+${msgHeader}
+⚠️ *Análisis:* El favorito (${favorite.team}) empata al medio tiempo pero domina estadísticamente.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 *Recomendación:* Gana Favorito 2da Mitad o Over Goles.
+🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
+                        alerts.push({
+                            text,
+                            metadata: {
+                                ruleId,
+                                ruleType: 8,
+                                ruleName: 'Favorito Domina HT',
+                                fixtureId,
+                                homeTeam: fixture.teams.home.name,
+                                awayTeam: fixture.teams.away.name,
+                                favoriteTeam: favorite.team,
+                                scoreAtAlert: { home: homeGoals, away: awayGoals },
+                                odds
+                            }
+                        });
+                        alertedMatches.add(ruleId);
+                    }
+                }
+            }
+        }
+
+        // --- REGLA 9: Gol Inminente Global ---
+        if (hasStats && elapsed > 0) {
+            const homeShotsOnGoal = getStat(fixture.teams.home.name, 'Shots on Goal');
+            const awayShotsOnGoal = getStat(fixture.teams.away.name, 'Shots on Goal');
+            const totalShotsOnGoal = homeShotsOnGoal + awayShotsOnGoal;
+            
+            // Dispara si el total de tiros a puerta supera 1 tiro cada 6 minutos (ej. 10 tiros al min 60)
+            // Se requiere un mínimo de 5 tiros a puerta para evitar alertas prematuras en los primeros minutos.
+            if (totalShotsOnGoal >= 5 && totalShotsOnGoal > (elapsed / 6)) {
+                const ruleId = `${fixtureId}_rule9`;
+                if (!alertedMatches.has(ruleId)) {
+                    const text = `💥 *REGLA 9: GOL INMINENTE GLOBAL (TOP LEAGUE)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Análisis:* Partido muy abierto. Ambos equipos combinan *${totalShotsOnGoal}* tiros a puerta en ${elapsed} minutos.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 *Recomendación:* Over 0.5 Goles Adicionales / Más Goles.
 🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-                alerts.push({
-                    text,
-                    metadata: {
-                        ruleId,
-                        ruleType: 9,
-                        ruleName: 'Gol Inminente Global',
-                        fixtureId,
-                        homeTeam: fixture.teams.home.name,
-                        awayTeam: fixture.teams.away.name,
-                        totalShotsOnGoal,
-                        scoreAtAlert: { home: homeGoals, away: awayGoals },
-                        totalGoalsAtAlert: homeGoals + awayGoals,
-                        odds
-                    }
-                });
-                alertedMatches.add(ruleId);
+                    alerts.push({
+                        text,
+                        metadata: {
+                            ruleId,
+                            ruleType: 9,
+                            ruleName: 'Gol Inminente Global',
+                            fixtureId,
+                            homeTeam: fixture.teams.home.name,
+                            awayTeam: fixture.teams.away.name,
+                            totalShotsOnGoal,
+                            scoreAtAlert: { home: homeGoals, away: awayGoals },
+                            totalGoalsAtAlert: homeGoals + awayGoals,
+                            odds
+                        }
+                    });
+                    alertedMatches.add(ruleId);
+                }
             }
         }
-    }
-
-    // ====================================================
-    // REGLAS AVANZADAS (EXCLUSIVAS PARA LIGAS IMPORTANTES)
-    // ====================================================
-    if (isTopLeague) {
 
         // --- REGLA 5: HT Comeback (Remontada al Descanso) ---
         if ((fixture.fixture.status.short === 'HT' || elapsed === 45) && favorite.odd < 1.45 && favorite.goals === underdog.goals - 1) {
