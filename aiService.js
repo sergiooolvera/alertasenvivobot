@@ -258,7 +258,10 @@ ${h2hMatchesStr}
 Instrucciones obligatorias para redactar la respuesta:
 1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en un solo párrafo conciso de máximo 50 palabras (máximo 120 caracteres) sobre la dinámica de juego actual.
 2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 2.5 Goles en el Partido", "Siguiente Gol de ${awayTeam}", "Más de 8.5 Córners Totales"). NO utilices justificaciones, explicaciones largas ni rodeos.
-   * REGLA DE VALOR EN LÍNEAS DE GOLES (CRÍTICA): Si el marcador en vivo ya suma un total de G goles (ej: si va 1-0 o 0-1, G = 1; si va 2-0 o 1-1, G = 2), NUNCA sugieras como apuesta "Más de (G + 0.5) Goles en el Partido" (ej. "Más de 1.5 Goles en el Partido" si el marcador actual es 1-0 o 0-1), ya que esta apuesta requiere un solo gol adicional y en vivo pagará una cuota extremadamente baja (menor a @1.30), lo cual no tiene valor de inversión y viola el requisito de momio mínimo de @1.60. Si prevés más goles, debes sugerir una línea con valor real como "Más de (G + 1.5) Goles en el Partido" (ej. "Más de 2.5 Goles en el Partido" si va 1-0), o "Más de (G + 0.5) Goles en el Primer Tiempo" (si es la primera mitad), o "Siguiente Gol de [Nombre de Equipo]".
+   * REGLA DE LÍNEA DE GOLES (CRÍTICA): Calcula la suma de goles en vivo del marcador actual (Goles Locales + Goles Visitantes = Goles Totales Actuales).
+     - NUNCA sugieras una línea de goles totales ('Más de X Goles') que ya se haya superado o igualado. Por ejemplo, si el marcador es 2-1 o 3-0 (3 goles en total), 'Más de 2.5 Goles' o 'Más de 1.5 Goles' ya se cumplieron y no existen en vivo, por lo que sugerirlas es un error grave.
+     - Tampoco sugieras una línea de goles totales que esté a solo 0.5 goles por encima del marcador actual (ej. 'Más de 3.5 Goles' si va 2-1), porque la cuota en vivo será extremadamente baja (menor a @1.30) y carece de valor de inversión.
+     - Si prevés más goles en el partido, la línea de goles totales sugerida debe ser al menos de 1.5 goles por encima del marcador actual. Por ejemplo: si va 1-0 o 0-1 (1 gol), sugiere 'Más de 2.5 Goles'; si va 2-0 o 1-1 (2 goles), sugiere 'Más de 3.5 Goles'; si va 2-1 o 3-0 (3 goles), sugiere 'Más de 4.5 Goles'.
 3. REGLA DE DESCARTE DE APUESTAS: Evita el sesgo de descarte ("Evitar apuesta / No recomendada"). Solo debes sugerir evitar la apuesta si el partido está completamente muerto (marcador abultado sin nada por jugar o total ausencia de datos). En cualquier otro escenario activo, analiza y busca una recomendación real de valor deportivo.
 4. Sugiera un momio objetivo en vivo realista (mínimo @1.60 o superior). Recuerda sugerir victoria directa, próximo gol o totales para momios realistas de @1.60+ si el equipo favorito va ganando.
 5. Estime una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
@@ -269,6 +272,44 @@ Formato de salida obligatorio (usa exactamente este formato en español, no uses
 🎯 Recomendación Inteligente: [Apuesta ultra directa, de 2 a 8 palabras]
 📈 Momio Sugerido: @[Momio sugerido aquí, mínimo 1.60]
 🔥 Confianza Estimada: [Porcentaje]%`;
+}
+
+/**
+ * Sanitiza y corrige la predicción de la IA en caso de que sugiera una línea de goles obsoleta.
+ */
+function sanitizeAndCorrectPrediction(aiPredictionText, score) {
+    if (!aiPredictionText || !score) return aiPredictionText;
+
+    const homeGoals = parseInt(score.home);
+    const awayGoals = parseInt(score.away);
+    if (isNaN(homeGoals) || isNaN(awayGoals)) return aiPredictionText;
+
+    const currentGoals = homeGoals + awayGoals;
+
+    // Buscar la línea de la Recomendación Inteligente
+    const recMatch = aiPredictionText.match(/(🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*)([^\n]+)/i);
+    if (!recMatch) return aiPredictionText;
+
+    const prefix = recMatch[1];
+    const recommendation = recMatch[2].trim();
+
+    // Buscar si es una línea de goles totales (ej. "Más de 2.5 Goles...", "Over 1.5 goles")
+    const goalsLineMatch = recommendation.match(/(?:más de|over)\s+(\d+(?:\.\d+)?)\s*(?:goles|goals)?/i);
+    if (goalsLineMatch) {
+        const lineVal = parseFloat(goalsLineMatch[1]);
+        if (lineVal <= currentGoals) {
+            // La apuesta ya se cumplió o empató, por lo que es inválida en vivo.
+            // La corregimos a la siguiente línea lógica viable (goles actuales + 0.5)
+            const correctedLine = currentGoals + 0.5;
+            const correctedRec = recommendation.replace(goalsLineMatch[0], `Más de ${correctedLine} Goles`);
+            console.log(`[AI-Service Verification] ⚠️ Predicción corregida de "${recommendation}" a "${correctedRec}" porque el marcador ya es ${homeGoals}-${awayGoals} (${currentGoals} goles).`);
+            
+            // Reemplazar en el texto completo
+            return aiPredictionText.replace(recMatch[0], `${prefix}${correctedRec}`);
+        }
+    }
+
+    return aiPredictionText;
 }
 
 /**
@@ -289,7 +330,7 @@ async function generatePrediction(matchData, sport = 'football', outContext = nu
         }
 
         const result = await callDeepSeekWithRotation(prompt);
-        return result;
+        return sanitizeAndCorrectPrediction(result, matchData.score);
     } catch (error) {
         console.error(`[AI-Service] Error crítico generando recomendación con DeepSeek: ${error.message}`);
         return null;
@@ -494,6 +535,7 @@ module.exports = {
     generatePredictionDeepSeek,
     generateDailyParlay,
     evaluatePredictionOutcome,
-    resolveVerdictViaWeb
+    resolveVerdictViaWeb,
+    sanitizeAndCorrectPrediction
 };
 

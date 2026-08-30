@@ -318,7 +318,8 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Compatibilidad del Parser de Reportes (`generar_reporte_messages.js`)**: Se actualizaron la regex `reglaMatch` y la función `normalizarRegla` del script de reportes para que soporten la nueva iconografía en mensajes futuros sin perder la capacidad de parsear alertas históricas en `messages.html`.
   - **Validación**: Se ejecutó `node test.js` confirmando que todas las alertas unitarias se disparan con su nuevo diseño y que pasan las pruebas.
   - **Control de Versión**: Se incrementó la versión a `2.16.2` en `package.json` (SemVer).
-
-
-
-
+- **[2026-08-30]**: Corrección de Líneas Obsoletas de Goles Totales en IA (Versión 2.16.3).
+  - **Afinación de Reglas en Prompt (`aiService.js`)**: Se actualizó el bloque `buildFootballPrompt` para endurecer la instrucción de cálculo de goles acumulados, prohibiendo de manera explícita sugerir líneas que ya se hayan superado o igualado (ej: proponer "Más de 2.5 Goles" en un marcador 2-1).
+  - **Saneamiento Programático Post-AI (`aiService.js`)**: Se implementó y exportó la función `sanitizeAndCorrectPrediction` que analiza la recomendación devuelta por DeepSeek y, si detecta una sugerencia de goles totales obsoleta (`lineVal <= goles_actuales`), la corrige automáticamente a la siguiente línea de goles activa viable (`goles_actuales + 0.5`), previniendo que se publiquen apuestas ya ganadas.
+  - **Pruebas de Validación**: Se creó el archivo de pruebas unitarias locales `testSanitize.js` simulando 6 escenarios distintos (incluyendo líneas obsoletas en español/inglés, marcadores en cero, córneres y victoria directa), logrando un 100% de efectividad de saneamiento.
+  - **Control de Versión**: Se incrementó la versión a `2.16.3` en `package.json` (SemVer).
