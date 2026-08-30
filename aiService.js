@@ -218,7 +218,7 @@ function formatH2HMatches(matches) {
  * Construye el prompt específico para DeepSeek (Fútbol) - Optimizado para brevedad y análisis técnico.
  */
 function buildFootballPrompt(matchData) {
-    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway, h2hMatches } = matchData;
+    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway, h2hMatches, standingsInfo } = matchData;
     
     const statsStr = formatFootballStats(stats);
     const eventsStr = formatFootballEvents(events);
@@ -226,10 +226,15 @@ function buildFootballPrompt(matchData) {
     const lastMatchesAwayStr = formatLastMatches(awayTeam, lastMatchesAway);
     const h2hMatchesStr = formatH2HMatches(h2hMatches);
 
+    let standingsStr = '';
+    if (standingsInfo && standingsInfo.homeRank !== undefined && standingsInfo.homeRank !== null && standingsInfo.awayRank !== undefined && standingsInfo.awayRank !== null) {
+        standingsStr = `\n- Posición en la tabla: ${homeTeam} #${standingsInfo.homeRank} vs #${standingsInfo.awayRank} ${awayTeam}`;
+    }
+
     return `Actúa como un analista profesional de apuestas deportivas de fútbol. Tu estilo debe ser sumamente directo, conciso, objetivo y preciso. Evita dar explicaciones largas o análisis redundantes.
  
 Analiza este partido de fútbol en vivo que acaba de activar una alerta estadística:
-- Partido: ${homeTeam} vs ${awayTeam}
+- Partido: ${homeTeam} vs ${awayTeam}${standingsStr}
 - Competición: ${leagueName}
 - Ronda/Fase: ${leagueRound}
 - Minuto actual: ${elapsed}'

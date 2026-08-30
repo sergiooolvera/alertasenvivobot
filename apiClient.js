@@ -163,6 +163,42 @@ async function getHeadToHead(team1Id, team2Id, last = 5) {
   }
 }
 
+// Caché en memoria para clasificaciones (standings) por liga y temporada
+const standingsCache = new Map();
+const STANDINGS_CACHE_TTL = 12 * 60 * 60 * 1000; // 12 horas en milisegundos
+
+// Obtiene la clasificación (standings) de una liga y temporada específica
+async function getStandings(leagueId, season) {
+  if (!leagueId || !season) return null;
+  const cacheKey = `${leagueId}_${season}`;
+  const now = Date.now();
+  
+  if (standingsCache.has(cacheKey)) {
+    const cached = standingsCache.get(cacheKey);
+    if (now - cached.timestamp < STANDINGS_CACHE_TTL) {
+      console.log(`[apiClient] Retornando standings desde caché para liga ${leagueId}, temporada ${season}`);
+      return cached.data;
+    }
+  }
+
+  if (checkRateLimit()) return null;
+
+  try {
+    console.log(`[apiClient] Consultando standings de API-Football para liga ${leagueId}, temporada ${season}`);
+    const response = await apiClient.get('/standings', { params: { league: leagueId, season: season } });
+    
+    if (response.data.response && response.data.response.length > 0) {
+      const standings = response.data.response[0].league.standings;
+      standingsCache.set(cacheKey, { data: standings, timestamp: now });
+      return standings;
+    }
+    return null;
+  } catch (error) {
+    handleApiError(`standings for league ${leagueId} season ${season}`, error);
+    return null;
+  }
+}
+
 module.exports = {
   getLiveMatches,
   getMatchEvents,
@@ -172,7 +208,8 @@ module.exports = {
   getMatchById,
   getTeamLastMatches,
   getLiveOdds,
-  getHeadToHead
+  getHeadToHead,
+  getStandings
 };
 
 

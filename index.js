@@ -8,12 +8,28 @@ const financialTracker = require('./financialTracker');
 
 
 // Módulos de Fútbol
-const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds, getHeadToHead } = require('./apiClient');
+const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds, getHeadToHead, getStandings } = require('./apiClient');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
 // Servicio de IA
 const aiService = require('./aiService');
+
+// Obtiene el rank del equipo dentro de la estructura de standings (soporta liguilla o múltiples grupos)
+function getTeamRankFromStandings(standings, teamId) {
+    if (!standings || !teamId) return null;
+    try {
+        for (const group of standings) {
+            if (Array.isArray(group)) {
+                const item = group.find(s => s.team && s.team.id === teamId);
+                if (item) return item.rank;
+            }
+        }
+    } catch (e) {
+        console.error("[index.js] Error al buscar rank del equipo en standings:", e.message);
+    }
+    return null;
+}
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 let bot;
@@ -704,14 +720,17 @@ async function checkMatches() {
             // Carga dinámica on-demand para alimentar a la IA con el contexto completo de forma paralela
             const homeTeamId = match.teams.home.id;
             const awayTeamId = match.teams.away.id;
+            const leagueId = match.league ? match.league.id : null;
+            const season = match.league ? match.league.season : null;
             console.log(`[index.js] Alerta de fútbol detectada para ${match.teams.home.name} vs ${match.teams.away.name}. Consultando datos adicionales en paralelo para la IA...`);
             
-            const [fetchedStats, fetchedEvents, rawLastMatchesHome, rawLastMatchesAway, rawH2hMatches] = await Promise.all([
+            const [fetchedStats, fetchedEvents, rawLastMatchesHome, rawLastMatchesAway, rawH2hMatches, standings] = await Promise.all([
                 stats.length === 0 ? getMatchStatistics(fixtureId) : Promise.resolve(stats),
                 events.length === 0 ? getMatchEvents(fixtureId) : Promise.resolve(events),
                 getTeamLastMatches(homeTeamId, 6),
                 getTeamLastMatches(awayTeamId, 6),
-                getHeadToHead(homeTeamId, awayTeamId, 6)
+                getHeadToHead(homeTeamId, awayTeamId, 6),
+                getStandings(leagueId, season)
             ]);
             
             stats = fetchedStats;
@@ -730,6 +749,10 @@ async function checkMatches() {
                 .filter(m => m.fixture && m.fixture.id !== fixtureId)
                 .slice(0, 5);
             
+            const homeRank = getTeamRankFromStandings(standings, homeTeamId);
+            const awayRank = getTeamRankFromStandings(standings, awayTeamId);
+            const standingsInfo = { homeRank, awayRank };
+
             if (!trackedMatches.has(fixtureId)) {
                 trackedMatches.set(fixtureId, {
                     home: match.teams.home.name,
@@ -742,6 +765,24 @@ async function checkMatches() {
 
             for (const alert of alerts) {
                 alert.metadata.isSent = false;
+
+                // --- FILTRO DE TABLA DE POSICIONES (STANDINGS) PARA REGLA 1 ---
+                if (alert.metadata.ruleType === 1 && standingsInfo.homeRank !== null && standingsInfo.awayRank !== null) {
+                    const teamWithRed = alert.metadata.teamWithRed;
+                    const isHomeRed = teamWithRed === match.teams.home.name;
+                    
+                    const rankWithRed = isHomeRed ? standingsInfo.homeRank : standingsInfo.awayRank;
+                    const rankWithAdvantage = isHomeRed ? standingsInfo.awayRank : standingsInfo.homeRank;
+                    
+                    const rankDifference = rankWithAdvantage - rankWithRed;
+                    
+                    // Si el beneficiado está 5 o más posiciones por debajo del afectado en la tabla
+                    if (rankDifference >= 5) {
+                        console.log(`[Standing Filter] ⛔ Alerta abortada para ${match.teams.home.name} vs ${match.teams.away.name} (Regla 1). El equipo beneficiado (${isHomeRed ? match.teams.away.name : match.teams.home.name}) está muy abajo en la tabla (${rankWithAdvantage} vs ${rankWithRed}). Diferencia: ${rankDifference} posiciones.`);
+                        continue;
+                    }
+                }
+
                 trackedInfo.alertsMetadata.push(alert.metadata);
 
                 let textToSend = alert.text;
@@ -766,7 +807,8 @@ async function checkMatches() {
                         events: events,
                         lastMatchesHome: lastMatchesHome,
                         lastMatchesAway: lastMatchesAway,
-                        h2hMatches: h2hMatches
+                        h2hMatches: h2hMatches,
+                        standingsInfo: standingsInfo
                     };
 
                     console.log(`[index.js] Solicitando predicción de IA con DeepSeek para partido: ${matchData.homeTeam} vs ${matchData.awayTeam}`);

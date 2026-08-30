@@ -290,5 +290,11 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Optimización de Consumo API (`needsStats` / `needsEvents`)**: En ligas menores solo se solicitan eventos en el rango de tarjeta roja (minutos 35-72) y estadísticas en las ventanas clave (min 35-72 y 75-83), reduciendo sustancialmente las peticiones innecesarias a la API.
   - **Control de Versión**: Se incrementó la versión a `2.15.1` en `package.json` (SemVer).
 
+- **[2026-08-30]**: Integración de Clasificaciones (Tabla de Posiciones) en la Regla 1 (Versión 2.16.0).
+  - **Consulta de Clasificación (`apiClient.js`)**: Se agregó el método `getStandings(leagueId, season)` para consultar el endpoint `/standings` de API-Football v3, con una caché de 12 horas en memoria (`standingsCache`) para minimizar peticiones API.
+  - **Filtro de Descarte en Regla 1 (`index.js`)**: Se creó el ayudante `getTeamRankFromStandings` y se implementó una condición en el ciclo de alertas: si el equipo beneficiado por la tarjeta roja está 5 o más posiciones por debajo del equipo afectado en la tabla (`rankDifference >= 5`), la alerta de la Regla 1 se aborta de inmediato para evitar falsos positivos deportivos.
+  - **Contexto de IA en DeepSeek (`aiService.js`)**: Se integró el ranking de ambos equipos en el prompt enviado a DeepSeek (`buildFootballPrompt`), permitiendo análisis lógicos basados en la brecha competitiva de los rivales.
+  - **Control de Versión**: Se incrementó la versión a `2.16.0` en `package.json` por la adición de funcionalidad.
+
 
 
