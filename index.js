@@ -334,6 +334,26 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                         const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
                         const confidence = confidenceMatch ? confidenceMatch[1] : '80';
 
+                        // --- FILTRO DE CONSENSO / CALIDAD EN RE-ANÁLISIS ---
+                        const recLower = recommendation.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        const isVictoriaDirecta = recLower.includes('victoria') || recLower.includes('gana') || recLower.includes('ml') || recLower.includes('resultado final') || recLower.includes('ganador') || recLower.includes('apuesta sin empate') || recLower.includes('dnb') || recLower.includes('handicap');
+                        const isProximoGol = recLower.includes('proximo gol') || recLower.includes('siguiente gol') || recLower.includes('primer gol') || recLower.includes('gol de');
+                        const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('esquina');
+
+                        let minRequiredConfidence = alert.metadata.minConfidence || 70; // Umbral base de 70% en lugar de 40%
+                        if (isVictoriaDirecta || isProximoGol || isCorners) {
+                            minRequiredConfidence = 78; // Umbral estricto para mercados de menor rendimiento reciente
+                        }
+
+                        const isLowConfidence = parseInt(confidence) < minRequiredConfidence;
+                        const isAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada') || recommendation.toLowerCase() === 'n/d';
+
+                        if (isLowConfidence || isAvoiding) {
+                            let reason = isLowConfidence ? `baja confianza (${confidence}% < ${minRequiredConfidence}%)` : `recomendó evitar/inválida (${recommendation})`;
+                            console.log(`[SafeOdds Filter] ⛔ Re-análisis abortado para ${alert.homeTeam} vs ${alert.awayTeam} (Regla: ${alert.ruleName}, Mercado: ${isVictoriaDirecta ? '1X2/ML' : (isProximoGol ? 'Próximo Gol' : (isCorners ? 'Córneres' : 'Otros'))}). Motivo: DeepSeek ${reason}.`);
+                            continue;
+                        }
+
                         alert.aiRecommendation = recommendation;
                         alert.metadata.aiRecommendation = recommendation;
                         alert.metadata.deepseekRecommendation = recommendation;
@@ -827,13 +847,22 @@ async function checkMatches() {
                         const confidence = confidenceMatch ? confidenceMatch[1] : '80';
 
                         // --- FILTRO DE CONSENSO / CALIDAD PARA DEEPSEEK ---
-                        const minRequiredConfidence = alert.metadata.minConfidence || 40;
+                        const recLower = recommendation.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        const isVictoriaDirecta = recLower.includes('victoria') || recLower.includes('gana') || recLower.includes('ml') || recLower.includes('resultado final') || recLower.includes('ganador') || recLower.includes('apuesta sin empate') || recLower.includes('dnb') || recLower.includes('handicap');
+                        const isProximoGol = recLower.includes('proximo gol') || recLower.includes('siguiente gol') || recLower.includes('primer gol') || recLower.includes('gol de');
+                        const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('esquina');
+
+                        let minRequiredConfidence = alert.metadata.minConfidence || 70; // Umbral base de 70% en lugar de 40%
+                        if (isVictoriaDirecta || isProximoGol || isCorners) {
+                            minRequiredConfidence = 78; // Umbral estricto para mercados de menor rendimiento reciente
+                        }
+
                         const isLowConfidence = parseInt(confidence) < minRequiredConfidence;
-                        const isAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada');
+                        const isAvoiding = recommendation.toLowerCase().includes('evitar') || recommendation.toLowerCase().includes('no recomendada') || recommendation.toLowerCase() === 'n/d';
 
                         if (isLowConfidence || isAvoiding) {
-                            let reason = isLowConfidence ? `baja confianza (${confidence}% < ${minRequiredConfidence}%)` : `recomendó evitar (${recommendation})`;
-                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}). Motivo: DeepSeek ${reason}.`);
+                            let reason = isLowConfidence ? `baja confianza (${confidence}% < ${minRequiredConfidence}%)` : `recomendó evitar/inválida (${recommendation})`;
+                            console.log(`[Consensus Filter] ⛔ Alerta abortada para ${matchData.homeTeam} vs ${matchData.awayTeam} (Regla: ${matchData.ruleName}, Mercado: ${isVictoriaDirecta ? '1X2/ML' : (isProximoGol ? 'Próximo Gol' : (isCorners ? 'Córneres' : 'Otros'))}). Motivo: DeepSeek ${reason}.`);
                             alert.metadata.isSent = false;
                             alert.metadata.aiRecommendation = recommendation;
                             continue;

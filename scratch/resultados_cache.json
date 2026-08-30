@@ -94,5 +94,77 @@
     "detalle": "Marcador final 1-1. Menos de 2.5 goles de Gemini y Siguiente gol de Temuco (0-1 al 46' tras roja al 32') acertados.",
     "geminiVeredicto": "GREEN",
     "deepseekVeredicto": "GREEN"
+  },
+  "nottinghamforestu21vsmanchestercityu21_Regla 2: Roja Estratégica": {
+    "veredicto": "GREEN",
+    "detalle": "La recomendación fue la victoria de Manchester City U21. El partido terminó con victoria de Manchester City U21 por 1-3, por lo que la apuesta resultó ganadora. (Marcador: 1-3)",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "intermiamiiivsatlantaunitedii_Regla 5: Partido Caliente": {
+    "veredicto": "APUESTA EVITADA",
+    "detalle": "El partido entre Inter Miami II y Atlanta United II programado para el 28.08.2026 no se ha disputado o no se encontraron datos oficiales del resultado. Por lo tanto, la recomendación de victoria de Atlanta United II se considera cancelada o nula. (Marcador: No disponible)",
+    "geminiVeredicto": "APUESTA EVITADA",
+    "deepseekVeredicto": "APUESTA EVITADA"
+  },
+  "coloradorapidsiivsventuracounty_Regla 5: Partido Caliente": {
+    "veredicto": "RED",
+    "detalle": "El partido terminó con 3 goles en total (2-1), por lo que la apuesta a Más de 3.5 goles no se cumplió. La recomendación es perdedora (RED). (Marcador: 2-1)",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "tolucawvsleonw_Regla 5: Partido Caliente": {
+    "veredicto": "APUESTA EVITADA",
+    "detalle": "El partido entre Toluca W y León W programado para el 28.08.2026 no se ha jugado o no se encontró un resultado oficial. Por lo tanto, la recomendación de victoria de Toluca W se considera cancelada/nula. (Marcador: No disponible)",
+    "geminiVeredicto": "APUESTA EVITADA",
+    "deepseekVeredicto": "APUESTA EVITADA"
+  },
+  "fsvmainz05vsscpaderborn07_Regla 6: Presión Córneres": {
+    "veredicto": "GREEN",
+    "detalle": "La recomendación fue la victoria de FSV Mainz 05. El partido terminó con victoria local por 2-1, por lo que la apuesta resultó ganadora. (Marcador: 2-1)",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "moreirenseu19vsfamalicaou19_Regla 2: Roja Estratégica": {
+    "veredicto": "GREEN",
+    "detalle": "La recomendación fue 'Famalicão U19 Victoria' (victoria de Famalicão U19). El marcador final fue 1-2 a favor de Famalicão U19, por lo que la apuesta resultó ganadora. (Marcador: 1-2)",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "pachucau21vsguadalajarachivasu21_Regla 5: Partido Caliente": {
+    "veredicto": "RED",
+    "detalle": "El partido terminó con 3 goles en total (2-1), por lo que la apuesta a Más de 3.5 goles no se cumplió. La recomendación es perdedora (RED). (Marcador: 2-1)",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "istra1961vsdinamozagreb_Regla 1: Asedio Favorito": {
+    "veredicto": "GREEN",
+    "detalle": "La recomendación 'Siguiente Gol de Dinamo Zagreb' resultó ganadora porque Dinamo Zagreb anotó el siguiente gol en el partido, independientemente del marcador final. El equipo visitante marcó al menos un gol después de la recomendación, cumpliendo la condición. (Marcador: 1-2)",
+    "geminiVeredicto": "GREEN",
+    "deepseekVeredicto": "GREEN"
+  },
+  "ajmanu23vsaljazirau23_Regla 2: Roja Estratégica": {
+    "veredicto": "APUESTA EVITADA",
+    "detalle": "El partido entre Ajman U23 y Al Jazira U23 no se jugó en la fecha indicada (30.08.2026) o no se encontraron datos oficiales del encuentro, por lo que la apuesta se considera cancelada/nula. (Marcador: No disponible)",
+    "geminiVeredicto": "APUESTA EVITADA",
+    "deepseekVeredicto": "APUESTA EVITADA"
+  },
+  "leonesnegrosudgvspiratas_Regla 2: Roja Estratégica": {
+    "veredicto": "RED",
+    "detalle": "La recomendación 'Siguiente gol de Piratas' requería que Piratas anotara el siguiente gol del partido. El marcador final fue 1-1, y el último gol fue de Leones Negros UDG, por lo que la apuesta resultó perdedora. (Marcador: 1-1)",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "birzebbugavssliemawanderers_Regla 5: Partido Caliente": {
+    "veredicto": "RED",
+    "detalle": "La recomendación era victoria de Birzebbuga, pero el partido terminó con victoria de Sliema Wanderers por 2-0, por lo que la apuesta resultó perdedora. (Marcador: 0-2)",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
+  },
+  "corinthiansvssantos_Regla 5: Partido Caliente": {
+    "veredicto": "RED",
+    "detalle": "El partido terminó con 2 goles en total (1-1), por lo que la apuesta a Más de 2.5 goles no se cumplió. (Marcador: 1-1)",
+    "geminiVeredicto": "RED",
+    "deepseekVeredicto": "RED"
   }
 }

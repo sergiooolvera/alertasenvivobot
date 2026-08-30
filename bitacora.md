@@ -296,5 +296,17 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Contexto de IA en DeepSeek (`aiService.js`)**: Se integró el ranking de ambos equipos en el prompt enviado a DeepSeek (`buildFootballPrompt`), permitiendo análisis lógicos basados en la brecha competitiva de los rivales.
   - **Control de Versión**: Se incrementó la versión a `2.16.0` en `package.json` por la adición de funcionalidad.
 
+- **[2026-08-30]**: Auditoría de Rendimiento, Actualización de Reporte Semanal y Optimización de Filtros DeepSeek (Versión 2.16.1).
+  - **Procesamiento de Alertas**: Se reemplazó y procesó el archivo `messages.html` que contiene las alertas de Telegram de la semana del 24 al 30 de agosto de 2026. Se resolvieron exitosamente 12 veredictos pendientes mediante consultas web automatizadas con DeepSeek.
+  - **Estadísticas de la Semana**: Se evaluó un volumen total de 72 alertas, registrando un Win Rate Global de 56.52% (39 GREEN / 30 RED / 3 Evitadas).
+  - **Desempeño de Motores**: Google Gemini operó parcialmente al inicio de la semana antes de su remoción total el 27 de agosto, registrando un 92.31% de acierto (12G / 1R). DeepSeek operó durante todo el periodo logrando un 56.52% de acierto (39G / 30R), lo que resultó en un balance neto negativo temporal de -4.65 unidades en el simulador financiero.
+  - **Foco de Optimización**: El mercado de Victoria Directa (1X2) representó el mayor volumen y arrastró el rendimiento con solo 46.67% de Win Rate (14G / 16R), en contraste con el excelente comportamiento de Tarjetas Totales (81.82%, 9G / 2R) y la Regla 5: Partido Caliente (64.29%, 18G / 10R).
+  - **Filtro Estricto de Confianza por Mercado (DeepSeek)**: Se implementó una lógica de filtrado de confianza dinámica en `index.js` para despachos iniciales y re-análisis en cola (SafeOdds) del motor DeepSeek. Se elevó el umbral mínimo de confianza de un 40% plano a:
+    - Un **70% de confianza mínima general** para la mayoría de mercados.
+    - Un **78% de confianza mínima estricta** para mercados con menor rendimiento histórico reciente (Victoria Directa/1X2/ML, Próximo Gol/Gol en Vivo y Córneres Totales).
+  - **Pruebas de Regresión y Sintaxis**: Se ejecutaron con éxito las pruebas de regresión (`node test.js` y `node test_omission.js`) y se validó la sintaxis completa del script orquestador (`node --check index.js`).
+  - **Control de Versión**: Se incrementó la versión a `2.16.1` en `package.json` (SemVer).
+
+
 
 
