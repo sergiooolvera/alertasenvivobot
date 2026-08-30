@@ -307,6 +307,18 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Pruebas de Regresión y Sintaxis**: Se ejecutaron con éxito las pruebas de regresión (`node test.js` y `node test_omission.js`) y se validó la sintaxis completa del script orquestador (`node --check index.js`).
   - **Control de Versión**: Se incrementó la versión a `2.16.1` en `package.json` (SemVer).
 
+- **[2026-08-30]**: Optimización Estética y Corrección de Confusión Visual en Alertas (Versión 2.16.2).
+  - **Rediseño de Iconografía de Reglas (`rulesEngine.js`)**: Se sustituyeron los emoticones en los encabezados de los mensajes de alerta de fútbol para evitar la sobreexposición del color rojo/amarillo que causaba falsos negativos psicológicos en los usuarios:
+    - **Regla 1 (Tarjeta Roja Estratégica)**: De `🟥` a `♟️` (Ajedrez / Táctica deportiva). Elimina la confusión visual del bloque rojo con un veredicto fallido.
+    - **Regla 4 (Asedio Intenso)**: De `🚨` a `🎯` (Diana de precisión de ataque).
+    - **Regla 5 (HT Comeback)**: De `🔄` a `🚀` (Remontada / Despegue deportivo).
+    - **Regla 7 (Partido Caliente)**: De `🟨` a `🔥` (Fuego). Evita el uso de bloques amarillos planos.
+    - **Regla 8 (Favorito Domina HT)**: De `⏳` a `👑` (Corona de dominancia).
+    - **Regla 9 (Gol Inminente)**: De `💥` a `⚡` (Rayo).
+  - **Compatibilidad del Parser de Reportes (`generar_reporte_messages.js`)**: Se actualizaron la regex `reglaMatch` y la función `normalizarRegla` del script de reportes para que soporten la nueva iconografía en mensajes futuros sin perder la capacidad de parsear alertas históricas en `messages.html`.
+  - **Validación**: Se ejecutó `node test.js` confirmando que todas las alertas unitarias se disparan con su nuevo diseño y que pasan las pruebas.
+  - **Control de Versión**: Se incrementó la versión a `2.16.2` en `package.json` (SemVer).
+
 
 
 

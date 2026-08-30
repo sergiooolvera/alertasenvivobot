@@ -96,7 +96,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
             if (isDominating) {
                 const ruleId = `${fixtureId}_rule1`;
                 if (!alertedMatches.has(ruleId)) {
-                const text = `🟥 *REGLA 1: TARJETA ROJA ESTRATÉGICA*
+                const text = `♟️ *REGLA 1: TARJETA ROJA ESTRATÉGICA*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Incidente:* Tarjeta roja para ${teamWithRed}
@@ -142,7 +142,7 @@ ${msgHeader}
             if (asedioFuerte || possession >= 70) {
                 const ruleId = `${fixtureId}_rule4`;
                 if (!alertedMatches.has(ruleId)) {
-                    const text = `🚨 *REGLA 4: ASEDIO INTENSO (HUELE A GOL)*
+                    const text = `🎯 *REGLA 4: ASEDIO INTENSO (HUELE A GOL)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Análisis:* El favorito (${favorite.team}) está atacando con todo: ${totalShots} tiros y ${possession}% de posesión. ¡Candidato a gol tardío!
@@ -191,7 +191,7 @@ ${msgHeader}
                 if (isDominating) {
                     const ruleId = `${fixtureId}_rule8`;
                     if (!alertedMatches.has(ruleId)) {
-                        const text = `⏳ *REGLA 8: FAVORITO DOMINA HT (TOP LEAGUE)*
+                        const text = `👑 *REGLA 8: FAVORITO DOMINA HT (TOP LEAGUE)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Análisis:* El favorito (${favorite.team}) empata al medio tiempo pero domina estadísticamente.
@@ -229,7 +229,7 @@ ${msgHeader}
             if (totalShotsOnGoal >= 5 && totalShotsOnGoal > (elapsed / 6)) {
                 const ruleId = `${fixtureId}_rule9`;
                 if (!alertedMatches.has(ruleId)) {
-                    const text = `💥 *REGLA 9: GOL INMINENTE GLOBAL (TOP LEAGUE)*
+                    const text = `⚡ *REGLA 9: GOL INMINENTE GLOBAL (TOP LEAGUE)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Análisis:* Partido muy abierto. Ambos equipos combinan *${totalShotsOnGoal}* tiros a puerta en ${elapsed} minutos.
@@ -270,7 +270,7 @@ ${msgHeader}
             }
             const ruleId = `${fixtureId}_rule5`;
             if (favDomina && !alertedMatches.has(ruleId)) {
-                const text = `🔄 *REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)*
+                const text = `🚀 *REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo por 1 gol en el medio tiempo.
@@ -343,7 +343,7 @@ ${msgHeader}
             if (yellowCards >= 3 || redCards >= 1) {
                 const ruleId = `${fixtureId}_rule7`;
                 if (!alertedMatches.has(ruleId)) {
-                    const text = `🟨 *REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)*
+                    const text = `🔥 *REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${msgHeader}
 ⚠️ *Análisis:* Partido muy ríspido con ${yellowCards} amarillas y ${redCards} rojas en el 1er tiempo.

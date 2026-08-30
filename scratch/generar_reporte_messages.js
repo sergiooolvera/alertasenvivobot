@@ -51,7 +51,7 @@ function cleanMarkdownLinks(str) {
 }
 
 function normalizarRegla(regla) {
-    let normal = regla.replace(/^(?:🔥|⏳|🟥|🟨|🟢|⚾|🚨|🏆)\s*/i, '');
+    let normal = regla.replace(/^(?:🔥|⏳|🟥|🟨|🟢|⚾|🚨|🏆|♟️|🎯|👑|⚡|🚀|🚩)\s*/i, '');
     normal = normal.replace(/^REGLA\s*\d+\s*:\s*/i, '');
     normal = normal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     
@@ -117,7 +117,7 @@ const processedAlerts = [];
 alerts.forEach(a => {
     const text = a.text;
     
-    const reglaMatch = text.match(/(?:🔥|⏳|🟥|🟨|🟢|⚾)?\s*(REGLA\s*\d+:\s*[^━\n]+)/i) || text.match(/(REGLA\s*\d+:[^\n]+)/i) || text.match(/(BÉISBOL[^\n]+)/i);
+    const reglaMatch = text.match(/(?:🔥|⏳|🟥|🟨|🟢|⚾|🚨|🏆|♟️|🎯|👑|⚡|🚀|🚩)?\s*(REGLA\s*\d+:\s*[^━\n]+)/i) || text.match(/(REGLA\s*\d+:[^\n]+)/i) || text.match(/(BÉISBOL[^\n]+)/i);
     const rawRegla = reglaMatch ? reglaMatch[1].trim() : 'REGLA GENERAL';
     const reglaNombre = normalizarRegla(rawRegla);
     
