@@ -284,8 +284,27 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
         const currentHomeGoals = match.goals.home || 0;
         const currentAwayGoals = match.goals.away || 0;
         
+        // Si el marcador coincide con el original, limpiar cualquier estado pendiente de cambio
+        if (currentHomeGoals === alert.scoreAtTime.home && currentAwayGoals === alert.scoreAtTime.away) {
+            alert.pendingScoreChange = null;
+        }
+        
         // 2. Si el marcador cambió
         if (currentHomeGoals !== alert.scoreAtTime.home || currentAwayGoals !== alert.scoreAtTime.away) {
+            const newScoreStr = `${currentHomeGoals}-${currentAwayGoals}`;
+            if (!alert.pendingScoreChange || alert.pendingScoreChange.scoreStr !== newScoreStr) {
+                console.log(`[SafeOdds] Detectado posible cambio de marcador para ${alert.homeTeam} vs ${alert.awayTeam} (${alert.scoreAtTime.home}-${alert.scoreAtTime.away} ➔ ${newScoreStr}). Esperando confirmación en el siguiente ciclo API (anti-gol fantasma/VAR)...`);
+                alert.pendingScoreChange = {
+                    scoreStr: newScoreStr,
+                    home: currentHomeGoals,
+                    away: currentAwayGoals,
+                    detectedAt: Date.now()
+                };
+                continue;
+            }
+
+            // Marcador verificado y confirmado tras al menos 2 ciclos seguidos de la API
+            alert.pendingScoreChange = null;
             const homeGoalsDiff = currentHomeGoals - alert.scoreAtTime.home;
             const awayGoalsDiff = currentAwayGoals - alert.scoreAtTime.away;
 
@@ -340,9 +359,9 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                         const isProximoGol = recLower.includes('proximo gol') || recLower.includes('siguiente gol') || recLower.includes('primer gol') || recLower.includes('gol de');
                         const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('esquina');
 
-                        let minRequiredConfidence = alert.metadata.minConfidence || 70; // Umbral base de 70% en lugar de 40%
+                        let minRequiredConfidence = alert.metadata.minConfidence || 60; // Umbral base de 60% en lugar de 70%
                         if (isVictoriaDirecta || isProximoGol || isCorners) {
-                            minRequiredConfidence = 78; // Umbral estricto para mercados de menor rendimiento reciente
+                            minRequiredConfidence = 70; // Umbral estricto para mercados de menor rendimiento reciente (70% en lugar de 78%)
                         }
 
                         const isLowConfidence = parseInt(confidence) < minRequiredConfidence;
@@ -852,9 +871,9 @@ async function checkMatches() {
                         const isProximoGol = recLower.includes('proximo gol') || recLower.includes('siguiente gol') || recLower.includes('primer gol') || recLower.includes('gol de');
                         const isCorners = recLower.includes('corner') || recLower.includes('corners') || recLower.includes('esquina');
 
-                        let minRequiredConfidence = alert.metadata.minConfidence || 70; // Umbral base de 70% en lugar de 40%
+                        let minRequiredConfidence = alert.metadata.minConfidence || 60; // Umbral base de 60% en lugar de 70%
                         if (isVictoriaDirecta || isProximoGol || isCorners) {
-                            minRequiredConfidence = 78; // Umbral estricto para mercados de menor rendimiento reciente
+                            minRequiredConfidence = 70; // Umbral estricto para mercados de menor rendimiento reciente (70% en lugar de 78%)
                         }
 
                         const isLowConfidence = parseInt(confidence) < minRequiredConfidence;

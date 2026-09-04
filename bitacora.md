@@ -318,8 +318,216 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Compatibilidad del Parser de Reportes (`generar_reporte_messages.js`)**: Se actualizaron la regex `reglaMatch` y la función `normalizarRegla` del script de reportes para que soporten la nueva iconografía en mensajes futuros sin perder la capacidad de parsear alertas históricas en `messages.html`.
   - **Validación**: Se ejecutó `node test.js` confirmando que todas las alertas unitarias se disparan con su nuevo diseño y que pasan las pruebas.
   - **Control de Versión**: Se incrementó la versión a `2.16.2` en `package.json` (SemVer).
+- **[2026-08-08]**: Generación de Dashboard Interactivo Premium `resumen_ayer.html`. Se construyó el script `scratch/generar_resumen_ayer.js` que compila los resultados de auditoría de la jornada del 7 de agosto de 2026 en una interfaz web responsiva en modo oscuro con diseño Glassmorphism, tipografía Google Fonts (Inter/Outfit) e iconos Lucide. El dashboard incluye tarjetas KPI de efectividad (50.0% GREEN / 50.0% RED), comparativa visual en barras de progreso entre Google Gemini (47.6%) y DeepSeek (50.0%), filtro dinámico por estado de veredicto (Todas, GREEN, RED, Parlays) y barra de búsqueda en tiempo real.
+- **[2026-08-08]**: Implementación de Veredictos Duales Post-Partido para Google Gemini y DeepSeek (Versión 2.3.0). Se modificó `index.js` para almacenar en los metadatos de la alerta tanto la recomendación de Google Gemini (`geminiRecommendation`) como la de DeepSeek (`deepseekRecommendation`). Se reestructuró la función `evaluateAlertResults` en `rulesEngine.js` para realizar la evaluación independiente por IA de ambas predicciones al finalizar el partido. Se rediseñó la plantilla del veredicto post-partido en Telegram (`VEREDICTO POST-PARTIDO - DUAL`) para mostrar explícitamente el resultado individual (GREEN 🟩 / RED 🟥) de cada modelo de IA junto con su justificación contextual, evitando veredictos GREEN falsos o engañosos basados en fallbacks estáticos de reglas contradictorias. Pruebas de integración superadas exitosamente en `scratch/test_dual_verdict.js`.
+- **[2026-08-10]**: Definición de Arquitectura de Monetización y Automatización de Contenidos (Sesión /grill-me):
+  - Definición de oferta comercial: Combo VIP ($25-$30 USD/mes), Módulo En Vivo individual ($15 USD/mes) y Pase Semanal ($10 USD).
+  - Automatización de accesos y pagos recurrentes mediante InviteMember/Tribute en Telegram.
+  - **Motor de Generación y Publicación Automática de Videos (100% Autónomo)**:
+    - Generación programática de videos 9:16 (Puppeteer + FFmpeg + Text-To-Speech) al confirmar un acierto GREEN 🟢 o boletín destacado.
+    - Publicación automática multicanal en Instagram Reels (Meta Graph API), YouTube Shorts (YouTube API v3) y TikTok (Posting API / Webhooks).
+- **[2026-08-10]**: Reporte de Rendimiento Histórico Completo basado en `messages.html` (Versión 2.4.0). Se creó el script de extracción y análisis `scratch/generar_reporte_messages.js` que procesó 118 alertas y 100 veredictos (incluyendo Veredictos Duales) acumulados entre el 4 y el 10 de agosto de 2026. Se generó la aplicación web de reporte interactivo `reporte_messages.html` en la raíz del proyecto, la cual incluye:
+  - **Métricas Generales**: Dashboard interactivo con 118 alertas totales, 84 veredictos evaluados (66.7% Win Rate directo) y gráficos visuales de tendencia con Chart.js.
+  - **Separado por Días**: Pestañas de filtrado individual para cada día del rango (04.08, 05.08, 06.08, 07.08, 08.08, 09.08, 10.08) con marcadores, ligas, minutos y recomendaciones individuales.
+  - **Análisis por IA**: Comparativa detallada entre Google Gemini (65.8% acierto) y DeepSeek (67.1% acierto), matriz de consenso dual y métricas de trampas/apuestas evitadas.
+  - **Por Tipo de Regla**: Desglose de rendimiento para las 8 reglas activas (Sorpresa Tempranera, Roja Estratégica, Asedio Favorito, Partido Caliente, Favorito Domina HT, etc.).
+  - **Efectividad y Confianza**: Análisis de rendimiento según rangos de confianza de la IA (Alta >=70%, Media 50-69%, Baja <50%).
+  - **Simulador Financiero ($100 MXN)**: Pestaña interactiva de cálculo de rendimiento con flat stake de $100 pesos por apuesta bajo cuotas de @1.65, @1.70 y @1.80.
+  - **Por Tipo de Apuesta (Mercados)**: Agrupación interactiva por mercados (Victoria Directa ML, Próximo Gol, Línea de Goles Over/Under, Doble Oportunidad, Tarjetas, Córneres) con comparativa Gemini vs DeepSeek.
+  - **Resolución al 100% de Veredictos Pendientes (Regla 3 & Global)**: Se implementó la limpieza de enlaces Markdown en la normalización de partidos e integración de resultados reales web para resolver el 100% de las 118 alertas acumuladas (0 alertas pendientes). La **Regla 3: Sorpresa Tempranera** se actualizó de 70 alertas a **39 GREEN / 29 RED / 2 EVITADAS** (57.4% Win Rate).
+  - **Bitácora Completa**: Tabla interactiva con buscador en tiempo real por partido o liga y selectores de filtrado por estado (GREEN, RED, EVITADA) y por regla.
+- **[2026-08-10]**: Optimización Estratégica de la Regla 3: Sorpresa Tempranera en `rulesEngine.js` (Versión 2.5.0).
+  - **Postergación de Ventana de Disparo**: Se ajustó el tiempo de activación a `elapsed >= 30 && elapsed <= 41` (a partir del minuto 30'). De esta forma, el bot recopila 30 minutos completos de estadísticas de presión en vivo (tiros, posesión, ataques peligrosos) antes de emitir la recomendación.
+  - **Inclusión de Mercado Ambos Anotan (BTTS)**: Se habilitó la recomendación explícita de "Ambos Anotan (BTTS)" y "Próximo Gol del Favorito" sin prohibir mercados existentes (permitiendo Doble Oportunidad cuando las métricas en vivo confirmen la reacción).
+  - **Filtro de Confianza Mínima (65%)**: Se fijó el parámetro `minConfidence: 65` para exigir un umbral mínimo del 65% en las predicciones generadas para la Regla 3.
+- **[2026-08-11]**: Desactivación Definitiva del Envío de Documentos de Prompts a Telegram (Versión 2.5.1). Se comentó el bloque de código `sendDocument` en [index.js](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) a solicitud del usuario para dejar de enviar los archivos de texto de prompts (`prompt_gemini_*.txt` and `prompt_deepseek_*.txt`) al canal "Los prompts de golesytarjetas". Se incrementó la versión en `package.json` a v2.5.1.
+- **[2026-08-13]**: Auditoría Integral y Resolución Web de Apuestas en `messages.html` (Versión 2.5.2).
+  - **Caché Local de Búsquedas (`resultados_cache.json`)**: Se implementó una base de datos de caché local para almacenar los resultados reales de partidos que no cuentan con un veredicto directo en los logs. Esto evita el consumo innecesario de peticiones a la API y el error 429 de cuota en Google Search Grounding de la cuenta gratuita de Gemini.
+  - **Normalización de Nombres de Partidos**: Se robusteció la función `normalizarPartido` en `generar_reporte_messages.js` para aplicar primero la normalización diacrítica y luego el filtrado de caracteres especiales, previniendo que se borrasen letras de equipos internacionales (como São, Água o Nõmme) y permitiendo cruzar con éxito el 100% de las 163 alertas registradas (0 pendientes).
+  - **Pestaña Interactiva de Auditoría de Fallos**: Se añadió la sección `⚠️ Auditoría de Fallos` en `reporte_messages.html` que lista detalladamente las 51 apuestas perdidas (`RED`), con detalles del marcador, confianza e hipótesis recomendadas por Gemini y DeepSeek para facilitar análisis y ajustes del bot.
+  - **Resultados de la Auditoría**: Efectividad global de 68.13% (109 GREEN / 51 RED). Gemini obtuvo 67.10% y DeepSeek 67.72%. Se detectó que la Regla 3: Sorpresa Tempranera arrastra la media del bot (59.3% win rate en 88 alertas) y que el mercado de Doble Oportunidad opera al 50.0% de efectividad en contraste con las Victorias Directas (79.1%).
+- **[2026-08-13]**: Optimización Estratégica de Alertas en Vivo y Control Financiero (Versión 2.6.0).
+  - **Filtro de Dobles Oportunidades**: Se implementó una lógica de bloqueo en `index.js` que descarta cualquier recomendación en vivo donde Gemini sugiera "Doble Oportunidad" (1X, X2, doble chance, etc.) debido a su bajo rendimiento histórico (47.8%).
+  - **SafeOdds Estricto**: Se eliminó el fallback de estimación temporal que enviaba apuestas a ciegas tras transcurrir el tiempo en cola. Ahora, si expira el tiempo sin una cuota real confirmada de @1.60 por la API, la alerta se cancela y descarta definitivamente de la cola, protegiendo el retorno matemático.
+  - **Regla 3 al 75%**: Se elevó el umbral `minConfidence` de la Regla 3: Sorpresa Tempranera a `75` en `rulesEngine.js` para reducir ruido, reflejando el cambio de forma dinámica en la evaluación de IA y en los textos del mensaje enviado a Telegram.
+  - **Pruebas de Integración**: Se corrieron exitosamente las simulaciones locales de `test.js` y `testAi.js` validando la robustez de los cambios y fallbacks ante contingencias de red.
+
+- **[2026-08-13]**: Detección y Alertas de Corrección VAR en Vivo (Versión 2.7.0).
+  - **Soporte para Goles Anulados**: Se implementó una lógica de comparación que detecta en tiempo real si el marcador en vivo retrocede con respecto al registrado al momento del envío de la alerta, notificando de inmediato una alerta de gol anulado.
+  - **Soporte para Tarjetas Rojas Anuladas**: Se adaptó el cliente API para adjuntar el estado de error (`isError`) a los eventos. Si se detecta que una tarjeta roja previamente alertada desaparece de los eventos activos del partido, se notifica la anulación de la expulsión.
+  - **Persistencia Antiduplicados**: Se implementó la función `updatePlayMetadata` en `financialTracker.js` para persistir las correcciones del VAR en el archivo local `financial_tracker.json`. Esto previene notificaciones duplicadas tras reinicios.
+  - **Pruebas de Integración**: Se ejecutó exitosamente el script `scratch/test_var_corrections.js` validando todos los escenarios de corrección, control de spam e inmunidad contra fallos de red.
+
+- **[2026-08-13]**: Optimización de Prompts y Regla de Valor en Línea de Goles en Vivo (Versión 2.7.1).
+  - **Evitar Apuestas de Bajo Valor**: Se introdujo una regla crítica de valor en líneas de goles en vivo (`REGLA DE VALOR EN LÍNEAS DE GOLES (CRÍTICA)`) en los prompts de fútbol de Google Gemini y DeepSeek en `aiService.js`.
+  - **Línea Dinámica vs Marcador**: Se prohíbe explícitamente sugerir una apuesta de goles "Más de (G + 0.5)" si el marcador en vivo ya cuenta con G goles (como sugerir "Más de 1.5" si va 1-0), ya que ofrece cuotas ínfimas en vivo (menores a @1.30). Se instruye a la IA a sugerir líneas con valor como "Más de (G + 1.5)" (Over 2.5 en este caso), "Más de (G + 0.5) en Primer Tiempo" u otros mercados válidos con momio mínimo de @1.60+.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.1`.
+
+- **[2026-08-15]**: Optimización de Ligas Menores y Fallback de DeepSeek por Descarte de Gemini DO (Versión 2.7.2).
+  - **Ligas Menores**: Se eliminó la validación obligatoria de momios en vivo para partidos de ligas menores (`!isTop`). Ahora, estas alertas se envían de inmediato y se les añade un aviso aclaratorio en el mensaje de Telegram (`⚠️ Nota: Este partido pertenece a una liga menor (se envía de inmediato sin validar cuotas en vivo)`), evitando que queden retenidas y expiren en la cola de SafeOdds debido a la falta de cobertura en vivo de la API.
+  - **Consenso Dual de IA**: Si Gemini recomienda una apuesta de Doble Oportunidad (DO), el bot descarta su recomendación de forma individual (tachándola y marcándola con un emoji en el mensaje unificado de Telegram), pero no aborta el partido completo. En su lugar, el bot activa la propuesta de DeepSeek (`deepseekRecommendation`) como la recomendación activa principal para el flujo de SafeOdds y el control financiero, permitiendo que la alerta continúe adelante con la recomendación de DeepSeek.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.2`.
+
+- **[2026-08-15]**: Corrección en el flujo de alertas y SafeOdds ante fallas de la IA (Versión 2.7.3).
+  - **Solución al silencio de alertas**: Se detectó en los logs de Railway que cuando las llamadas a la IA (Gemini/DeepSeek) fallaban por errores `503` (cuotas de API gratuita) o `404` (nombre de modelo no disponible), las alertas completas se perdían por completo. Esto se debía a que toda la lógica de SafeOdds, envío a Telegram y registro financiero estaba dentro del bloque `if (aiPrediction)`.
+  - **Fallback Estático y SafeOdds**: Se reestructuró la lógica en `index.js` para extraer el bloque de SafeOdds y el envío a Telegram fuera del bloque condicional de la IA. Si la IA falla, se activa un fallback estático que recupera la recomendación predeterminada escrita en el texto de la regla original mediante regex y procesa la alerta de manera normal (enviando el texto estático sin análisis de IA).
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.3`.
+
+- **[2026-08-15]**: Integración de DeepSeek como Fallback predictivo directo (Versión 2.7.4).
+  - **Uso prioritario de DeepSeek ante fallas de Gemini**: A solicitud del usuario, si la llamada a la API de Gemini falla o devuelve nulo, el bot ya no pasará de inmediato al fallback estático. En su lugar, intentará consultar a la API de DeepSeek para procesar la recomendación activa e integrarla a SafeOdds.
+  - **Consistencia de Fallbacks**: Si tanto Gemini como DeepSeek fallan (por problemas de red o saldo), el bot recurrirá al fallback estático de la regla original como última línea de defensa.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.4`.
+
+- **[2026-08-15]**: Corrección de falsos positivos en tarjeta roja anulada por el VAR (Versión 2.7.5).
+  - **Validación de Eventos no Vacíos**: Se añadió una restricción para evitar la detección de anulación si el array de eventos retornado por la API está vacío (`events.length === 0`), lo cual suele deberse a caídas temporales de la API-Sports o retrasos de sincronización y no a una corrección real del VAR.
+  - **Doble Verificación con Estadísticas**: Al detectar una posible anulación, se implementó una consulta asíncrona a las estadísticas en vivo del partido mediante `getMatchStatistics(fixtureId)`. Si las estadísticas confirman que el equipo afectado mantiene un número de tarjetas rojas mayor a 0, se descarta el aviso de anulación (falso positivo).
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.5`.
+
+- **[2026-08-16]**: Corrección de modelos de Gemini API por obsolescencia en Google Cloud (Versión 2.7.6).
+  - **Reemplazo de Modelos**: Se sustituyó el modelo deprecado `gemini-2.5-flash` (que devolvía error 404 continuo) por el modelo actual compatible `gemini-3.5-flash`.
+  - **Fallback Robusto**: Se reorganizó la lista de modelos prioritarios en `aiService.js` a `['gemini-3.5-flash', 'gemini-flash-latest']`, previniendo que los timeouts y límites de cuota (429) en los alias inhabiliten por completo el servicio de IA del bot.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.6`.
+
+- **[2026-08-16]**: Corrección y optimización del sistema de evaluación de veredictos post-partido (Versión 2.7.7).
+  - **Soporte robusto para Fallback de DeepSeek**: Se corrigió el flujo en `rulesEngine.js` para que si Gemini falla en la alerta original (`geminiRecommendation` es `'N/D'`) pero DeepSeek genera una predicción válida, el veredicto post-partido se evalúe correctamente utilizando el resultado de DeepSeek, activando la bandera `evaluatedByAI = true` y evitando falsos GREENs provocados por el descarte en el fallback tradicional.
+  - **Filtro de strings informativos 'N/D'**: Se previno que se envíen cadenas como `'N/D (Gemini falló)'` o `'no disponible'` a la API de Gemini para evaluar si resultaron ganadoras. Esto optimiza el consumo de la API en fútbol y béisbol (`baseballRulesEngine.js`).
+  - **Corrección de Regla 1 Tradicional Estática (Tarjeta Roja)**: Se implementó la lógica real en el switch tradicional estático para que el veredicto sea `RED` si el equipo perjudicado (el que recibió la tarjeta roja) mantiene la victoria al final del encuentro. Ahora solo marcará `GREEN` si el equipo perjudicado no ganó (el beneficiado empató o ganó). Se aplicó la misma validación al cálculo de control de omisiones.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.7.7`.
+
+- **[2026-08-17]**: Auditoría completa y actualización de rendimiento sobre el nuevo archivo `messages.html`. Se ejecutó el script `scratch/generar_reporte_messages.js` para extraer y consolidar las alertas del bot. Se procesaron un total de 241 alertas y se resolvieron 227 veredictos, quedando 14 pendientes debido a límites de cuota (429/404) en las consultas de Gemini Search Grounding. El reporte interactivo `reporte_messages.html` y el caché local `resultados_cache.json` fueron actualizados exitosamente, reportando un Win Rate Global de **72.44%** (163 GREEN / 62 RED / 2 Evitadas).
+
+- **[2026-08-18]**: Desactivación Definitiva de la Regla 3: Sorpresa Tempranera (Versión 2.8.0).
+  - **Desactivación de Alertas**: Se comentó la lógica de evaluación y encolado de alertas de la Regla 3 en la función `evaluateRules` de [`rulesEngine.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/rulesEngine.js). Esto previene que el bot genere alertas en vivo de esta regla y evita el desgaste de capital debido a su bajo rendimiento histórico (59.6% Win Rate).
+  - **Retrocompatibilidad**: Se mantuvo intacto el bloque del switch `case 3` en `evaluateAlertResults` para permitir la resolución automática de veredictos y omisiones de partidos históricos.
+  - **Pruebas de Integración**: Se ejecutó exitosamente `test.js` para garantizar la estabilidad de las reglas activas.
+  - **Control de Versión**: Se actualizó la versión en `package.json` a la versión `2.8.0` por remoción de funcionalidad (SemVer).
+
+- **[2026-08-19]**: Actualizacin del sistema de evaluacin de apuestas para soportar marcadores nulos/reembolsados. Se modific \evaluatePredictionOutcome\ y \
+esolveVerdictViaWeb\ en \ iService.js\ para poder retornar \VOID\ mediante \isVoid\ en lugar de forzar a GREEN o RED. En \
+ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando ? BLACK cuando el resultado de la apuesta es anulado (VOID o CANCELLED) en lugar de un veredicto RED incorrecto.
+
+### 20 de Agosto 2026
+- Se recibió actualización de `messages.html`.
+- Se generó un script de extracción en Python para recopilar datos de rentabilidad y resultados de inteligencia artificial.
+- Se produjo el reporte web `reporte_actualizado.html` estructurado con comparaciones Gemini vs DeepSeek y despliegue por cada regla operativa.
+
+
+- **[2026-08-21]**: Desactivacion del monitoreo de ligas menores (Version 2.8.2).
+  - **Filtro de Ligas Menores**: Se anadio un descarte temprano en la funcion checkMatches() en [index.js](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) para omitir el monitoreo de partidos pertenecientes a ligas menores (!isMajorLeague(match.league)). Esto evita el desperdicio de peticiones API y tiempo de procesamiento en partidos con escasa cobertura estadistica y sin cuotas en vivo.
+  - **Control de Version**: Se actualizo package.json a la version 2.8.2.
+
+- **[2026-08-24]**: Auditoría manual de resultados de inteligencia artificial (Gemini vs DeepSeek).
+  - **Análisis Real**: Se evaluó una muestra representativa de predicciones de IA descartando los resultados locales de Telegram en `messages.html` y comparándolos con los marcadores reales extraídos de internet. DeepSeek demostró un mayor porcentaje de efectividad (aprox. 66%) frente a Gemini, gracias a su enfoque pragmático en el mercado de goles (ej. 'Siguiente gol' y 'Más de 2.5') en contraste con la aproximación agresiva y dependiente de mercados secundarios (tarjetas/córners) de Gemini.
+  - **Generación de Reporte**: Se guardó la evaluación detallada en el archivo `reporte_auditoria_messages.html` para revisión del usuario.
+  - **Pivote Estratégico**: Con base en estos hallazgos, el usuario determinó enfocarse exclusivamente en DeepSeek como el motor de IA principal para futuras predicciones.
+  - **Mejora del Motor DeepSeek**: Se actualizó el arreglo de modelos de fallback en `aiService.js` para priorizar `deepseek-reasoner`. Esto eleva las capacidades lógicas del bot al forzar cadena de pensamiento (Chain of Thought) antes de emitir un pronóstico, minimizando alucinaciones y subiendo la precisión en apuestas en vivo. `deepseek-chat` queda como primer fallback.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.8.3` por mejora en el motor lógico.
+
+- **[2026-08-27]**: Eliminacion Completa de Modulos y Referencias de Beisbol (Version 2.9.0).
+  - **Eliminacion de Archivos**: Se eliminaron los archivos `baseballApiClient.js`, `baseballRulesEngine.js` y `testBaseball.js`.
+  - **Refactorizacion de `aiService.js`**: Se eliminaron las funciones `formatBaseballStats`, `buildBaseballPrompt`, `buildBaseballPromptDeepSeek` y `formatBaseballFinalData`. Se simplificaron `generatePrediction`, `generatePredictionDeepSeek`, `buildDailyParlayPrompt`, `evaluatePredictionOutcome` y `resolveVerdictViaWeb` para procesar unica y exclusivamente datos de futbol.
+  - **Limpieza en `index.js` y Pruebas**: Se eliminaron importaciones residuales, la variable de cache `currentLiveBaseballIds`, comentarios huerfanos de MLB y la logica condicional de deportes en parlays. Se limpiaron `test_omission.js` y `testAi.js`.
+  - **Validacion**: Se ejecutaron exitosamente los tests unitarios (`node test.js` y `node test_omission.js`), comprobando el 100% de operatividad en las reglas de futbol y la verificacion GREEN/RED.
+  - **Control de Version**: Se incremento la version a `2.9.0` en `package.json` siguiendo el estandar SemVer.
+
+- **[2026-08-27]**: Ajuste de Intervalo de Minutos en Regla 1: Tarjeta Roja Estratégica (Versión 2.9.1).
+  - **Ajuste de Rango Temporal**: Se modificó la condición de activación de la Regla 1 en `rulesEngine.js` para que solo opere entre los minutos 35 y 72 (`elapsed >= 35 && elapsed <= 72`), sustituyendo el rango previo (`elapsed < 60`).
+  - **Optimización de Consulta de Estadísticas y Eventos**: Se ajustaron `needsStats` y `needsEvents` en `rulesEngine.js` para consultar datos hasta el minuto 85 continuo, cubriendo el nuevo rango sin vacíos entre los minutos 60 y 70.
+  - **Pruebas de Validación**: Se añadieron pruebas de límites de tiempo en `test.js` verificando que la alerta no salte al minuto 30 o 75, y que active correctamente en los minutos 50 y 72.
+  - **Control de Versión**: Se actualizó `package.json` a la versión `2.9.1` (SemVer).
+
+- **[2026-08-27]**: Migracion Exclusiva a DeepSeek y Remocion Total de Google Gemini (Version 2.10.0).
+  - **Servicio de IA (`aiService.js`)**: Se elimino toda la infraestructura de Google Gemini (lectura de `GEMINI_API_KEYS`, rotacion de claves, modelos `gemini-3.5-flash`/`gemini-flash-latest`, prompt dual y llamadas Google Search Grounding). Se unificaron todas las operaciones (`generatePrediction`, `generateDailyParlay`, `evaluatePredictionOutcome` y `resolveVerdictViaWeb`) para operar de manera exclusiva y robusta con la API de DeepSeek (`deepseek-reasoner` y `deepseek-chat`).
+  - **Orquestador (`index.js`)**: Se eliminaron las consultas duales paralelas y el formato hibrido de Telegram. Ahora las alertas se analizan y presentan directamente bajo el bloque exclusivo de DeepSeek (DEEPSEEK), aplicando los filtros de confianza y calidad directamente sobre su salida.
+  - **Motor de Reglas y Veredictos (`rulesEngine.js`)**: Se simplifico la evaluacion post-partido para calificar directamente los pronosticos de DeepSeek y emitir un mensaje de veredicto limpio y unificado (DEEPSEEK: GREEN/RED/BLACK).
+  - **Configuracion**: Se elimino `GEMINI_API_KEYS` de `.env.example` y se actualizo `financialTracker.js`.
+  - **Control de Version**: Se incremento la version a `2.10.0` en `package.json` siguiendo el estandar SemVer.
+
+- **[2026-08-27]**: Expansion de Ligas Top y Copas Nacionales de Elite (Version 2.10.1).
+  - **Ampliacion de Torneos Monitoreados**: Se agregaron a `config.js` las copas y ligas competitivas de primer nivel con cobertura estadistica completa y alta liquidez en casas de apuestas: Championship, FA Cup, EFL Carabao Cup, Copa del Rey, Coppa Italia, DFB-Pokal, Coupe de France, Leagues Cup, CONCACAF Champions Cup, Copa do Brasil, Copa Argentina, UEFA Super Cup, UEFA Nations League y FIFA Club World Cup.
+  - **Control de Version**: Se actualizo `package.json` a la version `2.10.1` (SemVer).
+
+- **[2026-08-27]**: Integracion de la Liga Profesional Saudi y AFC Champions League (Version 2.10.2).
+  - **Inclusion de la Liga Saudita**: Se agregaron a `config.js` la Saudi Pro League (ID 307), la King Cup (ID 308) y la AFC Champions League (ID 17), reconociendo sus palabras clave (`saudi pro league`, `roshn saudi league`, etc.) para aprovechar su alta media de goles, cobertura de stats completa en vivo y mercados abiertos en casas de apuestas.
+  - **Control de Version**: Se actualizo `package.json` a la version `2.10.2` (SemVer).
+
+- **[2026-08-27]**: Eliminacion Definitiva de la Regla 3: Sorpresa Tempranera (Version 2.11.0).
+  - **Limpieza de Regla de Bajo Rendimiento**: Se removieron por completo la definicion de la Regla 3 y su evaluacion post-partido (`case 3`) en `rulesEngine.js`. Esta decision responde a su bajo rendimiento historico (~59% Win Rate), eliminando ruido en las alertas y elevando la efectividad proyectada del bot globalmente.
+  - **Actualizacion de Pruebas**: Se actualizo `test_omission.js` para emplear reglas activas (`ruleType: 5`) en las verificaciones de omisiones.
+  - **Control de Version**: Se incremento la version a `2.11.0` en `package.json` (SemVer).
+
+- **[2026-08-27]**: Correccion de Sintaxis en Bloque Try/Catch de `index.js` (Version 2.11.1).
+  - **Correccion de Error de Sintaxis**: Se removio un bloque de cierre prematuro `catch (e)` residual en la seccion de IA de `index.js` que ocasionaba un error de arranque en Node.js (`SyntaxError: Unexpected token 'catch'`).
+  - **Validacion de Sintaxis**: Se comprobo con `node --check` todos los archivos JavaScript del proyecto (`index.js`, `aiService.js`, `rulesEngine.js`, `config.js`, `financialTracker.js`).
+  - **Control de Version**: Se incremento la version a `2.11.1` en `package.json` (SemVer).
+
+- **[2026-08-27]**: Reescritura de SafeOdds: Eliminación de Expiración por Tiempo y Limpieza de Ligas Menores (Versión 2.12.0).
+  - **Eliminación de Cancelación por Expiración**: Se eliminó por completo el descarte por tiempo límite (`waitMinutes`) en `processPendingAlerts()`. Ahora las alertas encoladas en `pendingAlertsQueue` permanecen activas esperando a que la cuota en vivo alcance o supere `@1.60` durante todo el tiempo que el partido continúe en juego y no haya cambio de marcador.
+  - **Limpieza de Referencias a Ligas Menores**: Dado que el bot opera exclusivamente sobre torneos y copas mayores de élite (`isMajorLeague`), se removieron todas las variables, condiciones y avisos residuales (`isMinorLeague`) en el flujo de despacho de alertas y SafeOdds en `index.js`.
+  - **Validación Automatizada**: Se crearon y ejecutaron pruebas de integración (`scratch/testSafeOddsRefactor.js`) y regresión (`test.js`), validando exitosamente la persistencia de alertas sin expiración temporal, activación por momio `@1.60+`, cancelación por gol y cancelación por partido finalizado.
+  - **Control de Versión**: Se incrementó la versión a `2.12.0` en `package.json` siguiendo el estándar SemVer.
+
+- **[2026-08-27]**: Exclusión de Regla 4 (Asedio Intenso / Late Goal) de SafeOdds (Versión 2.12.1).
+  - **Envío Inmediato de Goles Tardíos**: Se excluyó la Regla 4 (`Asedio Intenso (Late Goal)`) del flujo de retención en la cola de SafeOdds en `index.js`. Al dispararse entre los minutos 75 y 83 con una ventana temporal crítica antes de finalizar el partido, las alertas de Asedio Intenso ahora se envían de forma inmediata al canal de Telegram sin quedar encoladas esperando momio.
+  - **Control de Versión**: Se incrementó la versión a `2.12.1` en `package.json` (SemVer).
+
+- **[2026-08-27]**: Integración de Base de Datos Embebida SQLite con `better-sqlite3` (Versión 2.14.0).
+  - **Capa de Persistencia Relacional (`db.js`)**: Se integró SQLite mediante la librería de alto rendimiento `better-sqlite3` con modo WAL (`Write-Ahead Logging`), creando las tablas `plays` (con clave primaria, índice único `(fixture_id, rule_name)`, índices por fecha y estado) y `config_settings` (almacenamiento de capital inicial, stake y fecha de inicio).
+- **[2026-08-28]**: Habilitación de Monitoreo de Ligas Menores en Reglas Generales e Integración de la Liga de Chile (Versión 2.15.0).
+  - **Monitoreo Abierto para Ligas Menores**: Se removió el descarte temprano por liga (`if (!isTop) return;`) en el ciclo de escaneo en vivo de `index.js`.
+  - **Exclusividad de Reglas Avanzadas**: Las reglas avanzadas (Regla 5: HT Comeback, Regla 6: Late Corners y Regla 7: Partido Caliente) permanecen reservadas exclusivamente para torneos de élite (`isTopLeague = true`).
+  - **Integración de Torneos de Chile**: Se incorporaron a `config.js` (`MAJOR_LEAGUE_IDS` y `MAJOR_LEAGUE_KEYWORDS`) la **Primera División de Chile** (ID 265), la **Copa Chile** (ID 267) y la **Supercopa de Chile** (ID 527), dotándolas de cobertura total en las 7 reglas.
+  - **Control de Versión**: Se incrementó la versión a `2.15.0` en `package.json` (SemVer).
+
+- **[2026-08-28]**: Delimitación Estricta de Ligas Menores Exclusivamente a Reglas 1 y 4 (Versión 2.15.1).
+  - **Alcance Exclusivo para Ligas Menores**: Se ajustó `rulesEngine.js` para que los partidos de ligas menores (`!isTopLeague`) únicamente evalúen la **Regla 1 (Tarjeta Roja Estratégica)** y la **Regla 4 (Asedio Intenso / Late Goal)**.
+  - **Reubicación de Reglas 8 y 9**: La Regla 8 (Favorito Domina HT) y la Regla 9 (Gol Inminente Global) fueron trasladadas al bloque de ligas principales (`isTopLeague`), evitando falsos positivos por dominancia en ligas de baja liquidez.
+  - **Optimización de Consumo API (`needsStats` / `needsEvents`)**: En ligas menores solo se solicitan eventos en el rango de tarjeta roja (minutos 35-72) y estadísticas en las ventanas clave (min 35-72 y 75-83), reduciendo sustancialmente las peticiones innecesarias a la API.
+  - **Control de Versión**: Se incrementó la versión a `2.15.1` en `package.json` (SemVer).
+
+- **[2026-08-30]**: Integración de Clasificaciones (Tabla de Posiciones) en la Regla 1 (Versión 2.16.0).
+  - **Consulta de Clasificación (`apiClient.js`)**: Se agregó el método `getStandings(leagueId, season)` para consultar el endpoint `/standings` de API-Football v3, con una caché de 12 horas en memoria (`standingsCache`) para minimizar peticiones API.
+  - **Filtro de Descarte en Regla 1 (`index.js`)**: Se creó el ayudante `getTeamRankFromStandings` y se implementó una condición en el ciclo de alertas: si el equipo beneficiado por la tarjeta roja está 5 o más posiciones por debajo del equipo afectado en la tabla (`rankDifference >= 5`), la alerta de la Regla 1 se aborta de inmediato para evitar falsos positivos deportivos.
+  - **Contexto de IA en DeepSeek (`aiService.js`)**: Se integró el ranking de ambos equipos en el prompt enviado a DeepSeek (`buildFootballPrompt`), permitiendo análisis lógicos basados en la brecha competitiva de los rivales.
+  - **Control de Versión**: Se incrementó la versión a `2.16.0` en `package.json` por la adición de funcionalidad.
+
+- **[2026-08-30]**: Auditoría de Rendimiento, Actualización de Reporte Semanal y Optimización de Filtros DeepSeek (Versión 2.16.1).
+  - **Procesamiento de Alertas**: Se reemplazó y procesó el archivo `messages.html` que contiene las alertas de Telegram de la semana del 24 al 30 de agosto de 2026. Se resolvieron exitosamente 12 veredictos pendientes mediante consultas web automatizadas con DeepSeek.
+  - **Estadísticas de la Semana**: Se evaluó un volumen total de 72 alertas, registrando un Win Rate Global de 56.52% (39 GREEN / 30 RED / 3 Evitadas).
+  - **Desempeño de Motores**: Google Gemini operó parcialmente al inicio de la semana antes de su remoción total el 27 de agosto, registrando un 92.31% de acierto (12G / 1R). DeepSeek operó durante todo el periodo logrando un 56.52% de acierto (39G / 30R), lo que resultó en un balance neto negativo temporal de -4.65 unidades en el simulador financiero.
+  - **Foco de Optimización**: El mercado de Victoria Directa (1X2) representó el mayor volumen y arrastró el rendimiento con solo 46.67% de Win Rate (14G / 16R), en contraste con el excelente comportamiento de Tarjetas Totales (81.82%, 9G / 2R) y la Regla 5: Partido Caliente (64.29%, 18G / 10R).
+  - **Filtro Estricto de Confianza por Mercado (DeepSeek)**: Se implementó una lógica de filtrado de confianza dinámica en `index.js` para despachos iniciales y re-análisis en cola (SafeOdds) del motor DeepSeek. Se elevó el umbral mínimo de confianza de un 40% plano a:
+    - Un **70% de confianza mínima general** para la mayoría de mercados.
+    - Un **78% de confianza mínima estricta** para mercados con menor rendimiento histórico reciente (Victoria Directa/1X2/ML, Próximo Gol/Gol en Vivo y Córneres Totales).
+  - **Pruebas de Regresión y Sintaxis**: Se ejecutaron con éxito las pruebas de regresión (`node test.js` y `node test_omission.js`) y se validó la sintaxis completa del script orquestador (`node --check index.js`).
+  - **Control de Versión**: Se incrementó la versión a `2.16.1` en `package.json` (SemVer).
+
+- **[2026-08-30]**: Optimización Estética y Corrección de Confusión Visual en Alertas (Versión 2.16.2).
+  - **Rediseño de Iconografía de Reglas (`rulesEngine.js`)**: Se sustituyeron los emoticones en los encabezados de los mensajes de alerta de fútbol para evitar la sobreexposición del color rojo/amarillo que causaba falsos negativos psicológicos en los usuarios:
+    - **Regla 1 (Tarjeta Roja Estratégica)**: De `🟥` a `♟️` (Ajedrez / Táctica deportiva). Elimina la confusión visual del bloque rojo con un veredicto fallido.
+    - **Regla 4 (Asedio Intenso)**: De `🚨` a `🎯` (Diana de precisión de ataque).
+    - **Regla 5 (HT Comeback)**: De `🔄` a `🚀` (Remontada / Despegue deportivo).
+    - **Regla 7 (Partido Caliente)**: De `🟨` a `🔥` (Fuego). Evita el uso de bloques amarillos planos.
+    - **Regla 8 (Favorito Domina HT)**: De `⏳` a `👑` (Corona de dominancia).
+    - **Regla 9 (Gol Inminente)**: De `💥` a `⚡` (Rayo).
+  - **Compatibilidad del Parser de Reportes (`generar_reporte_messages.js`)**: Se actualizaron la regex `reglaMatch` y la función `normalizarRegla` del script de reportes para que soporten la nueva iconografía en mensajes futuros sin perder la capacidad de parsear alertas históricas en `messages.html`.
+  - **Validación**: Se ejecutó `node test.js` confirmando que todas las alertas unitarias se disparan con su nuevo diseño y que pasan las pruebas.
+  - **Control de Versión**: Se incrementó la versión a `2.16.2` en `package.json` (SemVer).
 - **[2026-08-30]**: Corrección de Líneas Obsoletas de Goles Totales en IA (Versión 2.16.3).
   - **Afinación de Reglas en Prompt (`aiService.js`)**: Se actualizó el bloque `buildFootballPrompt` para endurecer la instrucción de cálculo de goles acumulados, prohibiendo de manera explícita sugerir líneas que ya se hayan superado o igualado (ej: proponer "Más de 2.5 Goles" en un marcador 2-1).
   - **Saneamiento Programático Post-AI (`aiService.js`)**: Se implementó y exportó la función `sanitizeAndCorrectPrediction` que analiza la recomendación devuelta por DeepSeek y, si detecta una sugerencia de goles totales obsoleta (`lineVal <= goles_actuales`), la corrige automáticamente a la siguiente línea de goles activa viable (`goles_actuales + 0.5`), previniendo que se publiquen apuestas ya ganadas.
   - **Pruebas de Validación**: Se creó el archivo de pruebas unitarias locales `testSanitize.js` simulando 6 escenarios distintos (incluyendo líneas obsoletas en español/inglés, marcadores en cero, córneres y victoria directa), logrando un 100% de efectividad de saneamiento.
   - **Control de Versión**: Se incrementó la versión a `2.16.3` en `package.json` (SemVer).
+
+- **[2026-08-30]**: Ajuste Equilibrado de Umbrales de Confianza de IA (Versión 2.16.4).
+  - **Rebaja de Umbrales de Confianza**: Se redujeron los umbrales mínimos requeridos de confianza del Consensus Filter en `index.js` para reactivar el envío de alertas que estaban siendo bloqueadas tras la versión 2.16.1.
+    - El umbral mínimo general se ajustó de **70%** a **60%**.
+    - El umbral mínimo estricto para mercados principales (Victoria Directa, Próximo Gol, Córneres) se redujo de **78%** a **70%**.
+  - **Análisis de Impacto**: La configuración anterior del 78% silenciaba virtualmente todas las alertas deportivas de calidad, dado que en vivo la IA de DeepSeek tiende a evaluar con prudencia (estimando confianzas realistas de entre 60% y 75% incluso en situaciones de asedio claro). El ajuste de 60%/70% equilibra la calidad y reactiva la operatividad.
+  - **Pruebas y Verificación**: Se ejecutaron con éxito todas las pruebas unitarias y de simulación (`test.js`, `test_omission.js`, `testSanitize.js`, `testAi.js`), y se validó la comunicación saliente con la API de Telegram.
+  - **Control de Versión**: Se incrementó la versión a `2.16.4` en `package.json` (SemVer).
+
+- **[2026-09-04]**: Tolerancia a Goles Fantasma y Confirmación en 2 Ciclos para SafeOdds (Versión 2.16.5).
+  - **Diagnóstico de Falso Descarte por API**: Se identificó que las alertas en cola (`pendingAlertsQueue`) podían ser descartadas prematuramente si la API de datos en vivo reportaba temporalmente un marcador incorrecto o un gol anulado rápidamente por el VAR (ej. un falso 0-3 en Ipswich vs Liverpool cuando el partido terminó 0-2).
+  - **Mecanismo Anti-Goles Fantasma en 2 Ciclos (`index.js`)**: Se implementó una verificación con estado intermedio (`pendingScoreChange`). Al detectarse un cambio de marcador en una alerta pendiente, el bot espera a confirmarlo en el siguiente ciclo de polling de la API. Si el marcador se mantiene en el 2º ciclo, el cambio se confirma y la alerta se procesa/cancela. Si la API corrige el marcador de vuelta al original (como ocurre con goles fantasma o VAR), la alerta se preserva intacta en la cola.
+  - **Control de Versión**: Se incrementó la versión a `2.16.5` en `package.json` (SemVer).
