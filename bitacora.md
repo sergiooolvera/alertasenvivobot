@@ -538,4 +538,22 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Pruebas Unitarias (`test.js`)**: Se adaptó el conjunto de pruebas unitarias para validar las sub-pruebas con límite superior exacto al minuto 76 y el descarte fuera de rango a partir del minuto 78.
   - **Control de Versión**: Se incrementó la versión a `2.16.6` en `package.json` (SemVer).
 
+- **[2026-09-04]**: Integración del Historial Condicional de Partidos de Local y Visita para Análisis de IA (Versión 2.17.0).
+  - **Consulta HTTP Optimizada sin Costo Extra (`index.js`)**: Se aumentó la cantidad de partidos crudos consultados a la API (`getTeamLastMatches`) de 6 a **12 partidos** en una sola petición por equipo.
+  - **Extracción Específica de Forma (`index.js`)**: Se estructuraron 4 colecciones independientes de rendimiento reciente:
+    - Últimos 5 partidos **generales** del equipo local.
+    - Últimos 5 partidos **de Local** del equipo local (jugando en su estadio).
+    - Últimos 5 partidos **generales** del equipo visitante.
+    - Últimos 5 partidos **de Visita** del equipo visitante (jugando fuera de casa).
+  - **Enriquecimiento del Prompt de IA (`aiService.js`)**: Se actualizó `formatLastMatches`, `buildFootballPrompt` y `buildDailyParlayPrompt` para incluir los bloques condicionales de Local y Visita, permitiendo a Gemini/DeepSeek detectar sesgos de rendimiento por condición de cancha.
+  - **Verificación y Pruebas Unitarias**: Se creó y ejecutó `scratch/test_local_visita.js` y se verificaron las pruebas de regresión en `test.js` con resultado **GREEN**.
+  - **Control de Versión**: Se incrementó la versión a `2.17.0` en `package.json` (SemVer).
+
+- **[2026-09-04]**: Integración de Enfrentamientos Directos H2H en Parlay del Día (Versión 2.17.1).
+  - **Consulta e Inclusión H2H en Parlay (`index.js` y `aiService.js`)**: Se añadió `getHeadToHead(homeId, awayId, 6)` en el recolector pre-partido del Parlay del Día y se formateó el bloque `h2hMatches` en `buildDailyParlayPrompt`, garantizando que tanto las alertas en vivo como los parlays diarios dispongan de los 5 enfrentamientos directos H2H recientes.
+  - **Pruebas y Verificación**: Se ejecutó `scratch/test_local_visita.js` validando la inclusión correcta de H2H en ambos tipos de prompts.
+  - **Control de Versión**: Se incrementó la versión a `2.17.1` en `package.json` (SemVer).
+
+
+
 

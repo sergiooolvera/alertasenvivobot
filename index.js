@@ -335,6 +335,8 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                         events: eventsCache.get(alert.fixtureId) || [],
                         lastMatchesHome: tpl.lastMatchesHome || [],
                         lastMatchesAway: tpl.lastMatchesAway || [],
+                        lastMatchesHomeSpecific: tpl.lastMatchesHomeSpecific || [],
+                        lastMatchesAwaySpecific: tpl.lastMatchesAwaySpecific || [],
                         h2hMatches: tpl.h2hMatches || []
                     };
 
@@ -766,8 +768,8 @@ async function checkMatches() {
             const [fetchedStats, fetchedEvents, rawLastMatchesHome, rawLastMatchesAway, rawH2hMatches, standings] = await Promise.all([
                 stats.length === 0 ? getMatchStatistics(fixtureId) : Promise.resolve(stats),
                 events.length === 0 ? getMatchEvents(fixtureId) : Promise.resolve(events),
-                getTeamLastMatches(homeTeamId, 6),
-                getTeamLastMatches(awayTeamId, 6),
+                getTeamLastMatches(homeTeamId, 12),
+                getTeamLastMatches(awayTeamId, 12),
                 getHeadToHead(homeTeamId, awayTeamId, 6),
                 getStandings(leagueId, season)
             ]);
@@ -775,13 +777,19 @@ async function checkMatches() {
             stats = fetchedStats;
             events = fetchedEvents;
 
-            // Filtrar para excluir el partido actual (fixtureId) y limitar a los últimos 5
-            const lastMatchesHome = (rawLastMatchesHome || [])
-                .filter(m => m.fixture && m.fixture.id !== fixtureId)
+            // Filtrar para excluir el partido actual (fixtureId) y separar historial general de condicional
+            const validMatchesHome = (rawLastMatchesHome || [])
+                .filter(m => m.fixture && m.fixture.id !== fixtureId);
+            const lastMatchesHome = validMatchesHome.slice(0, 5);
+            const lastMatchesHomeSpecific = validMatchesHome
+                .filter(m => m.teams && m.teams.home && m.teams.home.id === homeTeamId)
                 .slice(0, 5);
 
-            const lastMatchesAway = (rawLastMatchesAway || [])
-                .filter(m => m.fixture && m.fixture.id !== fixtureId)
+            const validMatchesAway = (rawLastMatchesAway || [])
+                .filter(m => m.fixture && m.fixture.id !== fixtureId);
+            const lastMatchesAway = validMatchesAway.slice(0, 5);
+            const lastMatchesAwaySpecific = validMatchesAway
+                .filter(m => m.teams && m.teams.away && m.teams.away.id === awayTeamId)
                 .slice(0, 5);
 
             const h2hMatches = (rawH2hMatches || [])
@@ -846,6 +854,8 @@ async function checkMatches() {
                         events: events,
                         lastMatchesHome: lastMatchesHome,
                         lastMatchesAway: lastMatchesAway,
+                        lastMatchesHomeSpecific: lastMatchesHomeSpecific,
+                        lastMatchesAwaySpecific: lastMatchesAwaySpecific,
                         h2hMatches: h2hMatches,
                         standingsInfo: standingsInfo
                     };
@@ -1053,6 +1063,8 @@ async function checkMatches() {
                                     ruleDetails: cleanRuleDetails,
                                     lastMatchesHome,
                                     lastMatchesAway,
+                                    lastMatchesHomeSpecific,
+                                    lastMatchesAwaySpecific,
                                     h2hMatches
                                 },
                                 originalAlertText: alert.text
@@ -1239,10 +1251,20 @@ async function generateAndSendDailyParlay(timeString) {
             if (!odds) continue;
 
             await new Promise(r => setTimeout(r, 200));
-            const lastMatchesHome = await getTeamLastMatches(match.teams.home.id, 5);
+            const rawHome = await getTeamLastMatches(match.teams.home.id, 12);
+            const validHome = (rawHome || []).filter(m => m.fixture && m.fixture.id !== fixtureId);
+            const lastMatchesHome = validHome.slice(0, 5);
+            const lastMatchesHomeSpecific = validHome.filter(m => m.teams && m.teams.home && m.teams.home.id === match.teams.home.id).slice(0, 5);
 
             await new Promise(r => setTimeout(r, 200));
-            const lastMatchesAway = await getTeamLastMatches(match.teams.away.id, 5);
+            const rawAway = await getTeamLastMatches(match.teams.away.id, 12);
+            const validAway = (rawAway || []).filter(m => m.fixture && m.fixture.id !== fixtureId);
+            const lastMatchesAway = validAway.slice(0, 5);
+            const lastMatchesAwaySpecific = validAway.filter(m => m.teams && m.teams.away && m.teams.away.id === match.teams.away.id).slice(0, 5);
+
+            await new Promise(r => setTimeout(r, 200));
+            const rawH2h = await getHeadToHead(match.teams.home.id, match.teams.away.id, 6);
+            const h2hMatches = (rawH2h || []).filter(m => m.fixture && m.fixture.id !== fixtureId).slice(0, 5);
 
             eligibleMatches.push({
                 sport: 'football',
@@ -1252,7 +1274,10 @@ async function generateAndSendDailyParlay(timeString) {
                 leagueName: match.league.name,
                 odds,
                 lastMatchesHome,
-                lastMatchesAway
+                lastMatchesAway,
+                lastMatchesHomeSpecific,
+                lastMatchesAwaySpecific,
+                h2hMatches
             });
 
             if (eligibleMatches.length >= 8) {

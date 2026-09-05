@@ -169,8 +169,9 @@ function formatFootballEvents(events) {
 /**
  * Formatea los últimos partidos de un equipo de fútbol en un texto compacto.
  */
-function formatLastMatches(teamName, matches) {
-    if (!matches || matches.length === 0) return `Últimos partidos de ${teamName}: No disponibles`;
+function formatLastMatches(teamName, matches, titlePrefix = '') {
+    const title = titlePrefix ? titlePrefix : `Últimos partidos de ${teamName}:`;
+    if (!matches || matches.length === 0) return `${title} No disponibles`;
     
     try {
         const formatted = matches.map(m => {
@@ -183,10 +184,10 @@ function formatLastMatches(teamName, matches) {
             return `- [${date}] ${homeName} ${homeGoals} - ${awayGoals} ${awayName} (${status})`;
         }).join('\n');
         
-        return `Últimos partidos de ${teamName}:\n${formatted}`;
+        return `${title}\n${formatted}`;
     } catch (e) {
         console.error(`[AI-Service] Error formateando últimos partidos para ${teamName}:`, e.message);
-        return `Últimos partidos de ${teamName}: Error al procesar.`;
+        return `${title} Error al procesar.`;
     }
 }
 
@@ -218,12 +219,14 @@ function formatH2HMatches(matches) {
  * Construye el prompt específico para DeepSeek (Fútbol) - Optimizado para brevedad y análisis técnico.
  */
 function buildFootballPrompt(matchData) {
-    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway, h2hMatches, standingsInfo } = matchData;
+    const { homeTeam, awayTeam, leagueName, leagueRound, elapsed, score, odds, ruleName, ruleDetails, stats, events, lastMatchesHome, lastMatchesAway, lastMatchesHomeSpecific, lastMatchesAwaySpecific, h2hMatches, standingsInfo } = matchData;
     
     const statsStr = formatFootballStats(stats);
     const eventsStr = formatFootballEvents(events);
-    const lastMatchesHomeStr = formatLastMatches(homeTeam, lastMatchesHome);
-    const lastMatchesAwayStr = formatLastMatches(awayTeam, lastMatchesAway);
+    const lastMatchesHomeGenStr = formatLastMatches(homeTeam, lastMatchesHome, `Últimos partidos GENERALES de ${homeTeam}:`);
+    const lastMatchesHomeSpecStr = formatLastMatches(homeTeam, lastMatchesHomeSpecific, `Últimos partidos DE LOCAL de ${homeTeam}:`);
+    const lastMatchesAwayGenStr = formatLastMatches(awayTeam, lastMatchesAway, `Últimos partidos GENERALES de ${awayTeam}:`);
+    const lastMatchesAwaySpecStr = formatLastMatches(awayTeam, lastMatchesAwaySpecific, `Últimos partidos DE VISITA de ${awayTeam}:`);
     const h2hMatchesStr = formatH2HMatches(h2hMatches);
 
     let standingsStr = '';
@@ -248,9 +251,12 @@ ${statsStr}
 📋 Línea de Tiempo de Eventos:
 ${eventsStr}
  
-📊 Rendimiento Histórico Reciente (Últimos 5 partidos):
-${lastMatchesHomeStr}
-${lastMatchesAwayStr}
+📊 Rendimiento Histórico Reciente:
+${lastMatchesHomeGenStr}
+${lastMatchesHomeSpecStr}
+
+${lastMatchesAwayGenStr}
+${lastMatchesAwaySpecStr}
  
 📊 Enfrentamientos Directos Recientes (Últimos 5 partidos H2H):
 ${h2hMatchesStr}
@@ -352,9 +358,12 @@ function buildDailyParlayPrompt(matchesData) {
         const type = '⚽ FÚTBOL';
         const oddsStr = `Local ${m.odds.home} | Empate ${m.odds.draw} | Visita ${m.odds.away}`;
         
-        const lastHome = formatLastMatches(m.homeTeam, m.lastMatchesHome);
-        const lastAway = formatLastMatches(m.awayTeam, m.lastMatchesAway);
-        const lastMatchesStr = `\n${lastHome}\n${lastAway}`;
+        const lastHomeGen = formatLastMatches(m.homeTeam, m.lastMatchesHome, `Últimos partidos GENERALES de ${m.homeTeam}:`);
+        const lastHomeLoc = formatLastMatches(m.homeTeam, m.lastMatchesHomeSpecific, `Últimos partidos DE LOCAL de ${m.homeTeam}:`);
+        const lastAwayGen = formatLastMatches(m.awayTeam, m.lastMatchesAway, `Últimos partidos GENERALES de ${m.awayTeam}:`);
+        const lastAwayVis = formatLastMatches(m.awayTeam, m.lastMatchesAwaySpecific, `Últimos partidos DE VISITA de ${m.awayTeam}:`);
+        const h2hStr = formatH2HMatches(m.h2hMatches);
+        const lastMatchesStr = `\n${lastHomeGen}\n${lastHomeLoc}\n${lastAwayGen}\n${lastAwayVis}\n${h2hStr}`;
         
         return `--- PARTIDO #${idx + 1} (${type}) ---
 - Deporte/Liga: ${type} - ${m.leagueName}
@@ -535,6 +544,8 @@ module.exports = {
     generatePredictionDeepSeek,
     generateDailyParlay,
     evaluatePredictionOutcome,
+    buildFootballPrompt,
+    buildDailyParlayPrompt,
     resolveVerdictViaWeb,
     sanitizeAndCorrectPrediction
 };
