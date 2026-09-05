@@ -531,3 +531,11 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Diagnóstico de Falso Descarte por API**: Se identificó que las alertas en cola (`pendingAlertsQueue`) podían ser descartadas prematuramente si la API de datos en vivo reportaba temporalmente un marcador incorrecto o un gol anulado rápidamente por el VAR (ej. un falso 0-3 en Ipswich vs Liverpool cuando el partido terminó 0-2).
   - **Mecanismo Anti-Goles Fantasma en 2 Ciclos (`index.js`)**: Se implementó una verificación con estado intermedio (`pendingScoreChange`). Al detectarse un cambio de marcador en una alerta pendiente, el bot espera a confirmarlo en el siguiente ciclo de polling de la API. Si el marcador se mantiene en el 2º ciclo, el cambio se confirma y la alerta se procesa/cancela. Si la API corrige el marcador de vuelta al original (como ocurre con goles fantasma o VAR), la alerta se preserva intacta en la cola.
   - **Control de Versión**: Se incrementó la versión a `2.16.5` en `package.json` (SemVer).
+
+- **[2026-09-04]**: Ampliación de la Ventana de Tiempo en Regla 1 a Minuto 76 (Versión 2.16.6).
+  - **Ampliación de Límite Temporal (`rulesEngine.js`)**: Se extendió la ventana de evaluación de la **Regla 1 (Tarjeta Roja Estratégica)** del minuto 72 al **minuto 76** (`elapsed >= 35 && elapsed <= 76`), permitiendo capturar incidentes de expulsión tardía en el tramo final del segundo tiempo.
+  - **Optimización de Consultas API (`needsStats` y `needsEvents`)**: Se actualizaron los rangos de la consulta previa a la API en ligas menores a los minutos 35-76 para asegurar la recepción de datos de eventos y tarjetas rojas durante dicho periodo prolongado.
+  - **Pruebas Unitarias (`test.js`)**: Se adaptó el conjunto de pruebas unitarias para validar las sub-pruebas con límite superior exacto al minuto 76 y el descarte fuera de rango a partir del minuto 78.
+  - **Control de Versión**: Se incrementó la versión a `2.16.6` en `package.json` (SemVer).
+
+

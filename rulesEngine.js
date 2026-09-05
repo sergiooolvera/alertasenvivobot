@@ -13,7 +13,7 @@ function needsStats(fixture, odds, isTopLeague = false) {
     const elapsed = fixture.fixture.status.elapsed;
     if (!isTopLeague) {
         // En ligas menores solo se requieren estadísticas para Regla 1 (posesión) o Regla 4 (asedio min 75-83)
-        return (elapsed >= 35 && elapsed <= 72) || (elapsed >= 75 && elapsed <= 83);
+        return (elapsed >= 35 && elapsed <= 76) || (elapsed >= 75 && elapsed <= 83);
     }
     return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
@@ -25,8 +25,8 @@ function needsEvents(fixture, odds, isTopLeague = false) {
     if (!odds || odds === 'NO_ODDS') return false;
     const elapsed = fixture.fixture.status.elapsed;
     if (!isTopLeague) {
-        // En ligas menores solo se requieren eventos para Regla 1 (tarjetas min 35-72)
-        return (elapsed >= 35 && elapsed <= 72);
+        // En ligas menores solo se requieren eventos para Regla 1 (tarjetas min 35-76)
+        return (elapsed >= 35 && elapsed <= 76);
     }
     return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
@@ -81,7 +81,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
     // =========================================================================
 
     // --- REGLA 1: Tarjeta Roja ---
-    if (elapsed >= 35 && elapsed <= 72 && (isDraw || underdogWinning)) {
+    if (elapsed >= 35 && elapsed <= 76 && (isDraw || underdogWinning)) {
         const redCards = events.filter(e => e.type === 'Card' && (e.detail === 'Red Card' || e.detail === 'Yellow 2nd'));
         if (redCards.length > 0) {
             const teamWithRed = redCards[0].team.name;
