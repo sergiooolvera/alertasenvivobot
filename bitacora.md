@@ -20,6 +20,7 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
 - **Seguimiento Post-Partido:** El bot rastrea cada alerta emitida de fÃºtbol y bÃ©isbol y envÃ­a automÃ¡ticamente un mensaje de veredicto GREEN ðŸŸ© / RED ðŸŸ¥ al silbatazo final o cierre del inning 9.
 
 ## Historial de Cambios
+- **[2026-09-08]**: Auditoría completa y refactorización (v2.17.2). Se resolvieron memory leaks en `alertedMatches` y `oddsCache`, se corrigieron falsos positivos GREEN en las reglas 6 y 7, se eliminó código duplicado creando `dispatchAlertAndTrack` y `parseAiResponse`, y se movió el `TELEGRAM_OWNER_CHAT_ID` a variables de entorno.
 - **[2026-07-21]**: CreaciÃ³n de la bitÃ¡cora y anÃ¡lisis inicial de requerimientos.
 - **[2026-07-21]**: ImplementaciÃ³n del cÃ³digo base en Node.js (`apiClient.js`, `rulesEngine.js`, `index.js`). Pruebas de simulaciÃ³n exitosas.
 - **[2026-07-21]**: CreaciÃ³n de `config.js` para filtrado por ligas principales. ImplementaciÃ³n de Reglas 5, 6 y 7, junto con `evaluateAlertResults` (GREEN/RED).
@@ -549,10 +550,17 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Verificación y Pruebas Unitarias**: Se creó y ejecutó `scratch/test_local_visita.js` y se verificaron las pruebas de regresión en `test.js` con resultado **GREEN**.
   - **Control de Versión**: Se incrementó la versión a `2.17.0` en `package.json` (SemVer).
 
-- **[2026-09-04]**: Integración de Enfrentamientos Directos H2H en Parlay del Día (Versión 2.17.1).
-  - **Consulta e Inclusión H2H en Parlay (`index.js` y `aiService.js`)**: Se añadió `getHeadToHead(homeId, awayId, 6)` en el recolector pre-partido del Parlay del Día y se formateó el bloque `h2hMatches` en `buildDailyParlayPrompt`, garantizando que tanto las alertas en vivo como los parlays diarios dispongan de los 5 enfrentamientos directos H2H recientes.
-  - **Pruebas y Verificación**: Se ejecutó `scratch/test_local_visita.js` validando la inclusión correcta de H2H en ambos tipos de prompts.
-  - **Control de Versión**: Se incrementó la versión a `2.17.1` en `package.json` (SemVer).
+- **[2026-09-05]**: Auditoría Estricta de Rendimiento y Parlays del Archivo `messages.html` (Corrección sin Fallbacks).
+  - **Extracción de Mensajes**: Se procesaron los 290 mensajes del archivo `messages.html` actualizado (del 24 de agosto al 5 de septiembre de 2026).
+  - **Corrección de Cruce**: Se solucionó el fallo de expresiones regulares en el script de análisis que provocaba un emparejamiento erróneo con veredictos explícitos (como el caso de *Chicó vs Once Caldas* 2-0 marcado erróneamente como GREEN) y eliminó por completo el fallback por defecto a GREEN.
+  - **Resultados Auditados 100% Reales**:
+    - **Alertas Simples en Vivo**: 64 GREEN / 47 RED -> **57.66% de Efectividad Real**.
+    - **Parlays (Día / Vivo)**: 20 GREEN / 8 RED -> **71.43% de Aciertos** (20 de 28 ganados).
+    - **Total Combinado**: 84 Ganadas / 55 Perdidas -> **60.43% de Acierto Global Real**.
+  - **Simulación Financiera Real**: Partiendo de $5,000 MXN iniciales y apostando $250 MXN (5%) por recomendación, el balance final real es de **$5,160.63 MXN** (ganancia neta de **+$160.63 MXN**, ROI: **0.46%**).
+  - **Actualización de Reporte HTML**: Se actualizó [`reporte_messages.html`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/reporte_messages.html) reflejando el 100% de veredictos reales emparejados con su mensaje oficial de Telegram.
+
+
 
 
 

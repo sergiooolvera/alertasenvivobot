@@ -9,7 +9,7 @@ const financialTracker = require('./financialTracker');
 
 // Módulos de Fútbol
 const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds, getHeadToHead, getStandings } = require('./apiClient');
-const { evaluateRules, needsStats, needsEvents, evaluateAlertResults } = require('./rulesEngine');
+const { evaluateRules, needsStats, needsEvents, evaluateAlertResults, clearMatchAlerts } = require('./rulesEngine');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
 // Servicio de IA
@@ -96,7 +96,7 @@ function logSafeOddsEvent(message) {
 
 // Almacenamos los chats suscritos
 const subscribedChats = new Set();
-const MI_CHAT_ID = 890184744; // Tu ID exclusivo
+const MI_CHAT_ID = parseInt(process.env.TELEGRAM_OWNER_CHAT_ID, 10) || 0; // Configurar en .env como TELEGRAM_OWNER_CHAT_ID
 
 if (bot.onText) {
     // Suscribir automáticamente al inicio para evitar que los reinicios corten las notificaciones
@@ -170,6 +170,54 @@ try {
     }
 } catch (error) {
     console.error(`[Inicio] Error al reconstruir trackedMatches desde jugadas pendientes:`, error.message);
+}
+
+/**
+ * Parsea la respuesta formateada de la IA (DeepSeek) y extrae sus campos clave.
+ * Centraliza la lógica de regex para evitar duplicación en múltiples lugares.
+ * @param {string} text - Texto completo de la respuesta de la IA
+ * @returns {{ analysis: string, recommendation: string, oddVal: string, confidence: string }}
+ */
+function parseAiResponse(text) {
+    if (!text) return { analysis: 'N/D', recommendation: 'N/D', oddVal: '1.60', confidence: '80' };
+    const recMatch      = text.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+    const analysisMatch = text.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
+    const oddMatch      = text.match(/📈\s*\*?\*?Momio Sugerido\*?\*?:?\s*\*?\*?\s*@?\s*([^\n]+)/i);
+    const confMatch     = text.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
+    return {
+        analysis:       analysisMatch ? analysisMatch[1].trim() : 'N/D',
+        recommendation: recMatch      ? recMatch[1].replace(/\*/g, '').trim() : 'N/D',
+        oddVal:         oddMatch      ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60',
+        confidence:     confMatch     ? confMatch[1] : '80'
+    };
+
+/**
+ * Envía la alerta a todos los chats suscritos, la procesa para posibles parlays en vivo
+ * y la registra en el tracker financiero. Centraliza este bloque repetitivo.
+ */
+async function dispatchAlertAndTrack(fixtureId, match, textToSend, alertMetadata, finalSuggestedOdd) {
+    for (const chatId of subscribedChats) {
+        try {
+            await sendSafeMarkdownMessage(chatId, textToSend);
+        } catch (e) {
+            console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+        }
+    }
+    alertMetadata.isSent = true;
+    if (textToSend) {
+        // La función handleLiveParlayQueue está definida más abajo, JS usa hoisting para funciones con nombre.
+        await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
+    }
+    
+    financialTracker.addPlay({
+        fixtureId,
+        home: match.teams.home.name,
+        away: match.teams.away.name,
+        recommendation: alertMetadata.aiRecommendation,
+        suggestedOdd: finalSuggestedOdd || 1.60,
+        ruleName: alertMetadata.ruleName,
+        metadata: alertMetadata
+    });
 }
 
 
@@ -326,7 +374,7 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                         awayTeam: alert.awayTeam,
                         leagueName: tpl.leagueName || (match.league && match.league.name ? match.league.name : 'Desconocida'),
                         leagueRound: tpl.leagueRound || (match.league && match.league.round ? match.league.round : 'Ronda Desconocida'),
-                        elapsed: match.fixture.status.elapsed || elapsed,
+                        elapsed: match.fixture.status.elapsed || 0,
                         score: { home: currentHomeGoals, away: currentAwayGoals },
                         odds: oddsCache.get(alert.fixtureId) || alert.metadata.odds || { home: 1.5, draw: 3.5, away: 5.0 },
                         ruleName: alert.ruleName,
@@ -345,15 +393,8 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                     const aiPrediction = await aiService.generatePrediction(matchData, 'football', contextDeepSeek);
 
                     if (aiPrediction) {
-                        const recMatch = aiPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                        const analysisMatch = aiPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                        const oddMatch = aiPrediction.match(/📈\s*\*?\*?Momio Sugerido\*?\*?:?\s*\*?\*?\s*@?\s*([^\n]+)/i);
-                        const confidenceMatch = aiPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
+                        const { analysis, recommendation, oddVal, confidence } = parseAiResponse(aiPrediction);
 
-                        const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
-                        const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
-                        const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
-                        const confidence = confidenceMatch ? confidenceMatch[1] : '80';
 
                         // --- FILTRO DE CONSENSO / CALIDAD EN RE-ANÁLISIS ---
                         const recLower = recommendation.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -404,8 +445,9 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                         }
 
                         if (liveOddVal !== null && liveOddVal >= alert.targetOdd) {
-                            const triggerLogMsg = `✅ *[SafeOdds]* ¡Alerta de Re-análisis ACTIVADA! *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}). Momio: *@${liveOddVal.toFixed(2)}* en el minuto ${elapsed}'`;
-                            console.log(`[SafeOdds] ¡Alerta de Re-análisis ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${liveOddVal.toFixed(2)} en el minuto ${elapsed}'`);
+                            const currentElapsed = match.fixture.status.elapsed || 0;
+                            const triggerLogMsg = `✅ *[SafeOdds]* ¡Alerta de Re-análisis ACTIVADA! *${alert.homeTeam} vs ${alert.awayTeam}* (Regla: ${alert.ruleName}). Momio: *@${liveOddVal.toFixed(2)}* en el minuto ${currentElapsed}'`;
+                            console.log(`[SafeOdds] ¡Alerta de Re-análisis ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${liveOddVal.toFixed(2)} en el minuto ${currentElapsed}'`);
                             logSafeOddsEvent(triggerLogMsg);
 
                             for (const chatId of subscribedChats) {
@@ -590,7 +632,7 @@ async function checkForVarCorrections(match, events) {
                 continue;
             }
 
-            if (events && !events.isError && Array.isArray(events)) {
+            if (events !== null && Array.isArray(events)) {
                 // EVITAR FALSOS POSITIVOS: Si la lista de eventos está vacía, no asumimos anulación (error temporal de la API)
                 if (events.length === 0) {
                     continue;
@@ -728,7 +770,7 @@ async function checkMatches() {
             const lastFetch = lastEventsFetchTime.get(fixtureId) || 0;
             if (now - lastFetch >= THROTTLE_COOLDOWN_MS || !eventsCache.has(fixtureId)) {
                 console.log(`[API-Sports] Consultando eventos en vivo para ${match.teams.home.name} vs ${match.teams.away.name} (fixture: ${fixtureId})`);
-                events = await getMatchEvents(fixtureId);
+                events = (await getMatchEvents(fixtureId)) || [];
                 eventsCache.set(fixtureId, events);
                 lastEventsFetchTime.set(fixtureId, now);
             } else {
@@ -774,8 +816,8 @@ async function checkMatches() {
                 getStandings(leagueId, season)
             ]);
             
-            stats = fetchedStats;
-            events = fetchedEvents;
+            stats = fetchedStats || [];
+            events = fetchedEvents || [];
 
             // Filtrar para excluir el partido actual (fixtureId) y separar historial general de condicional
             const validMatchesHome = (rawLastMatchesHome || [])
@@ -865,15 +907,7 @@ async function checkMatches() {
                     const aiPrediction = await aiService.generatePrediction(matchData, 'football', contextDeepSeek);
                     
                     if (aiPrediction) {
-                        const recMatch = aiPrediction.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                        const analysisMatch = aiPrediction.match(/🧠\s*\*?\*?Análisis de IA\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
-                        const oddMatch = aiPrediction.match(/📈\s*\*?\*?Momio Sugerido\*?\*?:?\s*\*?\*?\s*@?\s*([^\n]+)/i);
-                        const confidenceMatch = aiPrediction.match(/🔥\s*\*?\*?Confianza Estimada\*?\*?:?\s*\*?\*?\s*(\d+)%/i);
-                        
-                        const analysis = analysisMatch ? analysisMatch[1].trim() : 'N/D';
-                        const recommendation = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';
-                        const oddVal = oddMatch ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60';
-                        const confidence = confidenceMatch ? confidenceMatch[1] : '80';
+                        const { analysis, recommendation, oddVal, confidence } = parseAiResponse(aiPrediction);
 
                         // --- FILTRO DE CONSENSO / CALIDAD PARA DEEPSEEK ---
                         const recLower = recommendation.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -950,52 +984,10 @@ async function checkMatches() {
                         const reason = isLateGoal ? 'regla de Asedio Intenso / Gol Tardío (envío inmediato por urgencia temporal)' :
                                        (!oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 'mercado no monitorizable en vivo (tarjetas/córneres)');
                         console.log(`[SafeOdds] Enviando alerta de inmediato para ${match.teams.home.name} vs ${match.teams.away.name} por tratarse de un escenario ${reason}.`);
-                        for (const chatId of subscribedChats) {
-                            try {
-                                await sendSafeMarkdownMessage(chatId, textToSend);
-                            } catch (e) {
-                                console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
-                            }
-                        }
-                        alert.metadata.isSent = true;
-                        if (textToSend) {
-                            await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
-                        }
-
-                        // Registrar en el control financiero
-                        financialTracker.addPlay({
-                            fixtureId,
-                            home: match.teams.home.name,
-                            away: match.teams.away.name,
-                            recommendation: alert.metadata.aiRecommendation,
-                            suggestedOdd: suggestedOdd || 1.60,
-                            ruleName: alert.metadata.ruleName,
-                            metadata: alert.metadata
-                        });
+                        await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, suggestedOdd);
                     } else if (liveOddVal !== null && liveOddVal >= targetOdd) {
                         console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
-                        for (const chatId of subscribedChats) {
-                            try {
-                                await sendSafeMarkdownMessage(chatId, textToSend);
-                            } catch (e) {
-                                console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
-                            }
-                        }
-                        alert.metadata.isSent = true;
-                        if (textToSend) {
-                            await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
-                        }
-
-                        // Registrar en el control financiero
-                        financialTracker.addPlay({
-                            fixtureId,
-                            home: match.teams.home.name,
-                            away: match.teams.away.name,
-                            recommendation: alert.metadata.aiRecommendation,
-                            suggestedOdd: liveOddVal || 1.60,
-                            ruleName: alert.metadata.ruleName,
-                            metadata: alert.metadata
-                        });
+                        await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, liveOddVal);
                     } else {
                         let estimatedStartOdd = 1.30;
                         const favOdd = matchOdds.home < matchOdds.away ? matchOdds.home : matchOdds.away;
@@ -1012,28 +1004,7 @@ async function checkMatches() {
 
                         if (liveOddVal === null && estimatedStartOdd >= targetOdd) {
                             console.log(`[SafeOdds] Alerta enviada de inmediato (cuota de inicio estimada @${estimatedStartOdd.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
-                            for (const chatId of subscribedChats) {
-                                try {
-                                    await sendSafeMarkdownMessage(chatId, textToSend);
-                                } catch (e) {
-                                    console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
-                                }
-                            }
-                            alert.metadata.isSent = true;
-                            if (textToSend) {
-                                await handleLiveParlayQueue(fixtureId, 'football', match.teams.home.name, match.teams.away.name, textToSend);
-                            }
-
-                            // Registrar en el control financiero
-                            financialTracker.addPlay({
-                                fixtureId,
-                                home: match.teams.home.name,
-                                away: match.teams.away.name,
-                                recommendation: alert.metadata.aiRecommendation,
-                                suggestedOdd: estimatedStartOdd || 1.60,
-                                ruleName: alert.metadata.ruleName,
-                                metadata: alert.metadata
-                            });
+                            await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, estimatedStartOdd);
                         } else {
                             const startOdd = liveOddVal !== null ? liveOddVal : estimatedStartOdd;
                             const logMsg = `⏳ *[SafeOdds]* Alerta encolada para *${match.teams.home.name} vs ${match.teams.away.name}* (Regla: ${alert.metadata.ruleName}). Cuota inicial: *@${startOdd.toFixed(2)}*, Objetivo: *@${targetOdd.toFixed(2)}*.`;
@@ -1091,6 +1062,12 @@ async function checkMatches() {
             statsCache.delete(cachedFixtureId);
         }
     }
+    // Limpiar oddsCache para partidos que ya no están en vivo (anti memory-leak)
+    for (const cachedFixtureId of oddsCache.keys()) {
+        if (!newLiveIds.has(cachedFixtureId)) {
+            oddsCache.delete(cachedFixtureId);
+        }
+    }
 
     currentLiveFootballIds = newLiveIds;
 }
@@ -1107,7 +1084,7 @@ async function checkFinishedMatches() {
             if (matchData) {
                 const status = matchData.fixture.status.short;
                 if (status === 'FT' || status === 'AET' || status === 'PEN') {
-                    const finalEvents = await getMatchEvents(fixtureId);
+                    const finalEvents = (await getMatchEvents(fixtureId)) || [];
                     const finalStats = await getMatchStatistics(fixtureId);
 
                     const results = await evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
@@ -1124,9 +1101,11 @@ async function checkFinishedMatches() {
                         // Actualizar en el control financiero
                         financialTracker.updatePlayVerdict(fixtureId, result.meta.ruleName, result.isGreen, result.isOmitted);
                     }
+                    clearMatchAlerts(fixtureId); // Liberar entradas del Set alertedMatches (anti memory-leak)
                     trackedMatches.delete(fixtureId);
                 } else if (['CANC', 'PST', 'ABD', 'AWD', 'WO', 'SUSP', 'INT'].includes(status)) {
                     console.log(`[checkFinishedMatches] Partido ${fixtureId} cancelado o suspendido (${status}). Eliminando de rastreo.`);
+                    clearMatchAlerts(fixtureId); // Liberar entradas del Set alertedMatches (anti memory-leak)
                     trackedMatches.delete(fixtureId);
                 }
             }

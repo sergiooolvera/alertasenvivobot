@@ -113,7 +113,7 @@ module.exports = {
         const options = { timeZone: 'America/Mexico_City', hour: 'numeric', hour12: false };
         const formatter = new Intl.DateTimeFormat('en-US', options);
         const hour = parseInt(formatter.format(new Date()), 10);
-        return hour >= 7 && hour <= 21;
+        return hour >= 7 && hour < 21;
     }
 };
 

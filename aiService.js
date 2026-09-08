@@ -343,12 +343,7 @@ async function generatePrediction(matchData, sport = 'football', outContext = nu
     }
 }
 
-/**
- * Alias de compatibilidad para generatePrediction.
- */
-async function generatePredictionDeepSeek(matchData, sport = 'football', outContext = null) {
-    return generatePrediction(matchData, sport, outContext);
-}
+
 
 /**
  * Construye el prompt para el Parlay del Día pre-partido.
@@ -541,7 +536,6 @@ Instrucciones obligatorias:
 
 module.exports = {
     generatePrediction,
-    generatePredictionDeepSeek,
     generateDailyParlay,
     evaluatePredictionOutcome,
     buildFootballPrompt,

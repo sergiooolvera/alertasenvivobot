@@ -547,9 +547,18 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                 break;
 
             case 6: // Late Corners
-                // GREEN si hubo más córneres al final
-                isGreen = true; // Por defecto verde al aumentar intensidad ofensiva
-                explanation = `Partidazo ofensivo finalizado (${finalHome}-${finalAway}).`;
+                // GREEN si se generaron más córneres tras la alerta
+                {
+                    const cornersAtAlert = meta.initialCorners || 0;
+                    const finalCorners = finalEvents.filter(e => e.type === 'Corner').length;
+                    if (finalCorners > cornersAtAlert) {
+                        isGreen = true;
+                        explanation = `Se generaron más córneres tras la alerta (total: ${finalCorners}). Marcador final: ${finalHome}-${finalAway}.`;
+                    } else {
+                        isGreen = false;
+                        explanation = `No se generaron más córneres tras la alerta (córneres al alertar: ${cornersAtAlert}). Marcador final: ${finalHome}-${finalAway}.`;
+                    }
+                }
                 break;
 
             case 7: // Partido Caliente (Tarjetas)
@@ -560,8 +569,8 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                         isGreen = true;
                         explanation = `Se cumplió el Over de tarjetas (${totalCards} tarjetas registradas).`;
                     } else {
-                        isGreen = true; // Si el partido estuvo caliente se considera acertado el análisis
-                        explanation = `Intensidad alta registrada al finalizar (${finalHome}-${finalAway}).`;
+                        isGreen = false;
+                        explanation = `No se alcanzó el umbral de tarjetas (${totalCards} registradas al final). Marcador final: ${finalHome}-${finalAway}.`;
                     }
                 }
                 break;
@@ -593,10 +602,23 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
     return results;
 }
 
+/**
+ * Elimina todas las entradas del Set alertedMatches correspondientes a un fixtureId.
+ * Debe llamarse al finalizar un partido para evitar memory leaks en ejecuciones continuas.
+ */
+function clearMatchAlerts(fixtureId) {
+    for (const ruleId of alertedMatches) {
+        if (ruleId.startsWith(`${fixtureId}_`)) {
+            alertedMatches.delete(ruleId);
+        }
+    }
+}
+
 module.exports = {
     evaluateRules,
     needsStats,
     needsEvents,
     evaluateAlertResults,
+    clearMatchAlerts,
     alertedMatches
 };
