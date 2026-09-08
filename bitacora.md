@@ -20,6 +20,7 @@ Crear un sistema automatizado multideporte (FÃºtbol + MLB BÃ©isbol) que env�
 - **Seguimiento Post-Partido:** El bot rastrea cada alerta emitida de fÃºtbol y bÃ©isbol y envÃ­a automÃ¡ticamente un mensaje de veredicto GREEN ðŸŸ© / RED ðŸŸ¥ al silbatazo final o cierre del inning 9.
 
 ## Historial de Cambios
+- **[2026-09-08]**: Corrección de error de sintaxis SyntaxError Unexpected end of input (v2.17.3). Se corrigió la llave de cierre faltante `}` en la función `parseAiResponse` dentro de `index.js`, resolviendo el fallo de despliegue en Railway. Se verificaron la totalidad de los archivos JavaScript del proyecto y se aumentó la versión en `package.json`.
 - **[2026-09-08]**: Auditoría completa y refactorización (v2.17.2). Se resolvieron memory leaks en `alertedMatches` y `oddsCache`, se corrigieron falsos positivos GREEN en las reglas 6 y 7, se eliminó código duplicado creando `dispatchAlertAndTrack` y `parseAiResponse`, y se movió el `TELEGRAM_OWNER_CHAT_ID` a variables de entorno.
 - **[2026-07-21]**: CreaciÃ³n de la bitÃ¡cora y anÃ¡lisis inicial de requerimientos.
 - **[2026-07-21]**: ImplementaciÃ³n del cÃ³digo base en Node.js (`apiClient.js`, `rulesEngine.js`, `index.js`). Pruebas de simulaciÃ³n exitosas.

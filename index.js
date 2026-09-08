@@ -190,6 +190,7 @@ function parseAiResponse(text) {
         oddVal:         oddMatch      ? oddMatch[1].replace(/\*/g, '').replace('@', '').trim() : '1.60',
         confidence:     confMatch     ? confMatch[1] : '80'
     };
+}
 
 /**
  * Envía la alerta a todos los chats suscritos, la procesa para posibles parlays en vivo
