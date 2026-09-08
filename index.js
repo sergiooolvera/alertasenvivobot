@@ -96,7 +96,7 @@ function logSafeOddsEvent(message) {
 
 // Almacenamos los chats suscritos
 const subscribedChats = new Set();
-const MI_CHAT_ID = parseInt(process.env.TELEGRAM_OWNER_CHAT_ID, 10) || 0; // Configurar en .env como TELEGRAM_OWNER_CHAT_ID
+const MI_CHAT_ID = parseInt(process.env.TELEGRAM_OWNER_CHAT_ID, 10) || 890184744; // Configurar en .env como TELEGRAM_OWNER_CHAT_ID (default: 890184744)
 
 if (bot.onText) {
     // Suscribir automáticamente al inicio para evitar que los reinicios corten las notificaciones
