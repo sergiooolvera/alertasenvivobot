@@ -1,4 +1,6 @@
 const aiService = require('./aiService');
+const { isOffFieldCard } = require('./utils');
+
 
 // Set para recordar de qué partidos ya enviamos qué alerta y no hacer spam
 const alertedMatches = new Set();
@@ -82,7 +84,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
 
     // --- REGLA 1: Tarjeta Roja ---
     if (elapsed >= 35 && elapsed <= 76 && (isDraw || underdogWinning)) {
-        const redCards = events.filter(e => e.type === 'Card' && (e.detail === 'Red Card' || e.detail === 'Yellow 2nd'));
+        const redCards = events.filter(e => e.type === 'Card' && (e.detail === 'Red Card' || e.detail === 'Yellow 2nd') && !isOffFieldCard(e, events));
         if (redCards.length > 0) {
             const teamWithRed = redCards[0].team.name;
             const teamWithAdvantage = teamWithRed === favorite.team ? underdog.team : favorite.team;
@@ -336,7 +338,7 @@ ${msgHeader}
 
         // --- REGLA 7: Partido Caliente (Over Tarjetas) ---
         if (elapsed >= 25 && elapsed <= 45 && events && events.length > 0 && Math.abs(homeGoals - awayGoals) <= 1) {
-            const cards = events.filter(e => e.type === 'Card');
+            const cards = events.filter(e => e.type === 'Card' && !isOffFieldCard(e, events));
             const yellowCards = cards.filter(e => e.detail === 'Yellow Card').length;
             const redCards = cards.filter(e => e.detail === 'Red Card' || e.detail === 'Yellow 2nd').length;
 
@@ -443,8 +445,8 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                     break;
                 case 7: // Partido Caliente
                     {
-                        const totalCards = finalEvents.filter(e => e.type === 'Card').length;
-                        traditionalGreen = totalCards >= 5 || finalEvents.some(e => e.detail === 'Red Card');
+                        const totalCards = finalEvents.filter(e => e.type === 'Card' && !isOffFieldCard(e, finalEvents)).length;
+                        traditionalGreen = totalCards >= 5 || finalEvents.some(e => (e.detail === 'Red Card' || e.detail === 'Yellow 2nd') && !isOffFieldCard(e, finalEvents));
                     }
                     break;
                 case 8: // Favorito Domina HT
@@ -564,8 +566,8 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
             case 7: // Partido Caliente (Tarjetas)
                 // GREEN si en total hubo al menos 5 tarjetas o expulsiones al final
                 {
-                    const totalCards = finalEvents.filter(e => e.type === 'Card').length;
-                    if (totalCards >= 5 || finalEvents.some(e => e.detail === 'Red Card')) {
+                    const totalCards = finalEvents.filter(e => e.type === 'Card' && !isOffFieldCard(e, finalEvents)).length;
+                    if (totalCards >= 5 || finalEvents.some(e => (e.detail === 'Red Card' || e.detail === 'Yellow 2nd') && !isOffFieldCard(e, finalEvents))) {
                         isGreen = true;
                         explanation = `Se cumplió el Over de tarjetas (${totalCards} tarjetas registradas).`;
                     } else {

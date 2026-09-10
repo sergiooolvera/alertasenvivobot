@@ -1,4 +1,6 @@
 const axios = require('axios');
+const { isOffFieldCard } = require('./utils');
+
 
 const deepseekApiKey = process.env.DEEPSEEK_API_KEY || null;
 
@@ -154,7 +156,8 @@ function formatFootballEvents(events) {
             } else if (e.type === "Card") {
                 const isRed = e.detail === "Red Card" || e.detail === "Yellow 2nd";
                 const cardEmoji = isRed ? "🟥" : "🟨";
-                return `${cardEmoji} [Min ${time}'] Tarjeta para ${team} - ${player} (${e.detail})`;
+                const offFieldTag = isOffFieldCard(e, events) ? " (FUERA DEL CAMPO / BANCA / ENTRENADOR)" : "";
+                return `${cardEmoji} [Min ${time}'] Tarjeta para ${team} - ${player} (${e.detail})${offFieldTag}`;
             }
             return null;
         }).filter(Boolean);
@@ -264,6 +267,7 @@ ${h2hMatchesStr}
 Instrucciones obligatorias para redactar la respuesta:
 1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en un solo párrafo conciso de máximo 50 palabras (máximo 120 caracteres) sobre la dinámica de juego actual.
 2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 2.5 Goles en el Partido", "Siguiente Gol de ${awayTeam}", "Más de 8.5 Córners Totales"). NO utilices justificaciones, explicaciones largas ni rodeos.
+   * REGLA DE EXPULSIONES FUERA DEL CAMPO: Las tarjetas señaladas como '(FUERA DEL CAMPO / BANCA / ENTRENADOR)' fueron mostradas a entrenadores, suplentes o personal fuera de la cancha. NO afectan la cantidad de jugadores en el terreno de juego (los equipos siguen 11 vs 11). NUNCA asumas superioridad numérica o inferioridad numérica debido a una tarjeta fuera del campo.
    * REGLA DE LÍNEA DE GOLES (CRÍTICA): Calcula la suma de goles en vivo del marcador actual (Goles Locales + Goles Visitantes = Goles Totales Actuales).
      - NUNCA sugieras una línea de goles totales ('Más de X Goles') que ya se haya superado o igualado. Por ejemplo, si el marcador es 2-1 o 3-0 (3 goles en total), 'Más de 2.5 Goles' o 'Más de 1.5 Goles' ya se cumplieron y no existen en vivo, por lo que sugerirlas es un error grave.
      - Tampoco sugieras una línea de goles totales que esté a solo 0.5 goles por encima del marcador actual (ej. 'Más de 3.5 Goles' si va 2-1), porque la cuota en vivo será extremadamente baja (menor a @1.30) y carece de valor de inversión.

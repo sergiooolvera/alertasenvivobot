@@ -10,6 +10,7 @@ const financialTracker = require('./financialTracker');
 // Módulos de Fútbol
 const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds, getHeadToHead, getStandings } = require('./apiClient');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults, clearMatchAlerts } = require('./rulesEngine');
+const { isOffFieldCard } = require('./utils');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 
 // Servicio de IA
@@ -642,7 +643,8 @@ async function checkForVarCorrections(match, events) {
                 const redCardsInEvents = events.filter(e => 
                     e.type === 'Card' && 
                     (e.detail === 'Red Card' || e.detail === 'Yellow 2nd') && 
-                    e.team && e.team.name === meta.teamWithRed
+                    e.team && e.team.name === meta.teamWithRed &&
+                    !isOffFieldCard(e, events)
                 );
 
                 // Si al enviar la alerta había tarjeta roja, y ahora no hay ninguna tarjeta roja para ese equipo en los eventos en vivo,
