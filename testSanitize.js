@@ -60,6 +60,40 @@ const tests = [
 🔥 Confianza Estimada: 75%`,
         expected: "Más de 9.5 Córners Totales",
         shouldModify: false
+    },
+    {
+        name: "Caso 7: Ajax vs Willem II - Marcador 2-0 al HT, favorito @1.11, sugerencia Más de 3.5 goles",
+        matchData: {
+            score: { home: 2, away: 0 },
+            odds: { home: 1.11, draw: 10, away: 17 },
+            elapsed: 45
+        },
+        prediction: `🧠 Análisis de IA: Ajax aplasta con 18 tiros y 2-0.
+🎯 Recomendación Inteligente: Más de 3.5 Goles en el Partido
+📈 Momio Sugerido: @1.75
+🔥 Confianza Estimada: 65%`,
+        expected: "Más de 4.5 Goles en el Partido",
+        shouldModify: true
+    },
+    {
+        name: "Caso 8: Al Orubah vs Al Jeel - Min 40 con 3 amarillas (Regla 7), sugerencia Más de 3.5 Tarjetas",
+        matchData: {
+            score: { home: 0, away: 0 },
+            odds: { home: 1.67, draw: 3.25, away: 4.6 },
+            elapsed: 40,
+            ruleName: "REGLA 7: PARTIDO CALIENTE",
+            events: [
+                { type: "Card", detail: "Yellow Card" },
+                { type: "Card", detail: "Yellow Card" },
+                { type: "Card", detail: "Yellow Card" }
+            ]
+        },
+        prediction: `🧠 Análisis de IA: Partido muy ríspido con 3 amarillas en 7 minutos.
+🎯 Recomendación Inteligente: Más de 3.5 Tarjetas Totales
+📈 Momio Sugerido: @1.75
+🔥 Confianza Estimada: 68%`,
+        expected: "Más de 5.5 Tarjetas Totales",
+        shouldModify: true
     }
 ];
 
@@ -68,7 +102,8 @@ console.log("--- Iniciando pruebas de sanitización de predicciones ---\n");
 
 tests.forEach((t, index) => {
     console.log(`[Test #${index + 1}] ${t.name}`);
-    const output = sanitizeAndCorrectPrediction(t.prediction, t.score);
+    const inputParam = t.matchData || t.score;
+    const output = sanitizeAndCorrectPrediction(t.prediction, inputParam);
     
     const recMatch = output.match(/🎯\s*\*?\*?Recomendación Inteligente\*?\*?:?\s*\*?\*?\s*([^\n]+)/i);
     const actualRec = recMatch ? recMatch[1].replace(/\*/g, '').trim() : 'N/D';

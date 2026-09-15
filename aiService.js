@@ -268,13 +268,28 @@ Instrucciones obligatorias para redactar la respuesta:
 1. El "Análisis de IA" debe ser extremadamente corto y directo, redactado en un solo párrafo conciso de máximo 50 palabras (máximo 120 caracteres) sobre la dinámica de juego actual.
 2. La "Recomendación Inteligente" DEBE ser una apuesta directa de 2 a 8 palabras (ej. "Victoria de ${homeTeam}", "Más de 2.5 Goles en el Partido", "Siguiente Gol de ${awayTeam}", "Más de 8.5 Córners Totales"). NO utilices justificaciones, explicaciones largas ni rodeos.
    * REGLA DE EXPULSIONES FUERA DEL CAMPO: Las tarjetas señaladas como '(FUERA DEL CAMPO / BANCA / ENTRENADOR)' fueron mostradas a entrenadores, suplentes o personal fuera de la cancha. NO afectan la cantidad de jugadores en el terreno de juego (los equipos siguen 11 vs 11). NUNCA asumas superioridad numérica o inferioridad numérica debido a una tarjeta fuera del campo.
-   * REGLA DE LÍNEA DE GOLES (CRÍTICA): Calcula la suma de goles en vivo del marcador actual (Goles Locales + Goles Visitantes = Goles Totales Actuales).
-     - NUNCA sugieras una línea de goles totales ('Más de X Goles') que ya se haya superado o igualado. Por ejemplo, si el marcador es 2-1 o 3-0 (3 goles en total), 'Más de 2.5 Goles' o 'Más de 1.5 Goles' ya se cumplieron y no existen en vivo, por lo que sugerirlas es un error grave.
-     - Tampoco sugieras una línea de goles totales que esté a solo 0.5 goles por encima del marcador actual (ej. 'Más de 3.5 Goles' si va 2-1), porque la cuota en vivo será extremadamente baja (menor a @1.30) y carece de valor de inversión.
-     - Si prevés más goles en el partido, la línea de goles totales sugerida debe ser al menos de 1.5 goles por encima del marcador actual. Por ejemplo: si va 1-0 o 0-1 (1 gol), sugiere 'Más de 2.5 Goles'; si va 2-0 o 1-1 (2 goles), sugiere 'Más de 3.5 Goles'; si va 2-1 o 3-0 (3 goles), sugiere 'Más de 4.5 Goles'.
+   * REGLA CRÍTICA DE VALOR DE CUOTAS (VALUE BETTING - EVITAR PICKS DE POCO VALOR):
+     - Tu objetivo principal es recomendar apuestas con VALOR REAL en las casas de apuestas (Playdoit, Bet365, Caliente, etc.), con cuotas reales de mercado entre @1.65 y @2.30.
+     - ESTÁ ESTRICTAMENTE PROHIBIDO sugerir apuestas "trampa" u obvias que en la casa de apuestas paguen cuotas insignificantes (@1.10 a @1.45).
+     
+     * MERCADO DE GOLES TOTALES:
+       - NUNCA sugieras una línea de goles totales ('Más de X Goles') que ya se haya superado o igualado.
+       - NUNCA sugieras una línea que esté a sólo 0.5 goles por encima del marcador actual (ej. 'Más de 3.5 Goles' si va 2-1).
+       - CASO FAVORITO DOMINANTE O PRIMER TIEMPO GOLEADOR: Si el favorito pre-partido tenía momio <= 1.40 (ej. Ajax, Man City, Real Madrid, etc.) y va ganando 2-0 al descanso o ya hay 2+ goles en el 1er tiempo, la línea de 'Más de 3.5 Goles' en las casas de apuestas paga apenas @1.25 a @1.37 (cuota basura, sin valor). En estos escenarios, para tener una cuota real de valor:
+         -> Sugiere 'Más de 4.5 Goles en el Partido' o 'Más de 1.5 Goles en el 2do Tiempo'.
+         -> O bien sugiere 'Siguiente Gol de [Favorito]' o 'Hándicap Asiático [Favorito] -2.5'.
+       - En partidos parejos con 1 gol al descanso (1-0 o 0-1), 'Más de 2.5 Goles' es la línea estándar (@1.70 - @1.95). Si ya van 2 goles en el 1T en un partido parejo, 'Más de 3.5 Goles' sí tiene valor (@1.75+), pero SOLO si no hay un favorito aplastante.
+     
+     * MERCADO DE TARJETAS TOTALES:
+       - En alertas de partido caliente con 3 amarillas en el primer tiempo (minuto <= 45): NUNCA sugieras 'Más de 3.5 Tarjetas'. Como ya van 3 tarjetas, en cualquier casa de apuestas esa línea paga @1.15 a @1.25 o ya está cerrada.
+       - La línea viva de verdadero valor (@1.70 a @2.10) cuando ya hay 3 amonestaciones en el 1T es 'Más de 5.5 Tarjetas Totales' o 'Más de 6.5 Tarjetas Totales'.
+     
+     * MERCADO DE VICTORIA DIRECTA (1X2):
+       - Si un favorito aplastante (momio pre-partido < 1.35) ya va ganando con 2 o más goles de ventaja (ej. 2-0), su victoria directa en vivo paga @1.02 - @1.05. NO la sugieras. Sugiere 'Hándicap Asiático', 'Próximo Gol' o totales de goles.
+
 3. REGLA DE DESCARTE DE APUESTAS: Evita el sesgo de descarte ("Evitar apuesta / No recomendada"). Solo debes sugerir evitar la apuesta si el partido está completamente muerto (marcador abultado sin nada por jugar o total ausencia de datos). En cualquier otro escenario activo, analiza y busca una recomendación real de valor deportivo.
-4. Sugiera un momio objetivo en vivo realista (mínimo @1.60 o superior). Recuerda sugerir victoria directa, próximo gol o totales para momios realistas de @1.60+ si el equipo favorito va ganando.
-5. Estime una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
+4. Sugiere un momio objetivo en vivo realista (mínimo @1.60 o superior). Si el mercado que pensabas sugerir pagaría menos de @1.60 en la casa de apuestas en ese minuto, busca un mercado alternativo que sí pague @1.65+.
+5. Estima una probabilidad matemática/nivel de confianza de acierto (entre 0% y 100%).
  
 Formato de salida obligatorio (usa exactamente este formato en español, no uses negritas en los nombres de los campos, no agregues texto extra fuera de este formato):
  
@@ -285,10 +300,15 @@ Formato de salida obligatorio (usa exactamente este formato en español, no uses
 }
 
 /**
- * Sanitiza y corrige la predicción de la IA en caso de que sugiera una línea de goles obsoleta.
+ * Sanitiza y corrige la predicción de la IA en caso de que sugiera una línea de goles obsoleta
+ * o líneas de tarjetas/goles sin valor real de mercado.
  */
-function sanitizeAndCorrectPrediction(aiPredictionText, score) {
-    if (!aiPredictionText || !score) return aiPredictionText;
+function sanitizeAndCorrectPrediction(aiPredictionText, scoreOrMatchData) {
+    if (!aiPredictionText || !scoreOrMatchData) return aiPredictionText;
+
+    const isMatchData = typeof scoreOrMatchData === 'object' && scoreOrMatchData.score !== undefined;
+    const score = isMatchData ? scoreOrMatchData.score : scoreOrMatchData;
+    const matchData = isMatchData ? scoreOrMatchData : null;
 
     const homeGoals = parseInt(score.home);
     const awayGoals = parseInt(score.away);
@@ -301,21 +321,49 @@ function sanitizeAndCorrectPrediction(aiPredictionText, score) {
     if (!recMatch) return aiPredictionText;
 
     const prefix = recMatch[1];
-    const recommendation = recMatch[2].trim();
+    let recommendation = recMatch[2].trim();
 
-    // Buscar si es una línea de goles totales (ej. "Más de 2.5 Goles...", "Over 1.5 goles")
+    // 1. Corrección de líneas de tarjetas sin valor (ej. "Más de 3.5 Tarjetas" cuando ya hay 3 tarjetas en el 1T)
+    const cardsLineMatch = recommendation.match(/(?:más de|over)\s+(\d+(?:\.\d+)?)\s*(?:tarjetas|cards)?/i);
+    if (cardsLineMatch && matchData) {
+        const cardLineVal = parseFloat(cardsLineMatch[1]);
+        const elapsed = matchData.elapsed || 0;
+        
+        // Contar tarjetas en los eventos
+        let totalCards = 0;
+        if (Array.isArray(matchData.events)) {
+            totalCards = matchData.events.filter(e => e.type === 'Card' && !isOffFieldCard(e, matchData.events)).length;
+        }
+
+        // Si ya hay 3 o más tarjetas antes del minuto 55 y sugirió 3.5 o 4.5 tarjetas, elevar a línea de valor real
+        if (cardLineVal <= 4.5 && (totalCards >= 3 || (matchData.ruleName && matchData.ruleName.includes('7'))) && elapsed <= 55) {
+            const correctedRec = recommendation.replace(cardsLineMatch[1], '5.5');
+            console.log(`[AI-Service Verification] ⚠️ Línea de tarjetas corregida de "${recommendation}" a "${correctedRec}" para evitar cuota de bajo valor (@1.15-@1.30).`);
+            recommendation = correctedRec;
+            aiPredictionText = aiPredictionText.replace(recMatch[0], `${prefix}${correctedRec}`);
+        }
+    }
+
+    // 2. Corrección de líneas de goles totales
     const goalsLineMatch = recommendation.match(/(?:más de|over)\s+(\d+(?:\.\d+)?)\s*(?:goles|goals)?/i);
     if (goalsLineMatch) {
         const lineVal = parseFloat(goalsLineMatch[1]);
+        
         if (lineVal <= currentGoals) {
             // La apuesta ya se cumplió o empató, por lo que es inválida en vivo.
-            // La corregimos a la siguiente línea lógica viable (goles actuales + 0.5)
             const correctedLine = currentGoals + 0.5;
             const correctedRec = recommendation.replace(goalsLineMatch[0], `Más de ${correctedLine} Goles`);
             console.log(`[AI-Service Verification] ⚠️ Predicción corregida de "${recommendation}" a "${correctedRec}" porque el marcador ya es ${homeGoals}-${awayGoals} (${currentGoals} goles).`);
-            
-            // Reemplazar en el texto completo
             return aiPredictionText.replace(recMatch[0], `${prefix}${correctedRec}`);
+        } else if (matchData && lineVal === 3.5 && currentGoals === 2) {
+            // Caso especial: Marcador 2-0 o 1-1 en descanso/1T con favorito aplastante (momio < 1.35)
+            const favOdds = matchData.odds ? Math.min(matchData.odds.home || 99, matchData.odds.away || 99) : 99;
+            const elapsed = matchData.elapsed || 0;
+            if (favOdds <= 1.35 && elapsed <= 50) {
+                const correctedRec = recommendation.replace(goalsLineMatch[1], '4.5');
+                console.log(`[AI-Service Verification] ⚠️ Línea de goles corregida de "${recommendation}" a "${correctedRec}" (marcador 2-0 en min ${elapsed}' con favorito @${favOdds} donde Más de 3.5 solo paga @1.30-@1.37).`);
+                return aiPredictionText.replace(recMatch[0], `${prefix}${correctedRec}`);
+            }
         }
     }
 
@@ -340,7 +388,7 @@ async function generatePrediction(matchData, sport = 'football', outContext = nu
         }
 
         const result = await callDeepSeekWithRotation(prompt);
-        return sanitizeAndCorrectPrediction(result, matchData.score);
+        return sanitizeAndCorrectPrediction(result, matchData);
     } catch (error) {
         console.error(`[AI-Service] Error crítico generando recomendación con DeepSeek: ${error.message}`);
         return null;
