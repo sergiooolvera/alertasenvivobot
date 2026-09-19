@@ -92,7 +92,9 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
             let isDominating = true;
             if (hasStats) {
                 const advPoss = getStat(teamWithAdvantage, 'Ball Possession');
-                isDominating = advPoss >= 55;
+                // Se reduce el umbral de posesión al 40% porque la estadística es histórica
+                // y un equipo asediado tardaría mucho en subir a 55% tras una roja rival.
+                isDominating = advPoss >= 40;
             }
             
             if (isDominating) {
@@ -342,7 +344,7 @@ ${msgHeader}
             const yellowCards = cards.filter(e => e.detail === 'Yellow Card').length;
             const redCards = cards.filter(e => e.detail === 'Red Card' || e.detail === 'Yellow 2nd').length;
 
-            if (yellowCards >= 3 || redCards >= 1) {
+            if (yellowCards >= 4 || redCards >= 1) {
                 const ruleId = `${fixtureId}_rule7`;
                 if (!alertedMatches.has(ruleId)) {
                     const text = `🔥 *REGLA 7: PARTIDO CALIENTE (TOP LEAGUE)*

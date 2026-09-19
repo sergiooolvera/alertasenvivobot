@@ -572,3 +572,8 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
 
 
 
+
+- **[19-09-2026]** Se modificaron las reglas en rulesEngine.js:
+  - **Regla 1 (Tarjeta Roja):** Se redujo el umbral de posesión requerido al 40% porque la naturaleza acumulativa de la estadística de posesión estaba bloqueando falsamente la alerta para el equipo beneficiado.
+  - **Regla 7 (Partido Caliente):** Se subió el umbral de amarillas en el primer tiempo de 3 a 4 para evitar alertas excesivas en partidos normales.
+  - Se aumentó la versión a 2.17.7 en package.json.
