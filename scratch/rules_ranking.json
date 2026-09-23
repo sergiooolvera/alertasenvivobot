@@ -1,0 +1,72 @@
+[
+  {
+    "ruleName": "🏆 Parlays del Día / Vivo",
+    "total": 28,
+    "green": 20,
+    "red": 8,
+    "winRate": 71.43,
+    "staked": 7000,
+    "profit": 1510.625,
+    "roi": 21.58
+  },
+  {
+    "ruleName": "Regla 5: Partido Caliente",
+    "total": 35,
+    "green": 25,
+    "red": 10,
+    "winRate": 71.43,
+    "staked": 8750,
+    "profit": 1562.4999999999998,
+    "roi": 17.86
+  },
+  {
+    "ruleName": "Regla 8: Favorito Domina HT",
+    "total": 10,
+    "green": 7,
+    "red": 3,
+    "winRate": 70,
+    "staked": 2500,
+    "profit": 387.4999999999999,
+    "roi": 15.5
+  },
+  {
+    "ruleName": "Regla 1: Asedio Favorito",
+    "total": 15,
+    "green": 8,
+    "red": 7,
+    "winRate": 53.33,
+    "staked": 3750,
+    "profit": -450.0000000000001,
+    "roi": -12
+  },
+  {
+    "ruleName": "Regla 2: Roja Estratégica",
+    "total": 30,
+    "green": 15,
+    "red": 15,
+    "winRate": 50,
+    "staked": 7500,
+    "profit": -1312.5,
+    "roi": -17.5
+  },
+  {
+    "ruleName": "Regla 6: Presión Córneres",
+    "total": 10,
+    "green": 4,
+    "red": 6,
+    "winRate": 40,
+    "staked": 2500,
+    "profit": -850,
+    "roi": -34
+  },
+  {
+    "ruleName": "Regla 6: Remontada Improbable",
+    "total": 3,
+    "green": 1,
+    "red": 2,
+    "winRate": 33.33,
+    "staked": 750,
+    "profit": -337.5,
+    "roi": -45
+  }
+]

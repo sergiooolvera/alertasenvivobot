@@ -1,0 +1,224 @@
+{
+  "totalAlertas": 285,
+  "totalVeredictos": 273,
+  "emparejadas": 262,
+  "noEmparejadasAlertas": [
+    {
+      "id": "21558",
+      "date": "28.08.2026",
+      "partido": "Inter Miami II vs Atlanta United II",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "21573",
+      "date": "28.08.2026",
+      "partido": "Colorado Rapids II vs Ventura County",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "21575",
+      "date": "28.08.2026",
+      "partido": "Toluca W vs León W",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "21847",
+      "date": "30.08.2026",
+      "partido": "Leones Negros UDG vs Piratas",
+      "regla": "Regla 1: Tarjeta Roja Estratégica"
+    },
+    {
+      "id": "21848",
+      "date": "30.08.2026",
+      "partido": "Birzebbuga vs Sliema Wanderers",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "21849",
+      "date": "30.08.2026",
+      "partido": "Corinthians vs Santos",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "21856",
+      "date": "30.08.2026",
+      "partido": "Bahia vs Internacional",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "22255",
+      "date": "05.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "22336",
+      "date": "06.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "22342",
+      "date": "06.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "22507",
+      "date": "09.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "22584",
+      "date": "10.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "22588",
+      "date": "10.09.2026",
+      "partido": "Stevenage vs Luton",
+      "regla": "Regla 1: Tarjeta Roja Estratégica"
+    },
+    {
+      "id": "22841",
+      "date": "13.09.2026",
+      "partido": "Flamengo vs Corinthians",
+      "regla": "Regla 8: Favorito Domina HT"
+    },
+    {
+      "id": "22844",
+      "date": "13.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "22970",
+      "date": "15.09.2026",
+      "partido": "Alaves vs Valencia",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "22971",
+      "date": "15.09.2026",
+      "partido": "Al-Hilal Saudi FC vs Al-Gharafa",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "22976",
+      "date": "15.09.2026",
+      "partido": "Penybont vs Briton Ferry",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "22977",
+      "date": "15.09.2026",
+      "partido": "Bristol City vs Lincoln",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "22980",
+      "date": "15.09.2026",
+      "partido": "Liverpool vs Tottenham",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)"
+    },
+    {
+      "id": "23456",
+      "date": "19.09.2026",
+      "partido": "The New Saints vs Llandudno",
+      "regla": "Regla 8: Favorito Domina HT"
+    },
+    {
+      "id": "23603",
+      "date": "20.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    },
+    {
+      "id": "23636",
+      "date": "20.09.2026",
+      "partido": "Desconocido",
+      "regla": "REGLA GENERAL"
+    }
+  ],
+  "noEmparejadasVeredictos": [
+    {
+      "id": "21496",
+      "date": "28.08.2026",
+      "partido": "Holywell vs Caernarfon Town",
+      "regla": "Regla 8: Favorito Domina HT",
+      "outcome": "RED"
+    },
+    {
+      "id": "22192",
+      "date": "05.09.2026",
+      "partido": "FC Schalke 04 vs Bayern München",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "RED"
+    },
+    {
+      "id": "22256",
+      "date": "05.09.2026",
+      "partido": "Junior vs Jaguares",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "GREEN"
+    },
+    {
+      "id": "22338",
+      "date": "06.09.2026",
+      "partido": "Alvarado vs Atenas",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "GREEN"
+    },
+    {
+      "id": "22344",
+      "date": "06.09.2026",
+      "partido": "Huachipato vs Colo Colo",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "RED"
+    },
+    {
+      "id": "22508",
+      "date": "09.09.2026",
+      "partido": "Rangers vs ST Mirren",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "GREEN"
+    },
+    {
+      "id": "22586",
+      "date": "10.09.2026",
+      "partido": "Radnik Surdulica vs FK Crvena Zvezda",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "RED"
+    },
+    {
+      "id": "22607",
+      "date": "10.09.2026",
+      "partido": "Antofagasta vs Cobreloa",
+      "regla": "Regla 7: Partido Caliente (Tarjetas)",
+      "outcome": "GREEN"
+    },
+    {
+      "id": "22847",
+      "date": "13.09.2026",
+      "partido": "Colo Colo vs Concepción",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "GREEN"
+    },
+    {
+      "id": "23605",
+      "date": "20.09.2026",
+      "partido": "FK Jablonec vs Zlin",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "GREEN"
+    },
+    {
+      "id": "23638",
+      "date": "20.09.2026",
+      "partido": "Sport Huancayo vs UTC Cajamarca",
+      "regla": "Regla 4: Asedio Intenso (Huele a Gol)",
+      "outcome": "GREEN"
+    }
+  ]
+}

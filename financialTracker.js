@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { getDb, getConfig, setConfig } = require('./db');
+const googleSheetsService = require('./googleSheetsService');
 
 const TRACKER_FILE = path.join(__dirname, 'financial_tracker.json');
 const TRACKER_FILE_BAK = path.join(__dirname, 'financial_tracker.json.bak');
@@ -56,7 +57,7 @@ function initTracker() {
         setConfig('initialBalance', 5000);
     }
     if (getConfig('stakeAmount') === null) {
-        setConfig('stakeAmount', 250);
+        setConfig('stakeAmount', 500);
     }
 
     // Migración automática si existe financial_tracker.json
@@ -180,7 +181,7 @@ function addPlay({ fixtureId, home, away, recommendation, suggestedOdd, ruleName
     }
 
     const cleanedOdd = parseOdd(suggestedOdd);
-    const stakeAmount = getConfig('stakeAmount', 250);
+    const stakeAmount = getConfig('stakeAmount', 500);
     const dateStr = getLocalDateString();
     const metaStr = metadata ? JSON.stringify(metadata) : null;
     const now = Date.now();
@@ -194,6 +195,21 @@ function addPlay({ fixtureId, home, away, recommendation, suggestedOdd, ruleName
         `).run(fixtureId, dateStr, home, away, recommendation, cleanedOdd, stakeAmount, ruleName, metaStr, now);
 
         console.log(`[FinancialTracker] Jugada registrada en SQLite: ${home} vs ${away} - Regla: ${ruleName} - Momio: @${cleanedOdd}`);
+
+        // Sincronizar en tiempo real con Google Sheets ($500 pesos por unidad)
+        googleSheetsService.sendPickToSheet({
+            fixtureId,
+            date: dateStr,
+            league: (metadata && metadata.league) ? metadata.league : 'Fútbol en Vivo',
+            home,
+            away,
+            ruleName,
+            recommendation,
+            suggestedOdd: cleanedOdd,
+            stake: stakeAmount
+        }).catch(err => {
+            console.error('[FinancialTracker] Error al sincronizar con Google Sheets:', err.message);
+        });
     } catch (error) {
         console.error(`[FinancialTracker] Error al registrar jugada en SQLite:`, error.message);
     }
@@ -237,6 +253,18 @@ function updatePlayVerdict(fixtureId, ruleName, isGreen, isOmitted) {
         `).run(status, profit, explanation, row.id);
 
         console.log(`[FinancialTracker] Veredicto en vivo actualizado para ${row.home} vs ${row.away} (${ruleName}): ${status} (Profit: ${profit})`);
+
+        // Actualizar resultado en Google Sheets
+        googleSheetsService.updateResultInSheet({
+            fixtureId,
+            ruleName,
+            status,
+            profit,
+            explanation,
+            score: row.score || 'N/D'
+        }).catch(err => {
+            console.error('[FinancialTracker] Error al actualizar veredicto en Google Sheets:', err.message);
+        });
     } catch (error) {
         console.error(`[FinancialTracker] Error actualizando veredicto en SQLite:`, error.message);
     }
@@ -389,6 +417,22 @@ async function resolvePendingPlays() {
                 console.error(`[FinancialTracker] Falló resolución web para ${play.fixtureId}:`, webError.message);
             }
         }
+
+        if (resolved) {
+            const updatedRow = db.prepare('SELECT * FROM plays WHERE id = ?').get(play.id);
+            if (updatedRow) {
+                googleSheetsService.updateResultInSheet({
+                    fixtureId: updatedRow.fixture_id,
+                    ruleName: updatedRow.rule_name,
+                    status: updatedRow.status,
+                    profit: updatedRow.profit,
+                    explanation: updatedRow.explanation,
+                    score: updatedRow.score || 'N/D'
+                }).catch(err => {
+                    console.error('[FinancialTracker] Error actualizando veredicto nocturno en Google Sheets:', err.message);
+                });
+            }
+        }
     }
 }
 
@@ -398,7 +442,7 @@ function getReportData() {
     const yesterdayStr = getYesterdayDateString();
     const startDateStr = getConfig('startDate', getPreviousSundayDateString());
     const initialBalance = Number(getConfig('initialBalance', 5000));
-    const stakeAmount = Number(getConfig('stakeAmount', 250));
+    const stakeAmount = Number(getConfig('stakeAmount', 500));
 
     // Estadísticas de ayer
     const yesterdayStats = db.prepare(`

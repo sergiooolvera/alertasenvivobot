@@ -14,8 +14,8 @@ function needsStats(fixture, odds, isTopLeague = false) {
     }
     const elapsed = fixture.fixture.status.elapsed;
     if (!isTopLeague) {
-        // En ligas menores solo se requieren estadísticas para Regla 1 (posesión) o Regla 4 (asedio min 75-83)
-        return (elapsed >= 35 && elapsed <= 76) || (elapsed >= 75 && elapsed <= 83);
+        // En ligas menores solo se requieren estadísticas para Regla 1 (posesión min 35-76)
+        return (elapsed >= 35 && elapsed <= 76);
     }
     return (elapsed > 0 && elapsed <= 85) || fixture.fixture.status.short === 'HT';
 }
@@ -79,7 +79,7 @@ function evaluateRules(fixture, odds, events = [], stats = [], isTopLeague = fal
 🔍 *Flashscore:* [Buscar Partido](${matchSearchUrl})`;
 
     // =========================================================================
-    // REGLAS GENERALES: APLICAN A TODAS LAS LIGAS (MAYORES Y MENORES) [1 y 4]
+    // REGLAS GENERALES: APLICAN A TODAS LAS LIGAS (MAYORES Y MENORES) [Regla 1]
     // =========================================================================
 
     // --- REGLA 1: Tarjeta Roja ---
@@ -125,53 +125,6 @@ ${msgHeader}
             }
         }
     }
-    }
-
-    // --- REGLA 4: Asedio (Late Goal) ---
-    if (elapsed >= 75 && elapsed <= 83 && favorite.odd < 1.50 && favorite.goals <= underdog.goals && stats && stats.length > 0) {
-        const teamStats = stats.find(s => s.team.name === favorite.team);
-        if (teamStats && teamStats.statistics) {
-            const totalShotsStat = teamStats.statistics.find(s => s.type === 'Total Shots');
-            const possessionStat = teamStats.statistics.find(s => s.type === 'Ball Possession');
-            
-            const totalShots = totalShotsStat && totalShotsStat.value ? parseInt(totalShotsStat.value) : 0;
-            const shotsOnGoal = getStat(favorite.team, 'Shots on Goal');
-            const dangerousAttacks = getStat(favorite.team, 'Dangerous Attacks');
-            const possessionStr = possessionStat && possessionStat.value ? possessionStat.value : "0%";
-            const possession = parseInt(possessionStr.replace('%', ''));
-
-            // Graceful fallback: si no reporta shots on goal, usamos el viejo > 15
-            const asedioFuerte = (shotsOnGoal >= 4 && dangerousAttacks >= 25) || (totalShots >= 15);
-
-            if (asedioFuerte || possession >= 70) {
-                const ruleId = `${fixtureId}_rule4`;
-                if (!alertedMatches.has(ruleId)) {
-                    const text = `🎯 *REGLA 4: ASEDIO INTENSO (HUELE A GOL)*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-${msgHeader}
-⚠️ *Análisis:* El favorito (${favorite.team}) está atacando con todo: ${totalShots} tiros y ${possession}% de posesión. ¡Candidato a gol tardío!
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Over 0.5 Goles Adicionales / Próximo Gol (${favorite.team}).
-🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-                    alerts.push({
-                        text,
-                        metadata: {
-                            ruleId,
-                            ruleType: 4,
-                            ruleName: 'Asedio Intenso (Late Goal)',
-                            fixtureId,
-                            homeTeam: fixture.teams.home.name,
-                            awayTeam: fixture.teams.away.name,
-                            favoriteTeam: favorite.team,
-                            scoreAtAlert: { home: homeGoals, away: awayGoals },
-                            totalGoalsAtAlert: homeGoals + awayGoals,
-                            odds
-                        }
-                    });
-                    alertedMatches.add(ruleId);
-                }
-            }
-        }
     }
 
     // =========================================================================
@@ -256,84 +209,6 @@ ${msgHeader}
                         }
                     });
                     alertedMatches.add(ruleId);
-                }
-            }
-        }
-
-        // --- REGLA 5: HT Comeback (Remontada al Descanso) ---
-        if ((fixture.fixture.status.short === 'HT' || elapsed === 45) && favorite.odd < 1.45 && favorite.goals === underdog.goals - 1) {
-            let favDomina = true;
-            if (hasStats) {
-                const favCorners = getStat(favorite.team, 'Corner Kicks');
-                const underCorners = getStat(underdog.team, 'Corner Kicks');
-                const favShots = getStat(favorite.team, 'Shots on Goal');
-                const underShots = getStat(underdog.team, 'Shots on Goal');
-                if (underCorners > favCorners || underShots > favShots) {
-                    favDomina = false;
-                }
-            }
-            const ruleId = `${fixtureId}_rule5`;
-            if (favDomina && !alertedMatches.has(ruleId)) {
-                const text = `🚀 *REGLA 5: REMONTADA POTENCIAL AL DESCANSO (TOP LEAGUE)*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-${msgHeader}
-⚠️ *Análisis:* El favorito (${favorite.team}) va perdiendo por 1 gol en el medio tiempo.
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Favorito Gana o Empata (Doble Chance) o Hándicap Asiático Favorito (0 / +0.5).
-🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-                alerts.push({
-                    text,
-                    metadata: {
-                        ruleId,
-                        ruleType: 5,
-                        ruleName: 'HT Comeback Favorito',
-                        fixtureId,
-                        homeTeam: fixture.teams.home.name,
-                        awayTeam: fixture.teams.away.name,
-                        favoriteTeam: favorite.team,
-                        favoriteSide: favorite.side,
-                        scoreAtAlert: { home: homeGoals, away: awayGoals },
-                        odds
-                    }
-                });
-                alertedMatches.add(ruleId);
-            }
-        }
-
-        // --- REGLA 6: Presión de Córneres en Tramo Final (Late Corners) ---
-        if (elapsed >= 70 && elapsed <= 85 && favorite.odd < 1.60 && favorite.goals <= underdog.goals && stats && stats.length > 0) {
-            const teamStats = stats.find(s => s.team.name === favorite.team);
-            if (teamStats && teamStats.statistics) {
-                const cornersStat = teamStats.statistics.find(s => s.type === 'Corner Kicks');
-                const corners = cornersStat && cornersStat.value ? parseInt(cornersStat.value) : 0;
-
-                if (corners >= 6) {
-                    const ruleId = `${fixtureId}_rule6`;
-                    if (!alertedMatches.has(ruleId)) {
-                        const text = `🚩 *REGLA 6: PRESIÓN DE CÓRNERES (TOP LEAGUE)*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-${msgHeader}
-⚠️ *Análisis:* El favorito (${favorite.team}) acumula ${corners} córneres y busca insistentemente el gol.
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 *Recomendación:* Over Córneres Totales Asiáticos (+1.5 / +2.5 córneres finales).
-🎯 *Momio Objetivo Recomendado:* @1.60 o más`;
-                        alerts.push({
-                            text,
-                            metadata: {
-                                ruleId,
-                                ruleType: 6,
-                                ruleName: 'Late Corners',
-                                fixtureId,
-                                homeTeam: fixture.teams.home.name,
-                                awayTeam: fixture.teams.away.name,
-                                favoriteTeam: favorite.team,
-                                initialCorners: corners,
-                                scoreAtAlert: { home: homeGoals, away: awayGoals },
-                                odds
-                            }
-                        });
-                        alertedMatches.add(ruleId);
-                    }
                 }
             }
         }
