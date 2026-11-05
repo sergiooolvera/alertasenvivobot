@@ -712,3 +712,53 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Pruebas de regresión (`test.js` y `test_live_goals.js`) aprobadas al 100%.
   - **Control de Versión**: Se incrementó la versión a `2.22.0` en `package.json` siguiendo el estándar SemVer.
 
+
+- **[2026-11-05]**: Implementación del Sistema Integral de Membresías, Embudo de Ventas (4 Días Free & VIP 30 Días) y Creación de Canales (Versión 2.23.0).
+  - **Contexto y Sesión /grill-me**:
+    - Se adaptó la arquitectura comercial y el modelo de embudo implementado en `hacktipsters` para monetizar el canal y bot de apuestas deportivas **Rojas y Goles**.
+    - Decisiones de diseño acordadas con el usuario:
+      1. Estructura de 2 Canales Privados: `Rojas y Goles Free` (prueba de 4 días) y `Rojas y Goles VIP` (acceso premium por 30 días a $100 MXN).
+      2. Bot independiente de captación e invitaciones: `@RojasyGolesInvitacionBot` (`9089639280:AAEGDSHHR0N0Z5luaCqcoY9BjO8W6lT2FHE`).
+      3. Bot de alertas en vivo (`@Alertasenvivobot`): retransmite el 100% de las alertas en vivo y tickets a ambos canales de forma simultánea.
+      4. Precio: $100 MXN mensuales / 30 días.
+      5. Datos bancarios: BBVA, CLABE `012180004701190246`, Titular `Sergio Olvera`, Concepto `asesoria`.
+      6. Horarios oficiales de validación: Corte Vespertino (02:00 PM) y Corte Nocturno (08:00 PM).
+  - **Creación Automatizada de Canales ([`setup_canales.py`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/setup_canales.py))**:
+    - Utilizando la sesión de Telegram existente de `hacktipsters` (`session_userbot.session`) con MTProto / Telethon, se crearon los dos canales privados:
+      - `Rojas y Goles Free` (ID: `-1004366484952`).
+      - `Rojas y Goles VIP` (ID: `-1003748312099`).
+    - Se promovió automáticamente a `@Alertasenvivobot` y a `@RojasyGolesInvitacionBot` como Administradores con permisos completos (`post_messages`, `edit_messages`, `delete_messages`, `ban_users`, `invite_users`) en ambos canales.
+  - **Base de Datos de Membresías ([`gestor_membresias.py`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/gestor_membresias.py))**:
+    - Base de datos SQLite local (`membresias.db`) para control de ciclo de vida:
+      - Control de usuarios por `telegram_id` para evitar abusos de prueba gratuita repetida.
+      - Estados: `trial`, `expired_trial`, `premium`, `expired_premium`.
+      - Métodos de consulta y actualización para alertas de Día 3 (72h), expulsión de Día 4 (96h), alerta de Día 29 (24h previas) y expulsión de Día 30.
+      - Métricas para panel de administración (`/stats`).
+  - **Bot de Membresías y Validación de Pagos ([`bot_membresias.py`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/bot_membresias.py))**:
+    - **Comando `/start`**: Saludo personalizado, generación de enlace de invitación de un solo uso (`ExportChatInviteRequest` con `usage_limit=1`) para el Canal Free, fecha y hora exacta de vencimiento a 4 días, y datos bancarios directos con CLABE táctil.
+    - **Comandos `/pagar`, `/vip`, `/precio`, `/planes`**: Despliegue on-demand de la inversión ($100 MXN) e instrucciones SPEI.
+    - **Recepción de Comprobantes**: Manejo de fotos y documentos enviados por DM. El usuario recibe confirmación inmediata con los horarios de corte (02:00 PM y 08:00 PM); el comprobante se turna al Administrador (`ADMIN_USER_ID = 890184744`) con botones interactivos de 1 toque `[✅ Aprobar 30 Días]` y `[❌ Rechazar]`.
+    - **Aprobación de Pago**: Al aprobar, se genera un enlace de un solo uso para `Rojas y Goles VIP`, se activan 30 días y se notifica al usuario.
+    - **Scheduler de Ciclo de Vida**: Monitoreo en segundo plano cada 60 segundos que ejecuta avisos y expulsiones con `banChatMember` + `unbanChatMember`.
+  - **Integración en el Motor de Alertas ([`index.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) y [`ticketImageService.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/ticketImageService.js))**:
+    - Auto-suscripción de `CANAL_FREE_ID` y `CANAL_VIP_ID` en `subscribedChats`, garantizando que cada alerta en vivo, parlay o ticket gráfico llegue inmediatamente a ambos canales.
+    - Actualización del distintivo de marca en el ticket HTML a `⚽ ROJAS Y GOLES`.
+  - **Pruebas Automatizadas ([`test_membresias.py`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/test_membresias.py))**:
+    - Suite de 5 pruebas unitarias cubriendo registro de trial, activación premium, alertas de 72h, expulsión de 96h, formato de pago y estadísticas.
+    - Ejecución integrada con `npm test` aprobando 100% de pruebas (32/32 combinadas con tickets y live goals).
+  - **Control de Versión**: Se incrementó la versión a `2.23.0` en `package.json` siguiendo el estándar SemVer.
+
+- **[2026-11-05]**: Preparación de Infraestructura y Despliegue Multi-Proceso 24/7 en Railway (Versión 2.23.0).
+  - **Arquitectura de Contenedor Docker ([`Dockerfile`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/Dockerfile))**:
+    - Imagen base `node:20-bookworm-slim` con soporte simultáneo para Node.js y Python 3 (`python3-pip`).
+    - Instalación de Chromium headless (`chromium`), certificados CA y librerías tipográficas (`fonts-liberation`, `fonts-dejavu-core`).
+    - Instalación limpia de dependencias de Python desde [`requirements.txt`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/requirements.txt) (`telethon`, `requests`, `python-dotenv`).
+    - Instalación de dependencias de producción de Node.js (`npm install --omit=dev`).
+  - **Orquestador de Procesos Dual ([`start.sh`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/start.sh) y [`Procfile`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/Procfile))**:
+    - Script de arranque `start.sh` que ejecuta concurrentemente en el mismo contenedor de Railway:
+      1. `python3 -u bot_membresias.py` (Bot de invitaciones, membresías, embudo y cobros).
+      2. `node index.js` (Motor de escaneo de fútbol y emisión de alertas en vivo).
+    - Monitoreo activo de PIDs con `wait -n` y manejador de señales `trap cleanup SIGTERM SIGINT` para apagado elegante.
+  - **Compatibilidad Linux en Renderizado Gráfico ([`ticketImageService.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/ticketImageService.js))**:
+    - Se integró la autodetección de binarios de Chromium en Linux (`/usr/bin/chromium`, `/usr/bin/google-chrome`, `process.env.CHROME_BIN`).
+    - Detección dinámica de esquema de URL (`file:///` en Windows vs `file://` en Linux) para evitar errores de renderizado headless en Debian Slim.

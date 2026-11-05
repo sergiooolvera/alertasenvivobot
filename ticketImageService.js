@@ -5,10 +5,15 @@ const os = require('os');
 const { toAmericanOdd } = require('./utils');
 
 const BROWSER_PATHS = [
+    process.env.CHROME_BIN,
+    '/usr/bin/chromium',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium-browser',
+    '/usr/bin/google-chrome-stable',
     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
     'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'
-];
+].filter(Boolean);
 
 let cachedBrowserPath = null;
 
@@ -223,7 +228,7 @@ function buildTicketHtml(data) {
   </div>
 
   <div class="ticket-footer">
-    <span>⚽ ALERTAS EN VIVO</span>
+    <span>⚽ ROJAS Y GOLES</span>
     <span style="color:#38bdf8;">CONF. ${confVal}%</span>
   </div>
 </div>
@@ -260,7 +265,7 @@ async function generateBetTicketImage(data) {
             '--window-size=465,380',
             '--hide-scrollbars',
             `--screenshot=${pngPath}`,
-            `file:///${htmlPath.replace(/\\/g, '/')}`
+            os.platform() === 'win32' ? `file:///${htmlPath.replace(/\\/g, '/')}` : `file://${htmlPath}`
         ];
 
         await new Promise((resolve, reject) => {
