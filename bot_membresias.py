@@ -416,7 +416,10 @@ async def scheduler_ciclo_vida(client):
 
         await asyncio.sleep(60)
 
+CLIENTES_BOTS = []
+
 async def main():
+    global CLIENTES_BOTS
     init_membresias_db()
     print("📦 Base de datos de membresías inicializada (membresias.db).")
 
@@ -428,6 +431,7 @@ async def main():
     print(f"🤖 Bot de Invitaciones conectado: @{me.username} ({me.first_name}) - ID: {me.id}")
 
     registrar_manejadores_bot(client)
+    CLIENTES_BOTS.append(client)
 
     asyncio.create_task(scheduler_ciclo_vida(client))
 

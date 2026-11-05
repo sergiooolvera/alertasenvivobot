@@ -1,6 +1,6 @@
 {
   "name": "rojas-y-goles",
-  "version": "2.23.2",
+  "version": "2.23.4",
   "description": "Bot de Alertas de Fútbol en Vivo y Sistema de Membresías",
   "main": "index.js",
   "scripts": {

@@ -777,3 +777,15 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Se reemplazó el uso de `wait -n` en `start.sh` por un bucle de supervisión activo con `while kill -0 ...; do sleep 3; done` bajo `#!/bin/bash`, evitando que la falta de soporte de `-n` en shells POSIX finalice prematuramente el contenedor.
     - Se integró la función `safe_int_env` en [`bot_membresias.py`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/bot_membresias.py) e [`index.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) para sanitizar comillas y espacios en variables numéricas (`CANAL_FREE_ID`, `CANAL_VIP_ID`, `ADMIN_USER_ID`, etc.), protegiendo el arranque contra errores de parseo en Railway.
   - **Control de Versión**: Se incrementó la versión a `2.23.2` en `package.json` siguiendo el estándar SemVer.
+
+- **[2026-11-05]**: Persistencia de Cliente Telethon y Ejecución Explícita con Bash (Versión 2.23.3).
+  - **Ajustes de Fiabilidad**:
+    - Se agregó `CLIENTES_BOTS = []` para retener las referencias del cliente de Telethon en memoria, evitando que el recolector de basura descarte los manejadores de eventos.
+    - Se configuró la invocación explícita `/bin/bash ./start.sh` tanto en `Dockerfile` como en `Procfile`.
+  - **Control de Versión**: Se incrementó la versión a `2.23.3` en `package.json` conforme al estándar SemVer.
+
+- **[2026-11-05]**: Fallback por Defecto para Canales Free y VIP en index.js y Validación de Envío de Tickets (Versión 2.23.4).
+  - **Ajustes de Retransmisión**:
+    - Se incorporaron valores por defecto seguros en `index.js` para `CANAL_FREE_ID` (`-1004366484952`) y `CANAL_VIP_ID` (`-1003748312099`), asegurando que ambos canales estén siempre suscritos incluso si las variables aún no se sincronizan en Railway.
+    - Se validó la emisión directa de mensajes y fotos de tickets estilo Caliente generados en tiempo real hacia `Rojas y Goles Free` con respuesta 200 OK de Telegram.
+  - **Control de Versión**: Se incrementó la versión a `2.23.4` en `package.json` siguiendo el estándar SemVer.

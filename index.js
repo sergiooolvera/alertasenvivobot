@@ -107,19 +107,18 @@ if (bot.onText) {
     subscribedChats.add(MI_CHAT_ID);
     console.log(`[Inicio] Chat principal ${MI_CHAT_ID} auto-suscrito por defecto.`);
 
-    if (process.env.CANAL_FREE_ID) {
-        const canalFree = parseInt(String(process.env.CANAL_FREE_ID).replace(/['"]/g, '').trim(), 10);
-        if (!isNaN(canalFree)) {
-            subscribedChats.add(canalFree);
-            console.log(`[Inicio] Canal Free ${canalFree} auto-suscrito por defecto.`);
-        }
+    const canalFreeRaw = process.env.CANAL_FREE_ID || '-1004366484952';
+    const canalFree = parseInt(String(canalFreeRaw).replace(/['"]/g, '').trim(), 10);
+    if (!isNaN(canalFree)) {
+        subscribedChats.add(canalFree);
+        console.log(`[Inicio] Canal Free ${canalFree} auto-suscrito por defecto.`);
     }
-    if (process.env.CANAL_VIP_ID) {
-        const canalVip = parseInt(String(process.env.CANAL_VIP_ID).replace(/['"]/g, '').trim(), 10);
-        if (!isNaN(canalVip)) {
-            subscribedChats.add(canalVip);
-            console.log(`[Inicio] Canal VIP ${canalVip} auto-suscrito por defecto.`);
-        }
+
+    const canalVipRaw = process.env.CANAL_VIP_ID || '-1003748312099';
+    const canalVip = parseInt(String(canalVipRaw).replace(/['"]/g, '').trim(), 10);
+    if (!isNaN(canalVip)) {
+        subscribedChats.add(canalVip);
+        console.log(`[Inicio] Canal VIP ${canalVip} auto-suscrito por defecto.`);
     }
 
     bot.onText(/\/start/, (msg) => {
