@@ -762,3 +762,12 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
   - **Compatibilidad Linux en Renderizado Gráfico ([`ticketImageService.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/ticketImageService.js))**:
     - Se integró la autodetección de binarios de Chromium en Linux (`/usr/bin/chromium`, `/usr/bin/google-chrome`, `process.env.CHROME_BIN`).
     - Detección dinámica de esquema de URL (`file:///` en Windows vs `file://` en Linux) para evitar errores de renderizado headless en Debian Slim.
+
+- **[2026-11-05]**: Corrección de Entorno Node 22 y Herramientas de Compilación en Railway (Versión 2.23.1).
+  - **Diagnóstico del Error**:
+    - Al compilar en Railway, `better-sqlite3@13.0.3` arrojó error `EBADENGINE Unsupported engine` porque exige `node: '>=22'`, mientras que la imagen previa usaba `node:20`.
+    - Al intentar compilar con `node-gyp`, falló por falta de la herramienta `make` en Debian Slim (`not found: make`).
+  - **Solución Implementada ([`Dockerfile`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/Dockerfile))**:
+    - Se actualizó la imagen base a `node:22-bookworm-slim`.
+    - Se incluyó `build-essential` (`make`, `gcc`, `g++`) en el comando `apt-get install` para asegurar soporte nativo completo para `better-sqlite3` y extensiones binarias.
+  - **Control de Versión**: Se incrementó la versión a `2.23.1` en `package.json` conforme al estándar SemVer.

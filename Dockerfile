@@ -1,12 +1,13 @@
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
 ENV CHROME_BIN=/usr/bin/chromium
 
-# Instalar Python 3, pip, Chromium headless y fuentes tipográficas
+# Instalar build-essential (make, gcc para gyp), Python 3, pip, Chromium y fuentes tipográficas
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     python3 \
     python3-pip \
     chromium \
