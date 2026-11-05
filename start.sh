@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 echo "=================================================="
 echo "🚀 INICIANDO SERVICIOS DE ROJAS Y GOLES EN RAILWAY"
 echo "=================================================="
@@ -13,14 +14,10 @@ echo "⚽ Iniciando Motor de Alertas de Fútbol (@Alertasenvivobot)..."
 node index.js &
 NODE_PID=$!
 
-# Manejador de señales para apagado limpio (SIGTERM / SIGINT)
 cleanup() {
     echo "🛑 Recibida señal de detención. Terminando procesos..."
-    kill -TERM $MEMBRESIA_PID 2>/dev/null
-    kill -TERM $NODE_PID 2>/dev/null
-    wait $MEMBRESIA_PID 2>/dev/null
-    wait $NODE_PID 2>/dev/null
-    echo "👋 Procesos finalizados con éxito."
+    kill -TERM $MEMBRESIA_PID 2>/dev/null || true
+    kill -TERM $NODE_PID 2>/dev/null || true
     exit 0
 }
 
@@ -28,8 +25,10 @@ trap cleanup SIGTERM SIGINT
 
 echo "✅ Ambos servicios corriendo concurrentemente (PIDs: $MEMBRESIA_PID, $NODE_PID)."
 
-# Esperar a que alguno termine o reciba señal
-wait -n $MEMBRESIA_PID $NODE_PID
-STATUS=$?
-echo "⚠️ Uno de los procesos finalizó con código $STATUS. Deteniendo contenedor..."
+# Monitorear activamente ambos procesos
+while kill -0 $MEMBRESIA_PID 2>/dev/null && kill -0 $NODE_PID 2>/dev/null; do
+    sleep 3
+done
+
+echo "⚠️ Uno de los procesos finalizó. Finalizando contenedor..."
 cleanup

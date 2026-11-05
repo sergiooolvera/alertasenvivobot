@@ -771,3 +771,9 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Se actualizó la imagen base a `node:22-bookworm-slim`.
     - Se incluyó `build-essential` (`make`, `gcc`, `g++`) en el comando `apt-get install` para asegurar soporte nativo completo para `better-sqlite3` y extensiones binarias.
   - **Control de Versión**: Se incrementó la versión a `2.23.1` en `package.json` conforme al estándar SemVer.
+
+- **[2026-11-05]**: Blindaje de Script de Inicio en Railway y Sanitización de Variables de Entorno (Versión 2.23.2).
+  - **Diagnóstico y Corrección de Arranque Dual**:
+    - Se reemplazó el uso de `wait -n` en `start.sh` por un bucle de supervisión activo con `while kill -0 ...; do sleep 3; done` bajo `#!/bin/bash`, evitando que la falta de soporte de `-n` en shells POSIX finalice prematuramente el contenedor.
+    - Se integró la función `safe_int_env` en [`bot_membresias.py`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/bot_membresias.py) e [`index.js`](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/index.js) para sanitizar comillas y espacios en variables numéricas (`CANAL_FREE_ID`, `CANAL_VIP_ID`, `ADMIN_USER_ID`, etc.), protegiendo el arranque contra errores de parseo en Railway.
+  - **Control de Versión**: Se incrementó la versión a `2.23.2` en `package.json` siguiendo el estándar SemVer.

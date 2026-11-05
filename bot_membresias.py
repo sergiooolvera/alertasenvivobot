@@ -40,13 +40,20 @@ if sys.stderr.encoding != 'utf-8':
 
 load_dotenv()
 
-API_ID = int(os.getenv("TELEGRAM_API_ID", "34622692"))
-API_HASH = os.getenv("TELEGRAM_API_HASH", "ff8a8c91808884edbf1cce845bede897")
-BOT_TOKEN = os.getenv("TELEGRAM_INVITE_BOT_TOKEN", "9089639280:AAEGDSHHR0N0Z5luaCqcoY9BjO8W6lT2FHE")
-ADMIN_USER_ID = int(os.getenv("ADMIN_USER_ID", "890184744"))
+def safe_int_env(key, default):
+    val = str(os.getenv(key, default) or default).strip().strip('"').strip("'")
+    try:
+        return int(val)
+    except Exception:
+        return int(default)
 
-CANAL_FREE_ID = int(os.getenv("CANAL_FREE_ID", "-1004366484952"))
-CANAL_VIP_ID = int(os.getenv("CANAL_VIP_ID", "-1003748312099"))
+API_ID = safe_int_env("TELEGRAM_API_ID", 34622692)
+API_HASH = str(os.getenv("TELEGRAM_API_HASH", "ff8a8c91808884edbf1cce845bede897")).strip().strip('"').strip("'")
+BOT_TOKEN = str(os.getenv("TELEGRAM_INVITE_BOT_TOKEN", "9089639280:AAEGDSHHR0N0Z5luaCqcoY9BjO8W6lT2FHE")).strip().strip('"').strip("'")
+ADMIN_USER_ID = safe_int_env("ADMIN_USER_ID", 890184744)
+
+CANAL_FREE_ID = safe_int_env("CANAL_FREE_ID", -1004366484952)
+CANAL_VIP_ID = safe_int_env("CANAL_VIP_ID", -1003748312099)
 
 ZONA_HORARIA = ZoneInfo("America/Mexico_City")
 
