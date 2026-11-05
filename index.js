@@ -12,6 +12,7 @@ const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, get
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults, clearMatchAlerts } = require('./rulesEngine');
 const { isOffFieldCard } = require('./utils');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
+const { scanLiveMatches, isLiveFixtureAlerted, markLiveFixtureAlerted, isLiveParlayAlerted, markLiveParlayAlerted } = require('./liveEngine');
 
 // Servicio de IA
 const aiService = require('./aiService');
@@ -114,8 +115,18 @@ if (bot.onText) {
         }
 
         subscribedChats.add(chatId);
-        bot.sendMessage(chatId, `⚽ ¡Bienvenido jefe! Bot de Alertas de Fútbol iniciado.\n*Versión:* v${VERSION} (Soporte de Parlays Pre-Partido y En Vivo 🚀)\n\nMonitoreando 7 Reglas de Fútbol con Verificación GREEN/RED.`, { parse_mode: 'Markdown' });
+        bot.sendMessage(chatId, `⚽ ¡Bienvenido jefe! Bot de Alertas de Fútbol iniciado.\n*Versión:* v${VERSION} (Alertas en Vivo + Goles HT 0-0 + Parlays 🚀)\n\n*Estrategias de Monitoreo Activas:*\n• ♟️ *Regla 1:* Tarjeta Roja Estratégica\n• ⚽ *Goles HT:* Over 0.5 Goles tras Medio Tiempo (HT 0-0)\n• 🔥 *Regla 7:* Partido Caliente (Tarjetas)\n• 👑 *Regla 8:* Favorito Domina HT\n• ⚡ *Regla 9:* Gol Inminente Global\n\n*Comandos disponibles:*\n• /live - Escanea partidos en vivo 0-0 al HT de inmediato.\n• /start - Información del bot y estrategias activas.`, { parse_mode: 'Markdown' });
         console.log(`Usuario principal conectado: ${chatId}`);
+    });
+
+    bot.onText(/\/live/, async (msg) => {
+        const chatId = msg.chat.id;
+        if (chatId !== MI_CHAT_ID) {
+            bot.sendMessage(chatId, "⛔ Acceso denegado. Este es un bot privado de uso exclusivo.");
+            return;
+        }
+        await sendSafeMarkdownMessage(chatId, "🔍 *Escaneando partidos en vivo al HT 0-0 (Over 0.5 Goles)...* ⏳");
+        await runLiveGoalScanProcess('command', chatId);
     });
 } else {
     subscribedChats.add("console_user");
@@ -715,6 +726,169 @@ async function checkForVarCorrections(match, events) {
 }
 
 // ===================================================
+// ESCANEO EN VIVO: GOLES DESPUÉS DEL MEDIO TIEMPO (HT 0-0 OVER 0.5)
+// ===================================================
+/**
+ * Escanea y procesa partidos al Medio Tiempo (HT 0-0) para apuestas Over 0.5 Goles en Vivo
+ * Adaptado de parlaysPrepartido para identificar si va a haber goles tras el descanso.
+ * @param {string} triggerSource - 'monitoring_loop' o 'command'
+ * @param {number|string|null} requestedChatId - Chat ID para responder si es invocado por comando
+ * @param {Array|null} prefetchedMatches - Lista pre-consultada de partidos en vivo para ahorrar llamadas
+ */
+async function runLiveGoalScanProcess(triggerSource = 'auto', requestedChatId = null, prefetchedMatches = null) {
+    try {
+        console.log(`[Live Goals] Evaluando partidos HT 0-0 para Over 0.5 Goles... [Origen: ${triggerSource}]`);
+        const { directBets, parlayBets } = await scanLiveMatches(prefetchedMatches);
+
+        // Si fue disparado manualmente por comando /live y no hay partidos calificados:
+        if (requestedChatId && directBets.length === 0 && parlayBets.length === 0) {
+            await sendSafeMarkdownMessage(requestedChatId, "ℹ️ *Escaneo en Vivo (HT 0-0 / Over 0.5 Goles)*\n\nNo se detectaron partidos 0-0 al entretiempo (HT) o inicio del 2T (min 45-58) que cumplan con el volumen mínimo de tiros (≥ 3 a puerta o ≥ 7 totales) y tendencia histórica de gol (≥ 65%) en este momento.");
+            return;
+        }
+
+        // Filtrar apuestas directas no alertadas previamente
+        const unalertedDirectBets = [];
+        for (const direct of directBets) {
+            if (isLiveFixtureAlerted(direct.fixtureId)) {
+                continue;
+            }
+            unalertedDirectBets.push(direct);
+        }
+
+        // Filtrar parlays en vivo no alertados previamente
+        const unalertedParlayBets = [];
+        for (const parlay of parlayBets) {
+            const pKey = parlay.picks.map(p => p.fixtureId).join('_');
+            if (isLiveParlayAlerted(pKey)) {
+                continue;
+            }
+            unalertedParlayBets.push(parlay);
+        }
+
+        if (unalertedDirectBets.length === 0 && unalertedParlayBets.length === 0) {
+            if (requestedChatId) {
+                await sendSafeMarkdownMessage(requestedChatId, "ℹ️ *Escaneo en Vivo (HT 0-0)*\n\nLas oportunidades detectadas en este momento ya han sido alertadas previamente.");
+            }
+            return;
+        }
+
+        // 1. Notificar apuestas directas
+        for (const direct of unalertedDirectBets) {
+            markLiveFixtureAlerted(direct.fixtureId);
+
+            const isGreen = direct.tierColor === 'GREEN';
+            const badge = isGreen ? '🟢 *LIGA TOP GOLEADORA (Alta Confianza)*' : '🔴 *LIGA DE CUIDADO (Menor Ritmo / Defensiva)*';
+            const stakeTxt = isGreen ? '🟢 *Stake Sugerido:* 1.0u ($500.00 MXN)' : '🔴 *Stake Sugerido:* 0.5u ($250.00 MXN)';
+
+            const homeSearch = `https://www.google.com/search?q=${encodeURIComponent(direct.homeTeam + ' Flashscore')}`;
+            const awaySearch = `https://www.google.com/search?q=${encodeURIComponent(direct.awayTeam + ' Flashscore')}`;
+            const matchSearch = `https://www.google.com/search?q=${encodeURIComponent(direct.homeTeam + ' vs ' + direct.awayTeam + ' Flashscore')}`;
+
+            let msg = `⚽ *ALERTA EN VIVO: OVER 0.5 GOLES (HT 0-0)*\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `${badge}\n`;
+            msg += `🏆 *Liga:* ${direct.tierEmoji} ${direct.league} (${direct.statusShort === 'HT' ? 'Entretiempo HT' : `Minuto ${direct.elapsed}'`})\n`;
+            msg += `⚔️ *[${direct.homeTeam}](${homeSearch})* vs *[${direct.awayTeam}](${awaySearch})*\n`;
+            msg += `⏱️ *Tiempo:* ${direct.statusShort === 'HT' ? 'HT' : direct.elapsed + "'"}  |  📊 *Marcador:* 0 - 0\n`;
+            msg += `🔍 *Flashscore:* [Buscar Partido](${matchSearch})\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `🎯 *Tiros a Puerta HT:* ${direct.stats.totalShotsOnGoal}  |  🔥 *Remates Totales:* ${direct.stats.totalShots}\n`;
+            msg += `📈 *Tendencia Pre-partido de Gol:* ${direct.preMatchTrendPercent}% (Over 0.5 histórico)\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `🎯 *Pick:* *Over 0.5 Goles en Vivo* (Gol en 2do Tiempo)\n`;
+            msg += `💡 *Cuota Estimada Live:* ~@${direct.estimatedOdd.toFixed(2)}\n`;
+            msg += `💰 ${stakeTxt}\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `⚠️ *Gestión:* Esperar a que la cuota suba en vivo a @1.50+ si deseas mayor retorno.`;
+
+            // Enviar a todos los chats suscritos
+            for (const chatId of subscribedChats) {
+                try {
+                    await sendSafeMarkdownMessage(chatId, msg);
+                } catch (e) {
+                    console.error(`[Live Goals] Error enviando alerta al chat ${chatId}:`, e.message);
+                }
+            }
+
+            // Metadatos para seguimiento GREEN / RED post-partido
+            const alertMeta = {
+                ruleId: `${direct.fixtureId}_liveGoal`,
+                ruleType: 2,
+                ruleName: 'Goles después del Medio Tiempo (HT 0-0)',
+                fixtureId: direct.fixtureId,
+                homeTeam: direct.homeTeam,
+                awayTeam: direct.awayTeam,
+                scoreAtAlert: { home: 0, away: 0 },
+                league: direct.league,
+                tierColor: direct.tierColor,
+                stakeSuggestion: direct.stakeSuggestion,
+                estimatedOdd: direct.estimatedOdd,
+                isSent: true,
+                aiRecommendation: 'Over 0.5 Goles en Vivo'
+            };
+
+            // Rastrear para veredicto post-partido al finalizar (FT)
+            if (!trackedMatches.has(direct.fixtureId)) {
+                trackedMatches.set(direct.fixtureId, {
+                    home: direct.homeTeam,
+                    away: direct.awayTeam,
+                    alertsMetadata: []
+                });
+            }
+            const trackedInfo = trackedMatches.get(direct.fixtureId);
+            trackedInfo.alertsMetadata.push(alertMeta);
+
+            // Registrar en el control financiero y Google Sheets
+            financialTracker.addPlay({
+                fixtureId: direct.fixtureId,
+                home: direct.homeTeam,
+                away: direct.awayTeam,
+                recommendation: 'Over 0.5 Goles en Vivo',
+                suggestedOdd: direct.estimatedOdd,
+                ruleName: 'Goles después del Medio Tiempo (HT 0-0)',
+                metadata: alertMeta
+            });
+        }
+
+        // 2. Notificar parlays en vivo si coinciden 2 partidos
+        for (const parlay of unalertedParlayBets) {
+            const pKey = parlay.picks.map(p => p.fixtureId).join('_');
+            markLiveParlayAlerted(pKey);
+
+            const isAllGreen = parlay.tierColor === 'GREEN';
+            const parlayBadge = isAllGreen 
+                ? '🟢 *PARLAY EN VIVO (ALTA CONFIANZA - STAKE NORMAL)*' 
+                : '🟡 *PARLAY EN VIVO (MIXTO / STAKE REDUCIDO)*';
+            const parlayStake = isAllGreen ? '🟢 *Stake Sugerido:* 1.0u ($500.00 MXN)' : '🟡 *Stake Sugerido:* 0.5u ($250.00 MXN)';
+
+            let msg = `🔥 ${parlayBadge} ⚡\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `📈 *Cuota Total Combinada Est.:* *@${parlay.totalOdd.toFixed(2)}*\n`;
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            parlay.picks.forEach((p, idx) => {
+                msg += `${idx + 1}️⃣ 🏆 *${p.tierEmoji || '⚽'} ${p.league}* (${p.statusShort === 'HT' ? 'HT' : `Min ${p.elapsed}'`})\n`;
+                msg += `   ⚔️ *${p.homeTeam} vs ${p.awayTeam}* (Marcador 0-0)\n`;
+                msg += `   🎯 *Pick:* Over 0.5 Goles Live (Cuota ~@${p.estimatedOdd.toFixed(2)})\n`;
+                msg += `   📊 *Tiros a Puerta HT:* ${p.stats.totalShotsOnGoal} | *Tendencia Pre:* ${p.preMatchTrendPercent}%\n\n`;
+            });
+            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            msg += `💰 ${parlayStake}\n`;
+            msg += `🍀 _¡Combinación simultánea de 2 partidos con alta expectativa de gol tras el medio tiempo!_`;
+
+            for (const chatId of subscribedChats) {
+                try {
+                    await sendSafeMarkdownMessage(chatId, msg);
+                } catch (e) {
+                    console.error(`[Live Goals] Error enviando parlay live al chat ${chatId}:`, e.message);
+                }
+            }
+        }
+    } catch (e) {
+        console.error('[Live Goals] Error durante el proceso de escaneo en vivo:', e.message);
+    }
+}
+
+// ===================================================
 // MONITOREO DE FÚTBOL
 // ===================================================
 async function checkMatches() {
@@ -739,6 +913,13 @@ async function checkMatches() {
     
     // Procesar la cola de alertas en espera
     await processPendingAlerts(liveMatches, liveOddsMap);
+
+    // Escaneo en vivo de Goles tras el Medio Tiempo (HT 0-0 Over 0.5)
+    try {
+        await runLiveGoalScanProcess('monitoring_loop', null, liveMatches);
+    } catch (liveGoalErr) {
+        console.error('[checkMatches] Error en escaneo de goles HT 0-0:', liveGoalErr.message);
+    }
 
     const newLiveIds = new Set();
 

@@ -349,7 +349,9 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
         let deepseekOutcome = null;
 
         // Determinar si hay recomendación de IA válida (evitando evaluar strings informativos de error como 'N/D')
-        const isAiValid = meta.aiRecommendation && 
+        // La Regla 2 (Over 0.5 Goles HT) se evalúa matemáticamente de forma directa sin costo ni latencia de IA
+        const isAiValid = meta.ruleType !== 2 && 
+                          meta.aiRecommendation && 
                           !meta.aiRecommendation.includes('N/D') && 
                           !meta.aiRecommendation.toLowerCase().includes('no disponible') &&
                           !meta.aiFallbackUsed;
@@ -387,11 +389,11 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                 }
                 break;
 
-            case 2: // Favorito Sufre HT 0-0
+            case 2: // Goles después del Medio Tiempo (HT 0-0 Over 0.5)
                 // GREEN si hubo gol en el 2do tiempo (total goles > 0)
                 if ((finalHome + finalAway) > 0) {
                     isGreen = true;
-                    explanation = `El partido se rompió en el 2do tiempo (${finalHome}-${finalAway}).`;
+                    explanation = `¡Gol en el segundo tiempo! Marcador final: ${finalHome}-${finalAway} (Over 0.5 cumplido).`;
                 } else {
                     isGreen = false;
                     explanation = `El partido terminó 0-0 sin goles.`;

@@ -635,3 +635,27 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Envío de pick en tiempo real con stake de **$500.00 MXN**: **OK** (`status: 'success'`).
     - Actualización de resultado post-partido (GREEN, marcador, beneficio neto): **OK** (`status: 'success'`).
     - La hoja de cálculo creó automáticamente la pestaña *"Control de Apuestas"* con formato estilizado, colores semafóricos y moneda en pesos mexicanos.
+
+- **[2026-11-05]**: Adaptación e Integración de Funcionalidad de Goles tras el Medio Tiempo (HT 0-0 Over 0.5 Goles en Vivo) desde `parlaysPrepartido` (Versión 2.20.0).
+  - **Módulo de Escaneo en Vivo (`liveEngine.js`)**:
+    - Se adaptó e implementó el motor de detección de partidos 0-0 en el entretiempo (`HT`) y arranque del segundo tiempo (`2H` entre minutos 45 y 58).
+    - **Filtro Cuantitativo de Actividad Ofensiva**: Exige un mínimo de $\ge 3$ tiros a puerta combinados o $\ge 7$ remates totales en la primera mitad para descartar partidos pasivos o trabados.
+    - **Tendencia Histórica Pre-partido**: Evalúa los últimos 5 partidos de local y visitante (`getTeamLastMatches`) exigiendo una tasa de Over 0.5 goles $\ge 65\%$ para confirmar tendencia natural a que caigan goles.
+    - **Clasificación de Ligas por Tiers Semafóricos**:
+      - 🟢 **Ligas Verdes (Top Goleadoras / Alta Confianza)**: Bundesliga, Premier League, Eredivisie, Serie A Brasil, MLS, etc. Sugiere **Stake Normal (1.0u - $500.00 MXN)**.
+      - 🔴 **Ligas Rojas / De Cuidado (Menor Ritmo / Defensivas)**: Serie B Brasil, Liga 1 Perú, Primera A Colombia, etc. Sugiere **Stake Reducido (0.5u - $250.00 MXN)**.
+    - **Escalado Dinámico de Cuotas**: Estimación de momio vivo (~@1.30 en HT, ~@1.36 en min 50, ~@1.42 en min 55).
+    - **Detección de Parlays Live**: Si en un mismo escaneo coinciden 2 partidos calificados 0-0 al HT, se genera automáticamente una propuesta de Parlay en Vivo Over 0.5 con cuota combinada ($\ge 1.70$).
+    - **Deduplicación Robusta**: Almacenamiento en memoria (`alertedFixturesSet`) inicializado desde la base de datos SQLite (`plays`), evitando re-alertar partidos tras reinicios de servidor.
+  - **Integración en Ciclo Principal y Comandos de Telegram (`index.js`)**:
+    - Se integró `runLiveGoalScanProcess` dentro de `checkMatches` pasando la lista pre-consultada de partidos en vivo para no consumir llamadas extra a la API.
+    - Se incorporó el comando `/live` en Telegram para permitir escaneos manuales bajo demanda por el propietario del bot.
+    - Se actualizó el comando `/start` reflejando la nueva estrategia de Goles HT y los comandos disponibles.
+    - Se conectó con `financialTracker.addPlay` (registro en SQLite y Google Sheets en tiempo real) y con `trackedMatches` para auditoría post-partido al silbatazo final.
+  - **Resolución de Veredictos Post-Partido (`rulesEngine.js`)**:
+    - En `evaluateAlertResults`, la Regla 2 (`Goles después del Medio Tiempo (HT 0-0)`) se evalúa de manera determinista y matemática (`(finalHome + finalAway) > 0` -> GREEN 🟩, `0-0` -> RED 🟥), sin consumir tokens ni latencia de IA innecesaria.
+  - **Pruebas Automatizadas (`test_live_goals.js`)**:
+    - Se desarrolló una suite con 22 pruebas unitarias cubriendo parseo de estadísticas, tiers de ligas, filtros de tiempo/marcador, cuotas dinámicas y veredictos finales, logrando una tasa de aprobación del 100% (22/22).
+    - Verificación de regresión en `test.js` completada exitosamente sin romper las reglas 1, 7, 8 y 9.
+  - **Control de Versión**: Se incrementó la versión a `2.20.0` en `package.json` siguiendo el estándar SemVer.
+
