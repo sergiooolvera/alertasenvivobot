@@ -7,3 +7,6 @@ node_modules/
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
+scratch/tickets/
+scratch/*.png
+scratch/*.html

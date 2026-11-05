@@ -431,20 +431,27 @@ Instrucciones para la selección y redacción:
 4. Asegúrate de que las apuestas elegidas sean seguras y sumen un momio acumulado atractivo (idealmente entre @1.70 y @2.50).
 5. Justifica formalmente la selección de cada partido en el Parlay.
 
-Formato de salida obligatorio (usa exactamente este formato en español, no alteres los títulos de las secciones, no uses negritas en los nombres de campo iniciales, pero sí puedes usar negritas en el texto generado por ti):
+Formato de salida obligatorio (usa exactamente este formato en español, no uses justificaciones ni análisis extensos, no uses negritas en los nombres de campo iniciales, pero sí puedes usar negritas en el texto generado por ti):
 
-🏆 PARLAY DEL DÍA DE LA IA 🏆
+🎫 ━━━━━━━━━━━━━━━━━━━━━━━ 🎫
+       *TICKET PARLAY DEL DÍA*
+🎫 ━━━━━━━━━━━━━━━━━━━━━━━ 🎫
 
-📊 SELECCIONES:
-1. [Deporte - Liga] [Equipo Local] vs [Equipo Visitante] -> Pronóstico: [Su recomendación técnica] (Momio: @[Momio])
-2. [Deporte - Liga] [Equipo Local] vs [Equipo Visitante] -> Pronóstico: [Su recomendación técnica] (Momio: @[Momio])
+📋 SELECCIONES:
+1️⃣ ⚽ [Equipo Local] vs [Equipo Visitante]
+   👉 Pick: [Pronóstico directo, ej. Over 1.5 Goles / Victoria Local] (Momio: @[Momio])
+   🏆 Liga: [Liga]
 
-📈 MOMIO TOTAL ESTIMADO: @[Suma multiplicada de los momios]
-🔥 CONFIANZA COMBINADA: [Porcentaje estimado de certeza del parlay total]%
+2️⃣ ⚽ [Equipo Local] vs [Equipo Visitante]
+   👉 Pick: [Pronóstico directo, ej. Over 1.5 Goles / Victoria Visitante] (Momio: @[Momio])
+   🏆 Liga: [Liga]
 
-🧠 JUSTIFICACIÓN TÉCNICA:
-• [Justificación técnica formal y estructurada del Partido #1, combinando momios y datos históricos]
-• [Justificación técnica formal y estructurada del Partido #2, combinando momios y datos históricos]`;
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 DETALLES DEL TICKET:
+📈 Momio Total Estimado: @[Suma multiplicada de los momios]
+💵 Apuesta Sugerida: $500.00 MXN (1.0u)
+🔥 Confianza Combinada: [Porcentaje estimado]%
+━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 }
 
 /**

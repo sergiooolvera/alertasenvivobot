@@ -470,7 +470,6 @@ async function evaluateAlertResults(alertMetadatas, finalFixture, finalEvents = 
                   `⚽ *${meta.homeTeam}* ${finalHome} - ${finalAway} *${meta.awayTeam}*\n` +
                   `📋 *Regla:* ${meta.ruleName}\n` +
                   `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                  `🐳 *DEEPSEEK: ${icon}*\n` +
                   `🎯 *Apuesta:* *${meta.aiRecommendation}*\n` +
                   `💡 *Resultado:* ${explanation}`;
         } else {

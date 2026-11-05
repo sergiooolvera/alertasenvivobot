@@ -9,8 +9,10 @@ const financialTracker = require('./financialTracker');
 
 // Módulos de Fútbol
 const { getLiveMatches, getMatchEvents, getPreMatchOdds, getMatchStatistics, getMatchesByDate, getMatchById, getTeamLastMatches, getLiveOdds, getHeadToHead, getStandings } = require('./apiClient');
+const fs = require('fs');
 const { evaluateRules, needsStats, needsEvents, evaluateAlertResults, clearMatchAlerts } = require('./rulesEngine');
-const { isOffFieldCard } = require('./utils');
+const { isOffFieldCard, toAmericanOdd, buildBetTicketMessage, buildParlayTicketMessage } = require('./utils');
+const { generateBetTicketImage, buildTicketCaption } = require('./ticketImageService');
 const { isMajorLeague, isWithinActiveHours, TIMEZONE } = require('./config');
 const { scanLiveMatches, isLiveFixtureAlerted, markLiveFixtureAlerted, isLiveParlayAlerted, markLiveParlayAlerted } = require('./liveEngine');
 
@@ -205,15 +207,58 @@ function parseAiResponse(text) {
 }
 
 /**
+ * Envía una alerta de pick a los chats de Telegram:
+ * Intenta enviar la imagen del ticket de apuesta con el caption limpio.
+ * Si no se puede generar la imagen (fallback), envía el mensaje de texto limpio.
+ */
+async function sendTicketAlertToAll(ticketData, fallbackText = null) {
+    let imagePath = null;
+    try {
+        imagePath = await generateBetTicketImage(ticketData);
+    } catch (e) {
+        console.warn('[AlertDispatcher] Error al generar imagen del ticket:', e.message);
+    }
+
+    const caption = buildTicketCaption(ticketData);
+    const textMsg = fallbackText || (ticketData.textToSend || caption);
+
+    for (const chatId of subscribedChats) {
+        try {
+            if (imagePath && fs.existsSync(imagePath) && bot.sendPhoto) {
+                await bot.sendPhoto(chatId, imagePath, { caption: caption, parse_mode: 'Markdown' });
+            } else {
+                await sendSafeMarkdownMessage(chatId, textMsg);
+            }
+        } catch (e) {
+            console.error(`[AlertDispatcher] Error enviando imagen al chat ${chatId}:`, e.message);
+            try {
+                await sendSafeMarkdownMessage(chatId, textMsg);
+            } catch (err2) {
+                console.error(`[AlertDispatcher] Fallback texto también falló al chat ${chatId}:`, err2.message);
+            }
+        }
+    }
+
+    // Limpieza de la imagen temporal
+    if (imagePath && fs.existsSync(imagePath)) {
+        try { fs.unlinkSync(imagePath); } catch (e) {}
+    }
+}
+
+/**
  * Envía la alerta a todos los chats suscritos, la procesa para posibles parlays en vivo
  * y la registra en el tracker financiero. Centraliza este bloque repetitivo.
  */
-async function dispatchAlertAndTrack(fixtureId, match, textToSend, alertMetadata, finalSuggestedOdd) {
-    for (const chatId of subscribedChats) {
-        try {
-            await sendSafeMarkdownMessage(chatId, textToSend);
-        } catch (e) {
-            console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+async function dispatchAlertAndTrack(fixtureId, match, textToSend, alertMetadata, finalSuggestedOdd, ticketData = null) {
+    if (ticketData) {
+        await sendTicketAlertToAll(ticketData, textToSend);
+    } else {
+        for (const chatId of subscribedChats) {
+            try {
+                await sendSafeMarkdownMessage(chatId, textToSend);
+            } catch (e) {
+                console.error(`Error enviando alerta fútbol al chat ${chatId}:`, e.message);
+            }
         }
     }
     alertMetadata.isSent = true;
@@ -435,21 +480,23 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                         alert.scoreAtTime = { home: currentHomeGoals, away: currentAwayGoals };
                         alert.suggestedOdd = parseFloat(oddVal) || 1.60;
 
-                        const baseHeader = (alert.originalAlertText || alert.textToSend || '').split('🎯')[0].trim();
-                        const updatedHeader = baseHeader
-                            .replace(/⏱️\s*\*Minuto:\*\s*\d+'/i, `⏱️ *Minuto:* ${match.fixture.status.elapsed || elapsed}'`)
-                            .replace(/📊\s*\*Marcador:\*\s*\d+\s*-\s*\d+/i, `📊 *Marcador:* ${currentHomeGoals} - ${currentAwayGoals}`);
+                        alert.ticketData = {
+                            homeTeam: alert.homeTeam,
+                            awayTeam: alert.awayTeam,
+                            leagueName: alert.matchDataTemplate ? alert.matchDataTemplate.leagueName : (match.league ? match.league.name : ''),
+                            elapsed: match.fixture.status.elapsed || elapsed,
+                            scoreHome: currentHomeGoals,
+                            scoreAway: currentAwayGoals,
+                            recommendation: recommendation,
+                            oddVal: oddVal,
+                            confidence: confidence,
+                            ruleName: alert.ruleName,
+                            isUpdate: true,
+                            updateReason: `Actualización tras gol en contra (${currentHomeGoals}-${currentAwayGoals})`,
+                            stakeAmount: 500
+                        };
 
-                        const formattedAiSection = 
-                            `🔄 *ACTUALIZACIÓN TRAS GOL EN CONTRA (${currentHomeGoals}-${currentAwayGoals})*\n` +
-                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                            `🐳 *DEEPSEEK (RE-ANÁLISIS)*\n` +
-                            `🧠 *Análisis:* ${analysis}\n` +
-                            `🎯 *Apuesta:* *${recommendation}* (Confianza: *${confidence}%*)\n` +
-                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                            `📈 *Momio Sugerido de Entrada:* *@${oddVal}*`;
-
-                        alert.textToSend = `${updatedHeader}\n\n${formattedAiSection}`;
+                        alert.textToSend = buildBetTicketMessage(alert.ticketData);
 
                         const oddsArray = liveOddsMap.get(alert.fixtureId);
                         let liveOddVal = null;
@@ -463,13 +510,7 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
                             console.log(`[SafeOdds] ¡Alerta de Re-análisis ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${liveOddVal.toFixed(2)} en el minuto ${currentElapsed}'`);
                             logSafeOddsEvent(triggerLogMsg);
 
-                            for (const chatId of subscribedChats) {
-                                try {
-                                    await sendSafeMarkdownMessage(chatId, alert.textToSend);
-                                } catch (e) {
-                                    console.error(`Error enviando alerta pendiente al chat ${chatId}:`, e.message);
-                                }
-                            }
+                            await sendTicketAlertToAll(alert.ticketData, alert.textToSend);
 
                             const tracked = trackedMatches.get(alert.fixtureId);
                             if (tracked) {
@@ -537,11 +578,15 @@ async function processPendingAlerts(liveMatches, liveOddsMap) {
             console.log(`[SafeOdds] ¡Alerta ACTIVADA! ${alert.homeTeam} vs ${alert.awayTeam}. Momio: @${currentOddValue.toFixed(2)} (${method}) en el minuto ${elapsed}'`);
             logSafeOddsEvent(logMsg);
             
-            for (const chatId of subscribedChats) {
-                try {
-                    await sendSafeMarkdownMessage(chatId, alert.textToSend);
-                } catch (e) {
-                    console.error(`Error enviando alerta pendiente al chat ${chatId}:`, e.message);
+            if (alert.ticketData) {
+                await sendTicketAlertToAll(alert.ticketData, alert.textToSend);
+            } else {
+                for (const chatId of subscribedChats) {
+                    try {
+                        await sendSafeMarkdownMessage(chatId, alert.textToSend);
+                    } catch (e) {
+                        console.error(`Error enviando alerta pendiente al chat ${chatId}:`, e.message);
+                    }
                 }
             }
             
@@ -777,38 +822,27 @@ async function runLiveGoalScanProcess(triggerSource = 'auto', requestedChatId = 
             markLiveFixtureAlerted(direct.fixtureId);
 
             const isGreen = direct.tierColor === 'GREEN';
-            const badge = isGreen ? '🟢 *LIGA TOP GOLEADORA (Alta Confianza)*' : '🔴 *LIGA DE CUIDADO (Menor Ritmo / Defensiva)*';
-            const stakeTxt = isGreen ? '🟢 *Stake Sugerido:* 1.0u ($500.00 MXN)' : '🔴 *Stake Sugerido:* 0.5u ($250.00 MXN)';
+            const stakeAmount = isGreen ? 500 : 250;
+            const elapsedStr = direct.statusShort === 'HT' ? 'HT' : `${direct.elapsed}'`;
 
-            const homeSearch = `https://www.google.com/search?q=${encodeURIComponent(direct.homeTeam + ' Flashscore')}`;
-            const awaySearch = `https://www.google.com/search?q=${encodeURIComponent(direct.awayTeam + ' Flashscore')}`;
-            const matchSearch = `https://www.google.com/search?q=${encodeURIComponent(direct.homeTeam + ' vs ' + direct.awayTeam + ' Flashscore')}`;
+            const ticketData = {
+                homeTeam: direct.homeTeam,
+                awayTeam: direct.awayTeam,
+                leagueName: `${direct.tierEmoji} ${direct.league}`,
+                elapsed: elapsedStr,
+                scoreHome: 0,
+                scoreAway: 0,
+                recommendation: 'Over 0.5 Goles en Vivo (Gol en 2T)',
+                oddVal: direct.estimatedOdd.toFixed(2),
+                confidence: direct.preMatchTrendPercent,
+                ruleName: 'Over 0.5 Goles tras Medio Tiempo (HT 0-0)',
+                stakeAmount: stakeAmount
+            };
 
-            let msg = `⚽ *ALERTA EN VIVO: OVER 0.5 GOLES (HT 0-0)*\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `${badge}\n`;
-            msg += `🏆 *Liga:* ${direct.tierEmoji} ${direct.league} (${direct.statusShort === 'HT' ? 'Entretiempo HT' : `Minuto ${direct.elapsed}'`})\n`;
-            msg += `⚔️ *[${direct.homeTeam}](${homeSearch})* vs *[${direct.awayTeam}](${awaySearch})*\n`;
-            msg += `⏱️ *Tiempo:* ${direct.statusShort === 'HT' ? 'HT' : direct.elapsed + "'"}  |  📊 *Marcador:* 0 - 0\n`;
-            msg += `🔍 *Flashscore:* [Buscar Partido](${matchSearch})\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `🎯 *Tiros a Puerta HT:* ${direct.stats.totalShotsOnGoal}  |  🔥 *Remates Totales:* ${direct.stats.totalShots}\n`;
-            msg += `📈 *Tendencia Pre-partido de Gol:* ${direct.preMatchTrendPercent}% (Over 0.5 histórico)\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `🎯 *Pick:* *Over 0.5 Goles en Vivo* (Gol en 2do Tiempo)\n`;
-            msg += `💡 *Cuota Estimada Live:* ~@${direct.estimatedOdd.toFixed(2)}\n`;
-            msg += `💰 ${stakeTxt}\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `⚠️ *Gestión:* Esperar a que la cuota suba en vivo a @1.50+ si deseas mayor retorno.`;
+            const msg = buildBetTicketMessage(ticketData);
 
-            // Enviar a todos los chats suscritos
-            for (const chatId of subscribedChats) {
-                try {
-                    await sendSafeMarkdownMessage(chatId, msg);
-                } catch (e) {
-                    console.error(`[Live Goals] Error enviando alerta al chat ${chatId}:`, e.message);
-                }
-            }
+            // Enviar alerta con la imagen gráfica del ticket a todos los chats
+            await sendTicketAlertToAll(ticketData, msg);
 
             // Metadatos para seguimiento GREEN / RED post-partido
             const alertMeta = {
@@ -857,23 +891,24 @@ async function runLiveGoalScanProcess(triggerSource = 'auto', requestedChatId = 
 
             const isAllGreen = parlay.tierColor === 'GREEN';
             const parlayBadge = isAllGreen 
-                ? '🟢 *PARLAY EN VIVO (ALTA CONFIANZA - STAKE NORMAL)*' 
-                : '🟡 *PARLAY EN VIVO (MIXTO / STAKE REDUCIDO)*';
-            const parlayStake = isAllGreen ? '🟢 *Stake Sugerido:* 1.0u ($500.00 MXN)' : '🟡 *Stake Sugerido:* 0.5u ($250.00 MXN)';
+                ? '🟢 *ALTA CONFIANZA*' 
+                : '🟡 *MIXTO / PRECAUCIÓN*';
+            const stakeAmount = isAllGreen ? 500 : 250;
 
-            let msg = `🔥 ${parlayBadge} ⚡\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `📈 *Cuota Total Combinada Est.:* *@${parlay.totalOdd.toFixed(2)}*\n`;
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            parlay.picks.forEach((p, idx) => {
-                msg += `${idx + 1}️⃣ 🏆 *${p.tierEmoji || '⚽'} ${p.league}* (${p.statusShort === 'HT' ? 'HT' : `Min ${p.elapsed}'`})\n`;
-                msg += `   ⚔️ *${p.homeTeam} vs ${p.awayTeam}* (Marcador 0-0)\n`;
-                msg += `   🎯 *Pick:* Over 0.5 Goles Live (Cuota ~@${p.estimatedOdd.toFixed(2)})\n`;
-                msg += `   📊 *Tiros a Puerta HT:* ${p.stats.totalShotsOnGoal} | *Tendencia Pre:* ${p.preMatchTrendPercent}%\n\n`;
+            const msg = buildParlayTicketMessage({
+                title: 'TICKET PARLAY EN VIVO (HT 0-0)',
+                badge: parlayBadge,
+                selections: parlay.picks.map(p => ({
+                    home: p.homeTeam,
+                    away: p.awayTeam,
+                    league: `${p.tierEmoji || '⚽'} ${p.league} (${p.statusShort === 'HT' ? 'HT' : `Min ${p.elapsed}'`})`,
+                    recommendation: 'Over 0.5 Goles en Vivo',
+                    odd: p.estimatedOdd
+                })),
+                totalOdd: parlay.totalOdd,
+                stakeAmount: stakeAmount,
+                note: '¡Combinación simultánea de 2 partidos con alta expectativa de gol tras el medio tiempo!'
             });
-            msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-            msg += `💰 ${parlayStake}\n`;
-            msg += `🍀 _¡Combinación simultánea de 2 partidos con alta expectativa de gol tras el medio tiempo!_`;
 
             for (const chatId of subscribedChats) {
                 try {
@@ -1118,30 +1153,48 @@ async function checkMatches() {
                         alert.metadata.aiRecommendation = recommendation;
                         alert.metadata.deepseekRecommendation = recommendation;
 
-                        const splitIndex = alert.text.indexOf('🎯');
-                        const header = splitIndex !== -1 ? alert.text.substring(0, splitIndex).trim() : alert.text;
-
-                        const formattedAiSection = 
-                            `🤖 *ANÁLISIS DE IA - DEEPSEEK*\n` +
-                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                            `🐳 *DEEPSEEK*\n` +
-                            `🧠 *Análisis:* ${analysis}\n` +
-                            `🎯 *Apuesta:* *${recommendation}* (Confianza: *${confidence}%*)\n` +
-                            `━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-                            `📈 *Momio Sugerido de Entrada:* *@${oddVal}*`;
-
-                        textToSend = `${header}\n\n${formattedAiSection}`;
-
                         suggestedOdd = parseFloat(oddVal) || 1.60;
+
+                        const ticketData = {
+                            homeTeam: match.teams.home.name,
+                            awayTeam: match.teams.away.name,
+                            leagueName: match.league ? match.league.name : 'Desconocida',
+                            elapsed: match.fixture.status.elapsed || 0,
+                            scoreHome: match.goals.home || 0,
+                            scoreAway: match.goals.away || 0,
+                            recommendation: recommendation,
+                            oddVal: oddVal,
+                            confidence: confidence,
+                            ruleName: alert.metadata.ruleName,
+                            stakeAmount: 500
+                        };
+                        textToSend = buildBetTicketMessage(ticketData);
+                        alert.ticketData = ticketData;
                     } else {
-                        // DeepSeek falló o no devolvió predicción, usamos fallback estático
-                        console.log(`[index.js] ⚠️ DeepSeek no devolvió predicción. Usando fallback estático para ${matchData.homeTeam} vs ${matchData.awayTeam}.`);
+                        // IA falló o no devolvió predicción, usamos fallback estático en formato ticket
+                        console.log(`[index.js] ⚠️ IA no devolvió predicción. Usando fallback estático para ${matchData.homeTeam} vs ${matchData.awayTeam}.`);
                         const defaultRecMatch = alert.text.match(/🎯\s*\*?Recomendación\*?:\s*([^\n]+)/i);
                         const defaultRec = defaultRecMatch ? defaultRecMatch[1].replace(/\*/g, '').trim() : 'Recomendación por defecto';
                         alert.metadata.aiRecommendation = defaultRec;
                         alert.metadata.deepseekRecommendation = defaultRec;
                         alert.metadata.aiFallbackUsed = true;
                         suggestedOdd = 1.60;
+
+                        const ticketData = {
+                            homeTeam: match.teams.home.name,
+                            awayTeam: match.teams.away.name,
+                            leagueName: match.league ? match.league.name : 'Desconocida',
+                            elapsed: match.fixture.status.elapsed || 0,
+                            scoreHome: match.goals.home || 0,
+                            scoreAway: match.goals.away || 0,
+                            recommendation: defaultRec,
+                            oddVal: '1.60',
+                            confidence: '70',
+                            ruleName: alert.metadata.ruleName,
+                            stakeAmount: 500
+                        };
+                        textToSend = buildBetTicketMessage(ticketData);
+                        alert.ticketData = ticketData;
                     }
 
                     // --- INTEGRACIÓN DE SAFEODDS SYSTEM ---
@@ -1168,10 +1221,10 @@ async function checkMatches() {
                         const reason = isLateGoal ? 'regla de Asedio Intenso / Gol Tardío (envío inmediato por urgencia temporal)' :
                                        (!oddsArray ? 'sin cobertura de cuotas en vivo en la API' : 'mercado no monitorizable en vivo (tarjetas/córneres)');
                         console.log(`[SafeOdds] Enviando alerta de inmediato para ${match.teams.home.name} vs ${match.teams.away.name} por tratarse de un escenario ${reason}.`);
-                        await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, suggestedOdd);
+                        await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, suggestedOdd, alert.ticketData);
                     } else if (liveOddVal !== null && liveOddVal >= targetOdd) {
                         console.log(`[SafeOdds] Alerta enviada de inmediato (cuota en vivo @${liveOddVal.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
-                        await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, liveOddVal);
+                        await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, liveOddVal, alert.ticketData);
                     } else {
                         let estimatedStartOdd = 1.30;
                         const favOdd = matchOdds.home < matchOdds.away ? matchOdds.home : matchOdds.away;
@@ -1188,7 +1241,7 @@ async function checkMatches() {
 
                         if (liveOddVal === null && estimatedStartOdd >= targetOdd) {
                             console.log(`[SafeOdds] Alerta enviada de inmediato (cuota de inicio estimada @${estimatedStartOdd.toFixed(2)} >= @${targetOdd.toFixed(2)}).`);
-                            await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, estimatedStartOdd);
+                            await dispatchAlertAndTrack(fixtureId, match, textToSend, alert.metadata, estimatedStartOdd, alert.ticketData);
                         } else {
                             const startOdd = liveOddVal !== null ? liveOddVal : estimatedStartOdd;
                             const logMsg = `⏳ *[SafeOdds]* Alerta encolada para *${match.teams.home.name} vs ${match.teams.away.name}* (Regla: ${alert.metadata.ruleName}). Cuota inicial: *@${startOdd.toFixed(2)}*, Objetivo: *@${targetOdd.toFixed(2)}*.`;
@@ -1203,6 +1256,7 @@ async function checkMatches() {
                                 awayTeam: match.teams.away.name,
                                 ruleName: alert.metadata.ruleName,
                                 textToSend,
+                                ticketData: alert.ticketData,
                                 aiRecommendation: alert.metadata.aiRecommendation || '',
                                 suggestedOdd,
                                 targetOdd,
@@ -1274,15 +1328,10 @@ async function checkFinishedMatches() {
                     const results = await evaluateAlertResults(matchInfo.alertsMetadata, matchData, finalEvents, finalStats);
 
                     for (const result of results) {
-                        for (const chatId of subscribedChats) {
-                            try {
-                                await sendSafeMarkdownMessage(chatId, result.msg);
-                            } catch (e) {
-                                console.error(`Error enviando veredicto fútbol al chat ${chatId}:`, e.message);
-                            }
-                        }
+                        // Veredictos finales eliminados de los mensajes al usuario según requerimiento
+                        console.log(`[checkFinishedMatches] Veredicto resuelto internamente para ${matchData.teams.home.name} vs ${matchData.teams.away.name} (${result.meta.ruleName}): ${result.isGreen ? 'GREEN' : 'RED'} (Notificación a chat desactivada)`);
                         
-                        // Actualizar en el control financiero
+                        // Actualizar en el control financiero (SQLite y Google Sheets)
                         financialTracker.updatePlayVerdict(fixtureId, result.meta.ruleName, result.isGreen, result.isOmitted);
                     }
                     clearMatchAlerts(fixtureId); // Liberar entradas del Set alertedMatches (anti memory-leak)
@@ -1344,27 +1393,32 @@ async function handleLiveParlayQueue(fixtureId, sport, homeTeam, awayTeam, textT
 
     if (liveAlertsQueue.length >= 2) {
         console.log(`[Parlay en Vivo] Generando Parlay en Vivo con ${liveAlertsQueue.length} selecciones.`);
-        const selections = [];
         let combinedOdd = 1.0;
         let combinedConfidence = 1.0;
 
-        liveAlertsQueue.forEach((alert, idx) => {
+        const selections = liveAlertsQueue.map(alert => {
             const cleanOddVal = parseFloat(alert.odd.replace('@', '').trim()) || 1.60;
             combinedOdd *= cleanOddVal;
             combinedConfidence *= (alert.confidence / 100);
-
-            const sportIcon = '⚽';
-            selections.push(`${idx + 1}. ${sportIcon} *${alert.homeTeam} vs ${alert.awayTeam}* -> Pronóstico: *${alert.recommendation}* (Momio: @${cleanOddVal.toFixed(2)})`);
+            return {
+                home: alert.homeTeam,
+                away: alert.awayTeam,
+                recommendation: alert.recommendation,
+                odd: cleanOddVal
+            };
         });
 
         const finalConfidence = Math.round(combinedConfidence * 100);
 
-        const msg = `🔥 *PARLAY EN VIVO DETECTADO (ALTA CONFIANZA)* 🔥\n\n` +
-            `Se han identificado múltiples oportunidades en vivo con alta probabilidad de éxito de forma simultánea:\n\n` +
-            `📊 *SELECCIONES:*\n${selections.join('\n')}\n\n` +
-            `📈 *MOMIO TOTAL SUGERIDO:* @${combinedOdd.toFixed(2)}\n` +
-            `🔥 *CONFIANZA COMBINADA:* ${finalConfidence}%\n\n` +
-            `⚠️ *Nota:* Se recomienda ingresar esta apuesta a la brevedad, ya que las cuotas en vivo varían rápidamente.`;
+        const msg = buildParlayTicketMessage({
+            title: 'TICKET PARLAY EN VIVO',
+            badge: '🔥 *ALTA CONFIANZA*',
+            selections: selections,
+            totalOdd: combinedOdd,
+            combinedConfidence: finalConfidence,
+            stakeAmount: 500,
+            note: 'Ingresar a la brevedad en tu casa de apuestas (las cuotas en vivo varían rápidamente).'
+        });
 
         for (const chatId of subscribedChats) {
             try {

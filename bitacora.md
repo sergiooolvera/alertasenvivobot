@@ -659,3 +659,56 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Verificación de regresión en `test.js` completada exitosamente sin romper las reglas 1, 7, 8 y 9.
   - **Control de Versión**: Se incrementó la versión a `2.20.0` en `package.json` siguiendo el estándar SemVer.
 
+- **[2026-11-05]**: Transformación Integral de Presentación a Formato Ticket de Apuesta y Eliminación de Veredictos Finales (Versión 2.21.0).
+  - **Rediseño Completo a Formato Ticket de Apuesta (`utils.js`)**:
+    - Se implementó la función generadora `buildBetTicketMessage` inspirada en la interfaz gráfica de casas de apuestas (Caliente / Playdoit):
+      - Encabezado con marco visual delimitador: `🎫 ━━━ TICKET DE APUESTA ━━━ 🎫`.
+      - Encuentro y competición: equipos enlazados, liga, minuto y marcador actual.
+      - **Enlaces a Flashscore**: Se preservan los enlaces de búsqueda directos a Flashscore tanto de los equipos locales/visitantes como del partido en sí (`[Ver Partido en Flashscore](${matchSearchUrl})`).
+      - Sección destacada de **SELECCIÓN**: recomendación directa del pick y tipo de apuesta/mercado.
+      - **Detalles Financieros del Ticket**:
+        - Conversión matemática y despliegue simultáneo de **Momio Americano y Decimal** (`toAmericanOdd`, ej: `-137 (@1.73)`).
+        - **Apuesta Sugerida (Stake)**: $500.00 MXN (1.0u) o $250.00 MXN (0.5u).
+        - **Ganancia Total Estimada**: cálculo del retorno total en MXN y ganancia neta.
+        - **Nivel de Confianza**: porcentaje estimado de certeza.
+    - Se implementó `buildParlayTicketMessage` para los parlays en vivo y pre-partido, manteniendo la estructura estética de ticket múltiple con links a Flashscore.
+  - **Eliminación Total de Análisis y de la Palabra "DEEPSEEK"**:
+    - Se removió por completo la sección `🧠 Análisis:` y los textos explicativos redundantes de los mensajes enviados al usuario.
+    - Se eliminó la etiqueta `🤖 ANÁLISIS DE IA - DEEPSEEK`, el emoji de la ballena `🐳` y cualquier mención de la palabra "DEEPSEEK" en las notificaciones al chat de Telegram (`index.js` y `rulesEngine.js`).
+    - En `aiService.js`, se simplificó el formato obligatorio del Parlay del Día para enfocarse directamente en selecciones tipo ticket sin requerir justificaciones técnicas extensas.
+  - **Eliminación de Mensajes de Veredictos Finales al Chat (`index.js`)**:
+    - Se suprimió el envío de notificaciones de veredictos post-partido (`sendSafeMarkdownMessage(chatId, result.msg)`) en `checkFinishedMatches`.
+    - Se mantuvo intacta la actualización interna de contabilidad en `financialTracker.updatePlayVerdict(...)` para asegurar que el registro en SQLite, estadísticas y sincronización con Google Sheets continúen operando con precisión matemática sin generar spam en el canal de Telegram.
+  - **Validación Automatizada (`test_bet_ticket.js`)**:
+    - Se creó y ejecutó la suite de pruebas unitarias `test_bet_ticket.js` verificando:
+      1. Conversión de momios decimales a formato americano (+/-).
+      2. Generación del ticket simple con links a Flashscore, momios, cálculos y estructura visual.
+      3. Ausencia total de la palabra "DEEPSEEK" y ausencia de bloques de análisis.
+      4. Generación del ticket parlay.
+      5. Eliminación efectiva del envío de veredictos finales a Telegram en `index.js`.
+    - Resultado: 5/5 pruebas pasadas al 100%. Regresión completa de `test.js`, `test_live_goals.js`, `test_off_field_red_card.js`, `test_omission.js` y `testSanitize.js` aprobadas exitosamente.
+  - **Control de Versión**: Se incrementó la versión a `2.21.0` en `package.json` conforme a la regla del proyecto (SemVer).
+
+- **[2026-11-05]**: Integración de Tickets de Apuesta Gráficos (Estilo Caliente) y Depuración de Enlaces Flashscore (Versión 2.22.0).
+  - **Servicio de Renderizado Gráfico (`ticketImageService.js`)**:
+    - Se implementó la generación dinámica de imágenes PNG de tickets de apuesta mediante renderizado headless con Chrome / Edge (`generateBetTicketImage`).
+    - **Diseño Idéntico a Caliente / Casas de Apuestas**:
+      - Encabezado gris oscuro (`#5a626a`) con el encuentro y etiqueta de estado `ABIERTO` o `ACTUALIZADO`.
+      - Selección en negrita prominente con su momio americano a la derecha (`Lorient` y `-137`).
+      - Subtítulo del tipo de mercado/regla y nombres de los equipos en texto plano.
+      - Minuto de juego y marcador actual (`Minuto 54' · En vivo` | `0:0`).
+      - Fila de momios con formato americano y decimal (`-137 (@1.73)`).
+      - Apuesta total destacada (`$500.00`).
+      - Ganancia total en verde esmeralda brillante (`$865.00`).
+      - Barra inferior oscura con distintivo del canal y nivel de confianza.
+  - **Corrección de Enlaces a Flashscore en el Mensaje**:
+    - Se eliminaron los hipervínculos de Flashscore en los nombres de los equipos del partido principal (`⚽ *Lorient vs Brest*`), manteniéndolos en texto limpio.
+    - Se preservó el hipervínculo único de Flashscore en la línea inferior de la notificación (`🔍 *Flashscore:* [Ver Partido en Flashscore](...)`).
+  - **Flujo de Envío a Telegram (`sendTicketAlertToAll` en `index.js`)**:
+    - Las alertas ahora se envían primordialmente como una **foto nativa** (`bot.sendPhoto`) con el ticket gráfico de Caliente y el caption limpio.
+    - Se incluye mecanismo de respaldo (fallback) que conmuta a texto limpio estructurado si el renderizado gráfico no estuviese disponible.
+  - **Validación Automatizada**:
+    - Se actualizó y ejecutó `test_bet_ticket.js` verificando la generación del HTML, la captura PNG, el caption limpio y la ausencia total de la palabra "DEEPSEEK" y bloques de análisis.
+    - Pruebas de regresión (`test.js` y `test_live_goals.js`) aprobadas al 100%.
+  - **Control de Versión**: Se incrementó la versión a `2.22.0` en `package.json` siguiendo el estándar SemVer.
+
