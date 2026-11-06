@@ -718,7 +718,7 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Se adaptó la arquitectura comercial y el modelo de embudo implementado en `hacktipsters` para monetizar el canal y bot de apuestas deportivas **Rojas y Goles**.
     - Decisiones de diseño acordadas con el usuario:
       1. Estructura de 2 Canales Privados: `Rojas y Goles Free` (prueba de 4 días) y `Rojas y Goles VIP` (acceso premium por 30 días a $100 MXN).
-      2. Bot independiente de captación e invitaciones: `@RojasyGolesInvitacionBot` (`9089639280:AAEGDSHHR0N0Z5luaCqcoY9BjO8W6lT2FHE`).
+      2. Bot independiente de captación e invitaciones: `@RojasyGolesInvitacionBot` (`[TOKEN_REVOCADO_Y_PROTEGIDO]`).
       3. Bot de alertas en vivo (`@Alertasenvivobot`): retransmite el 100% de las alertas en vivo y tickets a ambos canales de forma simultánea.
       4. Precio: $100 MXN mensuales / 30 días.
       5. Datos bancarios: BBVA, CLABE `012180004701190246`, Titular `Sergio Olvera`, Concepto `asesoria`.
@@ -789,3 +789,12 @@ ulesEngine.js\, se adapt el veredicto final dual de Gemini y DeepSeek, mostrando
     - Se incorporaron valores por defecto seguros en `index.js` para `CANAL_FREE_ID` (`-1004366484952`) y `CANAL_VIP_ID` (`-1003748312099`), asegurando que ambos canales estén siempre suscritos incluso si las variables aún no se sincronizan en Railway.
     - Se validó la emisión directa de mensajes y fotos de tickets estilo Caliente generados en tiempo real hacia `Rojas y Goles Free` con respuesta 200 OK de Telegram.
   - **Control de Versión**: Se incrementó la versión a `2.23.4` en `package.json` siguiendo el estándar SemVer.
+
+- **[2026-11-06]**: Remediación de Seguridad: Sanitización de Credenciales y Eliminación de Fallbacks Sensibles (Versión 2.23.5).
+  - **Diagnóstico del Incidente**:
+    - La herramienta GitHub Secret Scanning identificó la exposición en texto plano del token de Telegram del bot de membresías (\@RojasyGolesInvitacionBot\) en los archivos \ot_membresias.py\ y \itacora.md\.
+  - **Acciones Correctivas ([ot_membresias.py](file:///c:/Users/sergi/.gemini/antigravity/scratch/rojas%20y%20goles/bot_membresias.py))**:
+    - Se eliminaron los valores fallback quemados para \TELEGRAM_INVITE_BOT_TOKEN\ y \TELEGRAM_API_HASH\. Ahora la lectura depende estrictamente de las variables de entorno sin comprometer secretos en el código fuente versionado.
+    - Se sanitizó el historial documental en \itacora.md\ ofuscando la cadena del token filtrado.
+    - Se estableció el procedimiento de rotación en \@BotFather\ para invalidar el token expuesto y reemplazarlo con una clave nueva en los entornos de ejecución local y Railway.
+  - **Control de Versión**: Se incrementó la versión a .23.5\ en \package.json\ conforme a las reglas SemVer del proyecto.

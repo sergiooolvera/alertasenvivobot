@@ -47,13 +47,18 @@ def safe_int_env(key, default):
     except Exception:
         return int(default)
 
-API_ID = safe_int_env("TELEGRAM_API_ID", 34622692)
-API_HASH = str(os.getenv("TELEGRAM_API_HASH", "ff8a8c91808884edbf1cce845bede897")).strip().strip('"').strip("'")
-BOT_TOKEN = str(os.getenv("TELEGRAM_INVITE_BOT_TOKEN", "9089639280:AAEGDSHHR0N0Z5luaCqcoY9BjO8W6lT2FHE")).strip().strip('"').strip("'")
-ADMIN_USER_ID = safe_int_env("ADMIN_USER_ID", 890184744)
+API_ID = safe_int_env("TELEGRAM_API_ID", 0)
+API_HASH = str(os.getenv("TELEGRAM_API_HASH", "")).strip().strip('"').strip("'")
+BOT_TOKEN = str(os.getenv("TELEGRAM_INVITE_BOT_TOKEN", "")).strip().strip('"').strip("'")
+ADMIN_USER_ID = safe_int_env("ADMIN_USER_ID", 0)
 
 CANAL_FREE_ID = safe_int_env("CANAL_FREE_ID", -1004366484952)
 CANAL_VIP_ID = safe_int_env("CANAL_VIP_ID", -1003748312099)
+
+if not BOT_TOKEN:
+    print("❌ ERROR CRÍTICO: La variable de entorno TELEGRAM_INVITE_BOT_TOKEN no está configurada.")
+if not API_HASH:
+    print("❌ ERROR CRÍTICO: La variable de entorno TELEGRAM_API_HASH no está configurada.")
 
 ZONA_HORARIA = ZoneInfo("America/Mexico_City")
 
